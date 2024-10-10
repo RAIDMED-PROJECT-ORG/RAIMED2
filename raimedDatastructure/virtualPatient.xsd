@@ -1,0 +1,82 @@
+<?xml version = "1.0"?>
+
+<xs:schema xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+   <xs:element name = "VirtualPatient">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name = "age" type = "xs:string"/>
+            <xs:element name = "result" type = "xs:string"/>
+            <xs:element name="gender">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="MALE"/>
+                     <xs:enumeration value="FEMALE"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element> 
+            <xs:element name = "createdAt" type = "xs:string"/>
+            <xs:element name="actions">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="action" maxOccurs="unbounded">
+                        <xs:complexType>
+                           <xs:sequence>
+                              <xs:element name = "type" type = "xs:string"/>
+                              <xs:element name = "primaryElement" type = "xs:string"/>
+                              <xs:element name="actionClosedQuestions">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="closedAnswer" type="xs:string" ></xs:element>
+                                       <xs:element name="question" type="question"></xs:element>
+                                    </xs:sequence>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="actionOpenedQuestions">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="openedAnswer" type="xs:string" ></xs:element>
+                                       <xs:element name="question" type="question"></xs:element>
+                                    </xs:sequence>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="actionSpontaneousPatientSpeech">
+                                 <xs:complexType>
+                                    <xs:sequence>
+                                       <xs:element name="speech" type="xs:string"/>
+                                    </xs:sequence>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+         </xs:sequence>
+         <xs:attribute name = 'rollno' type = 'xs:positiveInteger'/>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name="question">
+      <xs:sequence>
+         <xs:element name="type">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="OPENED"/>
+                  <xs:enumeration value="CLOSED"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="filter">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="MIXED"/>
+                  <xs:enumeration value="MALE"/>
+                  <xs:enumeration value="FEMALE"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name ="content" type = "xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>

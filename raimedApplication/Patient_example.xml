@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VirtualPatient targetNamespace="http://www.example.org/VirtualPatient" elementFormDefault="qualified">
+  <age>35</age>
+  <gender>MALE</gender>
+  <createdAt>2024-02-23T10:00:00+01:00</createdAt>
+  <result>Depression</result>
+  <actions>
+    <action>
+      <type>CLOSED_QUESTION</type> <!-- Possible values: CLOSED_QUESTION | OPENED_QUESTION | SPONTANEOUS_PATIENT_SPEECH -->
+      <primaryElement>Sans energie</primaryElement>
+      <actionClosedQuestion>
+        <closedAnswer>Oui depuis quelques jours je n'arrive à rien faire, je ne trouve pas l'énergie.</closedAnswer>
+        <questionLinked>
+          <type>CLOSED</type> <!-- Possible values: OPENED | CLOSED -->
+          <filter>MIXED</filter> <!-- Possible values: MALE | FEMALE | MIXED -->
+          <content>Vous sentez vous sans énergie ?</content>
+        </questionLinked>
+      </actionClosedQuestion>
+    </action>
+    <action>
+      <type>OPENED_QUESTION</type>
+      <primaryElement>Estomac contracté</primaryElement>
+      <actionOpenedQuestion>
+        <openedAnswer>Je me sens un peu tout et rien à la foi. J'ai des crampes d'estomac des fois...</openedAnswer>
+        <questionLinked>
+          <type>OPENED</type>
+          <filter>MIXED</filter>
+          <content>Comment vous sentez-vous ?</content>
+        </questionLinked>
+      </actionOpenedQuestion>
+    </action>
+    <action>
+      <type>SPONTANEOUS_PATIENT_SPEECH</type>
+      <primaryElement>Coléreux</primaryElement>
+      <actionSpontaneousPatientSpeech>
+        <speech>Je suis souvent en colère</speech>
+      </actionSpontaneousPatientSpeech>
+    </action>
+        <action>
+      <type>SPONTANEOUS_PATIENT_SPEECH</type>
+      <primaryElement>Tension mentale</primaryElement>
+      <actionSpontaneousPatientSpeech>
+        <speech>Je ne supporte plus les gens autour de moi</speech>
+      </actionSpontaneousPatientSpeech>
+    </action>
+  </actions>
+</VirtualPatient>
