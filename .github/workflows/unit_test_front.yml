@@ -1,0 +1,30 @@
+name: Unit test front CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        working-directory: ./raimed2Front
+        run: npm ci
+
+      - name: Run Unit tests
+        working-directory: ./raimed2Front
+        if: ${{ hashFiles('**.spec.ts') != '' }}
+        run: npm run test:unit
