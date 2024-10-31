@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        "dark-gray-border": "#9CA3AF",
-        "light-gray-border": "#E7E7E7",
+        "dark-grey-border": "#9CA3AF",
+        "light-grey-border": "#E7E7E7",
       }
     },
   },

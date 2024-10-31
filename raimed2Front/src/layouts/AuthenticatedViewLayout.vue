@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import UserStatusButton from '@/components/userStatusButton/UserStatusButton.vue';
+
 defineProps<{
   title?: string;
 }>();

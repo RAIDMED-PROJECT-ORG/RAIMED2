@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
+import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
+import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 interface Patient {
   id: number;
@@ -11,6 +13,18 @@ interface Patient {
 const patients: Patient[] = [
   { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
   { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
+  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
+  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
+  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
+  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
+  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
+  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
+  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
+  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
+  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
+  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
+  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
+  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
   { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' }
 ];
 
@@ -19,31 +33,51 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
 
 <template>
   <AuthenticatedPageLayout>
-    <div class="ml-10">
-      <h1 class="font-extrabold text-xl mb-2">Liste des patients</h1>
-      <div class="bg-white w-2/4 rounded-2xl">
-        <table class="w-full">
-          <thead class="border-b-[1px] border-dark-gray-border">
+    <div class="ml-10 w-2/4 flex flex-col h-[90%]">
+      <div class="flex justify-between items-center h-[5%] mb-5">
+        <h1 class="font-extrabold text-xl">Liste des patients</h1>
+        <ActionButton
+          :color="Color.Green"
+          :onClick="() => console.log('click')"
+          label="Créer un patient"
+        />
+      </div>
+      <div class="bg-white rounded-2xl px-4 h-[90%] overflow-auto">
+        <table class="w-full border-collapse">
+          <thead class="border-b-[1px] border-dark-grey-border">
             <tr>
-              <th class="font-bold py-4">Id</th>
-              <th class="font-bold py-4">Sexe</th>
-              <th class="font-bold py-4">Âge</th>
-              <th class="font-bold py-4">Diagnostic final</th>
-              <th class="font-bold py-4">Actions</th>
+              <th class="font-bold py-3">Id</th>
+              <th class="font-bold py-3">Sexe</th>
+              <th class="font-bold py-3">Âge</th>
+              <th class="font-bold py-3">Diagnostic final</th>
+              <th class="font-bold py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="patient in patients" :key="patient.id" class="border-b-[1px] border-light-gray-border">
-              <td class="text-center py-4">{{ patient.id }}</td>
-              <td class="text-center py-4">{{ getSexLabel(patient.sex) }}</td>
-              <td class="text-center py-4">{{ patient.age }}</td>
-              <td class="text-center py-4">{{ patient.diagnosis }}</td>
-              <td class="py-4 text-center">
-                <button
-                  class="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 focus:outline-none"
-                >
-                  Voir
-                </button>
+            <tr
+              v-for="(patient, index) in patients"
+              :key="index"
+              :class="{ 'border-b-[1px] border-light-grey-border': index !== patients.length - 1 }"
+              class="text-center"
+            >
+              <td class="py-2">{{ patient.id }}</td>
+              <td class="py-2">{{ getSexLabel(patient.sex) }}</td>
+              <td class="py-2">{{ patient.age }}</td>
+              <td class="py-2">{{ patient.diagnosis }}</td>
+              <td class="py-2 flex justify-center gap-2">
+                <ActionButton
+                  :color="Color.Grey"
+                  :icon="faPen"
+                  :onClick="() => console.log('click')"
+                  :iconOnly="true"
+                  :size="'small'"
+                />
+                <ActionButton
+                  :color="Color.Grey"
+                  :icon="faTrashCan"
+                  :onClick="() => console.log('click')"
+                  :size="'small'"
+                />
               </td>
             </tr>
           </tbody>
@@ -52,6 +86,10 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
     </div>
   </AuthenticatedPageLayout>
 </template>
+
+<style scoped></style>
+
+<style scoped></style>
 
 <style scoped>
 /* Ajoutez ici des styles si nécessaire */
