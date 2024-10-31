@@ -20,7 +20,9 @@ import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 export const Color = {
   Blue: "#9ccded",
   Orange: "#f1bf6d",
-  Purple: "#d0b1dd"
+  Purple: "#d0b1dd",
+  Green: "#2db784",
+  Grey: "#d9d9d9"
 } as const;
 
 type ColorType = typeof Color[keyof typeof Color];
@@ -62,6 +64,10 @@ export default defineComponent({
             return { backgroundColor: "#eed0a1" };
           case Color.Purple:
             return { backgroundColor: "#d5c3dd" };
+          case Color.Green:
+            return { backgroundColor: "#8fd9b0" };
+          case Color.Grey:
+            return { backgroundColor: "#e6e6e6" };
         }
       } else if (hover.value) {
         switch (props.color) {
@@ -71,6 +77,10 @@ export default defineComponent({
             return { backgroundColor: "#eeb354" };
           case Color.Purple:
             return { backgroundColor: "#c694db" };
+          case Color.Green:
+            return { backgroundColor: "#1e8e5b" };
+          case Color.Grey:
+            return { backgroundColor: "#bfbfbf" };
         }
       }
       return { backgroundColor: props.color };
