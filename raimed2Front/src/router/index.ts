@@ -54,6 +54,14 @@ const router = createRouter({
       meta: {
         roles: [Role.ADMIN]
       }
+    },
+    {
+      path: '/teacher/patients',
+      name: 'teacherPatients',
+      component: () => import('@/views/teacher/PatientsView.vue'),
+      meta: {
+        roles: [Role.TEACHER]
+      }
     }
   ]
 });
