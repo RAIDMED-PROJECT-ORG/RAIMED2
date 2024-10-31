@@ -22,7 +22,7 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
       <div class="diagnostic-actions">
         <div class="column">
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.SPONTANEOUS_PATIENT_SPEECH)"
+            label="Écouter"
             :color="Color.Blue"
             :icon="faEarListen"
           />

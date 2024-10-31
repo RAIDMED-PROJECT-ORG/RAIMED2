@@ -84,7 +84,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Blue"
           :icon="faSquarePlus"
           :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.SPECIFY_SYMPTOM)"
         />
       </div>
@@ -94,7 +93,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faMagnifyingGlass"
           :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.INSPECTION)"
         />
 
@@ -103,7 +101,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faHandHoldingMedical"
           :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.PALPATATION)"
         />
 
@@ -112,7 +109,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faGavel"
           :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.PERCUSSION)"
         />
 
@@ -121,7 +117,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faStethoscope"
           :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.AUSCULTATION)"
         />
       </div>
@@ -131,7 +126,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Purple"
           :icon="faFileMedical"
           :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
         />
 
@@ -140,7 +134,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Purple"
           :icon="faPersonRays"
           :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.IMAGING_PRESCRIPTION)"
         />
 
@@ -149,7 +142,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Purple"
           :icon="faSyringe"
           :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
-          :onClick="() => console.log('Not implemented yet')"
           :disabled="isActionDisabled(TypeAction.BIOPSIES_PRESCRIPTION)"
         />
       </div>
