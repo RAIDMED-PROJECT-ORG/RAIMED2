@@ -1,6 +1,6 @@
 <template>
   <button
-    class="btn dialog-action m-1 flex-nowrap"
+    class="btn m-1 flex-nowrap"
     @click="handleClick"
     :disabled="disabled"
     :style="buttonStyle"
@@ -13,44 +13,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed } from "vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { defineComponent, PropType, ref, computed } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const Color = {
-  Blue: "#9ccded",
-  Orange: "#f1bf6d",
-  Purple: "#d0b1dd",
-  Green: "#2db784",
-  Grey: "#d9d9d9"
+  Blue: '#9ccded',
+  Orange: '#f1bf6d',
+  Purple: '#d0b1dd',
+  Green: '#2db784',
+  Grey: '#d9d9d9',
+  Red: '#ff9a9b'
 } as const;
 
-type ColorType = typeof Color[keyof typeof Color];
+type ColorType = (typeof Color)[keyof typeof Color];
 
 export default defineComponent({
-  name: "ActionButton",
+  name: 'ActionButton',
   components: { FontAwesomeIcon },
   props: {
     color: {
       type: String as PropType<ColorType>,
-      required: true,
+      required: true
     },
     icon: {
       type: Object as PropType<IconDefinition>,
-      required: false,
+      required: false
     },
     label: {
       type: String,
-      required: true,
+      required: true
     },
     onClick: {
       type: Function as PropType<() => void>,
-      required: true,
+      required: false
     },
     disabled: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   setup(props) {
     const hover = ref(false);
@@ -59,28 +60,32 @@ export default defineComponent({
       if (props.disabled) {
         switch (props.color) {
           case Color.Blue:
-            return { backgroundColor: "#b7d8ee" };
+            return { backgroundColor: '#b7d8ee' };
           case Color.Orange:
-            return { backgroundColor: "#eed0a1" };
+            return { backgroundColor: '#eed0a1' };
           case Color.Purple:
-            return { backgroundColor: "#d5c3dd" };
+            return { backgroundColor: '#d5c3dd' };
           case Color.Green:
-            return { backgroundColor: "#8fd9b0" };
+            return { backgroundColor: '#8fd9b0' };
           case Color.Grey:
-            return { backgroundColor: "#e6e6e6" };
+            return { backgroundColor: '#e6e6e6' };
+          case Color.Red:
+            return { backgroundColor: '#f9c0c1' };
         }
       } else if (hover.value) {
         switch (props.color) {
           case Color.Blue:
-            return { backgroundColor: "#60aee2" };
+            return { backgroundColor: '#60aee2' };
           case Color.Orange:
-            return { backgroundColor: "#eeb354" };
+            return { backgroundColor: '#eeb354' };
           case Color.Purple:
-            return { backgroundColor: "#c694db" };
+            return { backgroundColor: '#c694db' };
           case Color.Green:
-            return { backgroundColor: "#1e8e5b" };
+            return { backgroundColor: '#1e8e5b' };
           case Color.Grey:
-            return { backgroundColor: "#bfbfbf" };
+            return { backgroundColor: '#bfbfbf' };
+          case Color.Red:
+            return { backgroundColor: '#f26d6e' };
         }
       }
       return { backgroundColor: props.color };
@@ -88,14 +93,21 @@ export default defineComponent({
 
     return {
       hover,
-      buttonStyle,
+      buttonStyle
     };
   },
   methods: {
     handleClick() {
-      if (!this.disabled && this.onClick) this.onClick();
-    },
-  },
+      if (!this.disabled) {
+        if (this.onClick) {
+          this.onClick();
+        }
+        else {
+          console.log(`Action "${this.label}" not implemented yet`);
+        }
+      }
+    }
+  }
 });
 </script>
 
@@ -103,6 +115,7 @@ export default defineComponent({
 .btn {
   transition: background-color 0.3s ease;
 }
+
 span {
   font-weight: 600;
 }
