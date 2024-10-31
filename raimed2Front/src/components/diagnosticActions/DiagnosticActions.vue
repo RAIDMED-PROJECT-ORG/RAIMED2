@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { TypeAction, getTypeActionDisplayName } from '@/models/virtual-patient/typeAction.enum';
 import { useDiagnosticStore } from '@/stores/diagnostic.store';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faEarListen,
   faFileMedical,
