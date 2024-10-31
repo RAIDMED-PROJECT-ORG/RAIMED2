@@ -3,6 +3,7 @@ import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { useRouter } from 'vue-router';
 import { Role } from '@/models/auth/role.enum';
+import ActionButton, {Color} from '@/components/actionButton/ActionButton.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -20,7 +21,7 @@ const { role, firstname, lastname } = authStore.getUserInfo;
         vos étudiants.
       </p>
       <p class="text-center m-2" v-else-if="role == Role.STUDENT">
-        Bonjour {{ firstname }} {{ lastname }} ! <br />
+        Bonjour <strong>{{ firstname }} {{ lastname }} ! </strong><br />
       </p>
       <h1 class="title">Projet RAIMED-2</h1>
       <p class="text">
@@ -32,13 +33,9 @@ const { role, firstname, lastname } = authStore.getUserInfo;
         aboutir au diagnostic dans une situation clinique donnée.<br />
       </p>
       <p class="w-full text-center">A vous de jouer !</p>
-      <div class="flex flex-col m-4 space-y-4">
-        <button class="btn btn-warning" v-if="role == Role.TEACHER">
-          Visualisation des patients / Création de nouveaux patients
-        </button>
-        <button class="btn btn-warning" v-if="role == Role.TEACHER">
-          Analyse des résultats des étudiants
-        </button>
+      <div class="flex flex-col m-4 space-y-4" v-if="role == Role.TEACHER">
+        <ActionButton on-click="" label="Visualisation des patients / Création de nouveaux patients" :color="Color.Orange"></ActionButton>
+        <ActionButton on-click="" label="Analyse des résultats des étudiants" :color="Color.Orange"></ActionButton>
       </div>
     </div>
   </AuthenticatedPageLayout>
