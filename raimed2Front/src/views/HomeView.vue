@@ -14,7 +14,7 @@ const { role, firstname, lastname } = authStore.getUserInfo;
 <template>
   <AuthenticatedPageLayout>
     <div class="w-full h-full flex flex-col justify-center items-center">
-      <h1 class="title">Accueil</h1>
+      <h1 class="title">Projet RAIMED-2</h1>
       <p class="text-center m-2" v-if="role == Role.TEACHER">
         Bonjour <strong>{{ firstname }} {{ lastname }} !</strong><br />
         En tant que professeur, vous pouvez gérer les cas de patients ou analyser les résultats de
@@ -23,7 +23,6 @@ const { role, firstname, lastname } = authStore.getUserInfo;
       <p class="text-center m-2" v-else-if="role == Role.STUDENT">
         Bonjour <strong>{{ firstname }} {{ lastname }} ! </strong><br />
       </p>
-      <h1 class="title">Projet RAIMED-2</h1>
       <p class="text">
         RAIMED est un <strong>outil pédagogique</strong> permettant aux étudiants d’interagir avec
         des patients virtuels, pour s’entrainer à identifier les éléments clés de la démarche
