@@ -13,14 +13,14 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
 <template>
   <AuthenticatedPageLayout>
     <div class="w-full h-full flex flex-col justify-center items-center">
-      <h1 class="title">Nouveau patient</h1>
-      <p class="text">
+      <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
+      <p class="text-center pt-3 w-1/2">
         Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
         champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton “Créer le
         patient”. Il sera ensuite visible dans votre liste des patients.
       </p>
-      <div class="diagnostic-actions">
-        <div class="column">
+      <div class="flex gap-8 my-8">
+        <div class="flex flex-col w-1/3">
           <ActionButton
             label="Écouter"
             :color="Color.Blue"
@@ -37,7 +37,7 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
             :icon="faSquarePlus"
           />
         </div>
-        <div class="column">
+        <div class="flex flex-col w-1/3">
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
             :color="Color.Orange"
@@ -58,8 +58,13 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
             :color="Color.Orange"
             :icon="faStethoscope"
           />
+          <ActionButton
+            class="mt-8"
+            label="Créer le patient"
+            :color="Color.Green"
+          />
         </div>
-        <div class="column">
+        <div class="flex flex-col w-1/3">
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
             :color="Color.Purple"
@@ -82,39 +87,9 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
           />
         </div>
       </div>
-      <ActionButton
-        class="create-button"
-        label="Créer le patient"
-        :color="Color.Green"
-      />
     </div>
   </AuthenticatedPageLayout>
 </template>
 
 <style>
-.title {
-  @apply text-2xl text-primary font-bold;
-}
-
-.text {
-  @apply w-2/4 pt-3;
-  text-align: center;
-}
-
-.diagnostic-actions {
-  gap: 2rem;
-  display: flex;
-  margin: 2rem 0;
-}
-
-.column {
-  flex-basis: 33.33%;
-  display: flex;
-  flex-direction: column;
-}
-
-.create-button {
-  width: 25%;
-  min-width: 200px;
-}
 </style>
