@@ -35,7 +35,7 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
   <AuthenticatedPageLayout>
     <div class="ml-10 w-2/4 flex flex-col h-[90%]">
       <div class="flex justify-between items-center h-[5%] mb-5">
-        <h1 class="font-extrabold text-xl">Liste des patients</h1>
+        <h1 class="font-extrabold text-xl">Visualisation des patients</h1>
         <ActionButton
           :color="Color.Green"
           :onClick="() => console.log('click')"
