@@ -2,13 +2,20 @@
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
 import {
-  faEarListen, faFileMedical, faGavel,
+  faEarListen,
+  faFileMedical,
+  faGavel,
   faHandHoldingMedical,
-  faMagnifyingGlass, faPerson,
-  faPersonCircleQuestion, faPersonRays, faStethoscope, faSyringe
+  faMagnifyingGlass,
+  faPerson,
+  faPersonCircleQuestion,
+  faPersonRays,
+  faStethoscope,
+  faSyringe
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/typeAction.enum';
+import router from '@/router';
 </script>
 <template>
   <AuthenticatedPageLayout>
@@ -21,16 +28,8 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
       </p>
       <div class="flex gap-8 my-8">
         <div class="flex flex-col w-1/3">
-          <ActionButton
-            label="Écouter"
-            :color="Color.Blue"
-            :icon="faEarListen"
-          />
-          <ActionButton
-            label="Question"
-            :color="Color.Blue"
-            :icon="faPersonCircleQuestion"
-          />
+          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
+          <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
             :color="Color.Blue"
@@ -58,11 +57,6 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
             :color="Color.Orange"
             :icon="faStethoscope"
           />
-          <ActionButton
-            class="mt-8"
-            label="Créer le patient"
-            :color="Color.Green"
-          />
         </div>
         <div class="flex flex-col w-1/3">
           <ActionButton
@@ -80,16 +74,25 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
             :color="Color.Purple"
             :icon="faSyringe"
           />
-          <ActionButton
-            label="Caractéristiques du patient"
-            :color="Color.Red"
-            :icon="faPerson"
-          />
+          <ActionButton label="Caractéristiques du patient" :color="Color.Red" :icon="faPerson" />
         </div>
+      </div>
+      <div>
+        <ActionButton
+          class="mt-8"
+          :onClick="() => router.back()"
+          label="Créer le patient"
+          :color="Color.Green"
+        />
+        <ActionButton
+          class="mt-8"
+          :onClick="() => router.back()"
+          label="Annuler"
+          :color="Color.Grey"
+        />
       </div>
     </div>
   </AuthenticatedPageLayout>
 </template>
 
-<style>
-</style>
+<style></style>

@@ -2,6 +2,7 @@
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import router from '@/router';
 
 interface Patient {
   id: number;
@@ -38,7 +39,7 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
         <h1 class="font-extrabold text-xl">Visualisation des patients</h1>
         <ActionButton
           :color="Color.Green"
-          :onClick="() => console.log('click')"
+          :onClick="() => router.push({ name: 'newPatient' })"
           label="Créer un patient"
         />
       </div>
