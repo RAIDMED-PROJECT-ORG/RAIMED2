@@ -6,7 +6,7 @@ import {
   faBars,
   faCircleQuestion,
   faHospitalUser,
-  faHouse,
+  faHouse, faListDots,
   faScrewdriverWrench,
   faSquarePollVertical,
   faXmark
@@ -67,6 +67,12 @@ const closeDrawerMenu = () => (isDrawerOpened.value = false);
             <RouterLink :to="{ name: 'studentResults' }" @click="closeDrawerMenu">
               <FontAwesomeIcon :icon="faSquarePollVertical" class="w-4 h-4" />
               Vos résultats
+            </RouterLink>
+          </li>
+          <li v-if="getUserRole && [Role.TEACHER].includes(getUserRole)">
+            <RouterLink :to="{ name: 'teacherPatients' }" @click="closeDrawerMenu">
+              <FontAwesomeIcon :icon="faListDots" class="w-4 h-4" />
+              Visualisation des patients
             </RouterLink>
           </li>
           <li v-if="getUserRole && [Role.ADMIN].includes(getUserRole)">

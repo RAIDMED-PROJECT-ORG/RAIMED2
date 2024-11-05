@@ -73,7 +73,7 @@ const handleValidateDiagnostic = () => {
       </template>
 
       <template v-else>
-        <p class="py-4">
+        <p class="py-2">
           Parmis vos hypothèses, quel diagnostic souhaitez-vous valider comme le bon diagnostic ?
         </p>
         <div class="flex justify-center flex-wrap">
@@ -91,9 +91,9 @@ const handleValidateDiagnostic = () => {
             {{ hypothesis.value }}
           </button>
         </div>
-        <p class="py-4">Entre 0 et 100, quel est votre degré de certitude pour ce diagnostic ?</p>
+        <p class="py-2">Entre 0 et 100, quel est votre degré de certitude pour ce diagnostic ?</p>
         <div class="flex flex-col justify-center items-center">
-          <span class="py-4 text-4xl">{{ degreeOfCertainty }}</span>
+          <span class="py-2 text-4xl">{{ degreeOfCertainty }}</span>
           <input
             id="diagnostic-degree-of-certainty"
             type="range"

@@ -1,19 +1,28 @@
 <template>
   <button
     class="btn m-1 flex-nowrap"
+    :class="{
+      'rounded-full': label === undefined,
+      'w-7 h-7 min-h-5 p-0': size === 'small',
+      'w-20 h-20 min-h-20': size === 'tall'
+    }"
     @click="handleClick"
     :disabled="disabled"
     :style="buttonStyle"
     @mouseover="hover = true"
     @mouseleave="hover = false"
   >
-    <FontAwesomeIcon v-if="icon" :icon="icon" class="h-5 w-5" />
-    <span>{{ label }}</span>
+    <FontAwesomeIcon
+      v-if="icon"
+      :icon="icon"
+      :class="{'h-3 w-3': size === 'small', 'h-12 w-12': size === 'tall'}"
+    />
+    <span v-if="label !== undefined">{{ label }}</span>
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
@@ -36,13 +45,17 @@ export default defineComponent({
       type: String as PropType<ColorType>,
       required: true
     },
+    size: {
+      type: String as PropType<'small' | 'medium' | 'tall'>,
+      default: 'medium'
+    },
     icon: {
       type: Object as PropType<IconDefinition>,
       required: false
     },
     label: {
       type: String,
-      required: true
+      required: false,
     },
     onClick: {
       type: Function as PropType<() => void>,
@@ -50,7 +63,7 @@ export default defineComponent({
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     }
   },
   setup(props) {

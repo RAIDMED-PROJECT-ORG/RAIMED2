@@ -6,7 +6,12 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "dark-grey-border": "#9CA3AF",
+        "light-grey-border": "#E7E7E7",
+      }
+    },
   },
   daisyui: {
     themes: [
