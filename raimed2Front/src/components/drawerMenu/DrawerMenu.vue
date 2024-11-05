@@ -72,7 +72,7 @@ const closeDrawerMenu = () => (isDrawerOpened.value = false);
           <li v-if="getUserRole && [Role.TEACHER].includes(getUserRole)">
             <RouterLink :to="{ name: 'teacherPatients' }" @click="closeDrawerMenu">
               <FontAwesomeIcon :icon="faListDots" class="w-4 h-4" />
-              Liste des patients
+              Visualisation des patients
             </RouterLink>
           </li>
           <li v-if="getUserRole && [Role.ADMIN].includes(getUserRole)">
