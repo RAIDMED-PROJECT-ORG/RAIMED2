@@ -14,7 +14,8 @@ import {
   faSyringe
 } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
-import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
+import { Color } from '@/models/new-patient/color.model';
 
 defineProps<{
   handleOnClickActionButton: (typeAction: TypeAction) => void;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
-import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
 import {
   faEarListen,
   faFileMedical,
@@ -16,6 +16,8 @@ import {
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import router from '@/router';
+import { Color } from '@/models/new-patient/color.model';
+
 </script>
 <template>
   <AuthenticatedPageLayout>
