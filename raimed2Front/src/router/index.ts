@@ -56,6 +56,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/teacher/patients/new/characteristic',
+      name: 'characteristicSection',
+      component: () => import('@/views/CharacteristicView.vue'),
+      meta: {
+        roles: [Role.TEACHER]
+      }
+    },
+    {
       path: '/teacher/patients',
       name: 'teacherPatients',
       component: () => import('@/views/teacher/PatientsView.vue'),
