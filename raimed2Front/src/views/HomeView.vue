@@ -33,7 +33,7 @@ const { role, firstname, lastname } = authStore.getUserInfo;
       </p>
       <p class="w-full text-center">A vous de jouer !</p>
       <div class="flex flex-col m-4 space-y-4" v-if="role == Role.TEACHER">
-        <ActionButton :onClick="() => console.log('Not implemented yet')" label="Visualisation des patients / Création de nouveaux patients" :color="Color.Orange"></ActionButton>
+        <ActionButton :onClick="() => router.push({ name: 'teacherPatients' })" label="Visualisation des patients / Création de nouveaux patients" :color="Color.Orange"></ActionButton>
         <ActionButton :onClick="() => console.log('Not implemented yet')" label="Analyse des résultats des étudiants" :color="Color.Orange"></ActionButton>
       </div>
     </div>

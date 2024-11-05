@@ -25,14 +25,6 @@ const router = createRouter({
       }
     },
     {
-      path: '/patients/new',
-      name: 'waitingRoom',
-      component: () => import('@/views/NewPatientView.vue'),
-      meta: {
-        roles: [Role.TEACHER]
-      }
-    },
-    {
       path: '/diagnostic/:virtualPatientId/:diagnosticId',
       name: 'diagnostic',
       component: () => import('@/views/DiagnosticView.vue')
@@ -53,6 +45,14 @@ const router = createRouter({
       component: () => import('@/views/administration/QuestionsView.vue'),
       meta: {
         roles: [Role.ADMIN]
+      }
+    },
+    {
+      path: '/teacher/patients/new',
+      name: 'newPatient',
+      component: () => import('@/views/NewPatientView.vue'),
+      meta: {
+        roles: [Role.TEACHER]
       }
     },
     {
