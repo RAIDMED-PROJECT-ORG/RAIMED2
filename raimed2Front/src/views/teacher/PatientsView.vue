@@ -88,7 +88,6 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
 </template>
 
 
-<style scoped></style>
 
 <style scoped>
 /* Ajoutez ici des styles si nécessaire */
