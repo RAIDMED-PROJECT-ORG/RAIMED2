@@ -33,7 +33,7 @@ const props = defineProps<{
   size?: 'small' | 'medium' | 'tall';
   icon?: IconDefinition;
   label?: string;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
 }>();
 
@@ -77,7 +77,7 @@ const buttonStyle = computed(() => {
 
 const handleClick = () => {
   if (!props.disabled) {
-    props.onClick();
+    props.onClick?.();
   }
 };
 </script>
