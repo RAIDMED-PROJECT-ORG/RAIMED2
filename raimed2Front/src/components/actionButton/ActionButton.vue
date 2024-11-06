@@ -24,10 +24,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { Color, type ColorType } from '@/models/new-patient/color.model';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-// Define props directly in <script setup>
 const props = defineProps<{
   color: ColorType;
   size?: 'small' | 'medium' | 'tall';
@@ -39,7 +38,6 @@ const props = defineProps<{
 
 const hover = ref(false);
 
-// Compute the button style based on props
 const buttonStyle = computed(() => {
   if (props.disabled) {
     return {

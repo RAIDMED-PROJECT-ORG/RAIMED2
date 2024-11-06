@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  options: {
+    type: Array as () => string[],
+    required: true
+  },
+  modelValue: {
+    type: String,
+    required: true
+  }
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const isOpen = ref(false);
+
+const selectedOption = computed(() => props.modelValue);
+
+function toggleDropdown() {
+  isOpen.value = !isOpen.value;
+}
+
+function selectOption(option: string) {
+  emit('update:modelValue', option);
+  isOpen.value = false;
+}
+</script>
+
 <template>
   <div class="relative inline-block w-auto">
     <button
@@ -32,34 +63,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue';
-import { defineProps } from 'vue';
-
-const props = defineProps({
-  options: {
-    type: Array as () => string[],
-    required: true
-  },
-  modelValue: {
-    type: String,
-    required: true
-  }
-});
-
-const emit = defineEmits(['update:modelValue']);
-
-const isOpen = ref(false);
-
-const selectedOption = computed(() => props.modelValue);
-
-function toggleDropdown() {
-  isOpen.value = !isOpen.value;
-}
-
-function selectOption(option: string) {
-  emit('update:modelValue', option);
-  isOpen.value = false;
-}
-</script>

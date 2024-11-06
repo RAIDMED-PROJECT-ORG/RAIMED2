@@ -150,5 +150,4 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
