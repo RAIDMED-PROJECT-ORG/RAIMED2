@@ -3,7 +3,8 @@ import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { useRouter } from 'vue-router';
 import { Role } from '@/models/auth/role.enum';
-import ActionButton, {Color} from '@/components/actionButton/ActionButton.vue';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
+import { Color } from '@/models/new-patient/color.model';
 
 const authStore = useAuthStore();
 const router = useRouter();

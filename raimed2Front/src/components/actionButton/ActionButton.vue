@@ -25,17 +25,7 @@
 import { computed, defineComponent, PropType, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-
-export const Color = {
-  Blue: '#9ccded',
-  Orange: '#f1bf6d',
-  Purple: '#d0b1dd',
-  Green: '#2db784',
-  Grey: '#d9d9d9',
-  Red: '#ff9a9b'
-} as const;
-
-type ColorType = (typeof Color)[keyof typeof Color];
+import { Color, type ColorType } from '@/models/new-patient/color.model';
 
 export default defineComponent({
   name: 'ActionButton',

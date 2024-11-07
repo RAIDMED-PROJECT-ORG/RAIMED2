@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
-import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import router from '@/router';
+import { Color } from '@/models/new-patient/color.model';
 
 interface Patient {
   id: number;

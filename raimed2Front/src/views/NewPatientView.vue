@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
-import ActionButton, { Color } from '@/components/actionButton/ActionButton.vue';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
 import {
   faEarListen,
   faFileMedical,
@@ -16,6 +16,9 @@ import {
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import router from '@/router';
+import { ref } from 'vue';
+import { Color } from '@/models/new-patient/color.model';
+
 </script>
 <template>
   <AuthenticatedPageLayout>
@@ -28,6 +31,12 @@ import router from '@/router';
       </p>
       <div class="flex gap-8 my-8">
         <div class="flex flex-col w-1/3">
+          <ActionButton
+            label="Caractéristiques du patient"
+            :color="Color.Red"
+            :icon="faPerson"
+            :onClick="() => router.push({name:'characteristicSection'})"
+          />
           <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
           <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" />
           <ActionButton
@@ -74,7 +83,6 @@ import router from '@/router';
             :color="Color.Purple"
             :icon="faSyringe"
           />
-          <ActionButton label="Caractéristiques du patient" :color="Color.Red" :icon="faPerson" />
         </div>
       </div>
       <div>
