@@ -15,103 +15,69 @@
     <FontAwesomeIcon
       v-if="icon"
       :icon="icon"
-      :class="{'h-3 w-3': size === 'small', 'h-12 w-12': size === 'tall'}"
+      :class="{ 'h-3 w-3': size === 'small', 'h-12 w-12': size === 'tall' }"
     />
     <span v-if="label !== undefined">{{ label }}</span>
   </button>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { Color, type ColorType } from '@/models/new-patient/color.model';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-export default defineComponent({
-  name: 'ActionButton',
-  components: { FontAwesomeIcon },
-  props: {
-    color: {
-      type: String as PropType<ColorType>,
-      required: true
-    },
-    size: {
-      type: String as PropType<'small' | 'medium' | 'tall'>,
-      default: 'medium'
-    },
-    icon: {
-      type: Object as PropType<IconDefinition>,
-      required: false
-    },
-    label: {
-      type: String,
-      required: false,
-    },
-    onClick: {
-      type: Function as PropType<() => void>,
-      required: false
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    }
-  },
-  setup(props) {
-    const hover = ref(false);
+const props = defineProps<{
+  color: ColorType;
+  size?: 'small' | 'medium' | 'tall';
+  icon?: IconDefinition;
+  label?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}>();
 
-    const buttonStyle = computed(() => {
-      if (props.disabled) {
-        switch (props.color) {
-          case Color.Blue:
-            return { backgroundColor: '#b7d8ee' };
-          case Color.Orange:
-            return { backgroundColor: '#eed0a1' };
-          case Color.Purple:
-            return { backgroundColor: '#d5c3dd' };
-          case Color.Green:
-            return { backgroundColor: '#8fd9b0' };
-          case Color.Grey:
-            return { backgroundColor: '#e6e6e6' };
-          case Color.Red:
-            return { backgroundColor: '#f9c0c1' };
-        }
-      } else if (hover.value) {
-        switch (props.color) {
-          case Color.Blue:
-            return { backgroundColor: '#60aee2' };
-          case Color.Orange:
-            return { backgroundColor: '#eeb354' };
-          case Color.Purple:
-            return { backgroundColor: '#c694db' };
-          case Color.Green:
-            return { backgroundColor: '#1e8e5b' };
-          case Color.Grey:
-            return { backgroundColor: '#bfbfbf' };
-          case Color.Red:
-            return { backgroundColor: '#f26d6e' };
-        }
-      }
-      return { backgroundColor: props.color };
-    });
+const hover = ref(false);
 
+const buttonStyle = computed(() => {
+  if (props.disabled) {
     return {
-      hover,
-      buttonStyle
+      backgroundColor:
+        props.color === Color.Blue
+          ? '#b7d8ee'
+          : props.color === Color.Orange
+            ? '#eed0a1'
+            : props.color === Color.Purple
+              ? '#d5c3dd'
+              : props.color === Color.Green
+                ? '#8fd9b0'
+                : props.color === Color.Grey
+                  ? '#e6e6e6'
+                  : '#f9c0c1', // Default for Red
     };
-  },
-  methods: {
-    handleClick() {
-      if (!this.disabled) {
-        if (this.onClick) {
-          this.onClick();
-        }
-        else {
-          console.log(`Action "${this.label}" not implemented yet`);
-        }
-      }
-    }
+  } else if (hover.value) {
+    return {
+      backgroundColor:
+        props.color === Color.Blue
+          ? '#60aee2'
+          : props.color === Color.Orange
+            ? '#eeb354'
+            : props.color === Color.Purple
+              ? '#c694db'
+              : props.color === Color.Green
+                ? '#1e8e5b'
+                : props.color === Color.Grey
+                  ? '#bfbfbf'
+                  : '#f26d6e', // Default for Red
+    };
   }
+  return { backgroundColor: props.color };
 });
+
+const handleClick = () => {
+  if (!props.disabled) {
+    props.onClick?.();
+  }
+};
 </script>
 
 <style scoped>
