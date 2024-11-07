@@ -19,19 +19,40 @@ import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/t
 import router from '@/router';
 import { Color } from '@/models/new-patient/color.model';
 import CharacteristicModal from '@/components/modal/characteristicModal/CharacteristicModal.vue';
-
-type Characteristics = {
-  sex: string;
-  age: number;
-  diagnostic: string;
-};
+import { initializeNewPatient, type NewPatient } from '@/models/new-patient/newPatient.model';
+import type { Characteristics } from '@/models/new-patient/characteristics.model';
+import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
 
 const isCharacteristicModalOpen = ref(false);
-const characteristicData = ref<Characteristics | null>(null);
+const isWarningModalOpen = ref(false);
+const errors = ref<string[]>([]);
+const newPatient = ref<NewPatient>(initializeNewPatient());
+
+function handleSubmit() {
+  errors.value = [];
+  if (!newPatient.value.characteristic) {
+    errors.value.push('Caractéristiques du patient');
+  }
+
+  if (!newPatient.value.questions) {
+    errors.value.push('Questions ouvertes ou fermées');
+  }
+
+  if (errors.value.length > 0) {
+    switchWarningModalVisibility();
+    return;
+  }
+
+  router.back();
+}
+
+function switchWarningModalVisibility() {
+  isWarningModalOpen.value = !isWarningModalOpen.value;
+}
 
 function onCharacteristicValidation(data: Characteristics) {
-  characteristicData.value = data;
-  console.log('Characteristics :', data);
+  newPatient.value.characteristic = data;
+  console.log('nouveau Patient :', newPatient);
   switchCharacteristicModalVisibility();
 }
 
@@ -42,6 +63,11 @@ function switchCharacteristicModalVisibility() {
 
 <template>
   <AuthenticatedPageLayout>
+    <WarningModal
+      v-if="isWarningModalOpen"
+      :on-back="switchWarningModalVisibility"
+      :errors="errors"
+    />
     <CharacteristicModal
       v-if="isCharacteristicModalOpen"
       :onValidation="onCharacteristicValidation"
@@ -113,8 +139,9 @@ function switchCharacteristicModalVisibility() {
       <p>* Champs requis</p>
       <div>
         <ActionButton
+          :disabled="newPatient.characteristic === null"
           class="mt-8"
-          :onClick="() => router.back()"
+          :onClick="handleSubmit"
           label="Créer le patient"
           :color="Color.Green"
         />
