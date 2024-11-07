@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import {
@@ -16,12 +17,36 @@ import {
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
 import { getTypeActionDisplayName, TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import router from '@/router';
-import { ref } from 'vue';
 import { Color } from '@/models/new-patient/color.model';
+import CharacteristicModal from '@/components/modal/characteristicModal/CharacteristicModal.vue';
 
+type Characteristics = {
+  sex: string;
+  age: number;
+  diagnostic: string;
+};
+
+const isCharacteristicModalOpen = ref(false);
+const characteristicData = ref<Characteristics | null>(null);
+
+function onCharacteristicValidation(data: Characteristics) {
+  characteristicData.value = data;
+  console.log('Characteristics :', data);
+  switchCharacteristicModalVisibility();
+}
+
+function switchCharacteristicModalVisibility() {
+  isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
+}
 </script>
+
 <template>
   <AuthenticatedPageLayout>
+    <CharacteristicModal
+      v-if="isCharacteristicModalOpen"
+      :onValidation="onCharacteristicValidation"
+      :onBack="switchCharacteristicModalVisibility"
+    />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
       <p class="text-center pt-3 w-1/2">
@@ -32,10 +57,10 @@ import { Color } from '@/models/new-patient/color.model';
       <div class="flex gap-8 my-8">
         <div class="flex flex-col w-1/3">
           <ActionButton
-            label="Caractéristiques du patient"
+            label="Caractéristiques du patient*"
             :color="Color.Red"
             :icon="faPerson"
-            :onClick="() => router.push({name:'characteristicSection'})"
+            :onClick="switchCharacteristicModalVisibility"
           />
           <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
           <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" />
@@ -85,6 +110,7 @@ import { Color } from '@/models/new-patient/color.model';
           />
         </div>
       </div>
+      <p>* Champs requis</p>
       <div>
         <ActionButton
           class="mt-8"
@@ -103,4 +129,4 @@ import { Color } from '@/models/new-patient/color.model';
   </AuthenticatedPageLayout>
 </template>
 
-<style></style>
+<style scoped></style>
