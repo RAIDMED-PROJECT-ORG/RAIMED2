@@ -8,4 +8,5 @@ export interface VirtualPatient {
   createdBy: string;
   createdAt: Date;
   actions: Action[];
+  result: string;
 }

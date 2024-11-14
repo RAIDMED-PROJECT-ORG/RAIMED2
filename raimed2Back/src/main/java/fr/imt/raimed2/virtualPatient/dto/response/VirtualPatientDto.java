@@ -26,6 +26,8 @@ public class VirtualPatientDto {
 
     private UUID createdBy;
 
+    private String result;
+
     private List<Action> actions;
 
 }

@@ -18,7 +18,7 @@ public interface VirtualPatientEntityDtoMapper {
     // java(virtualPatient.getCreatedBy() != null " + " ? virtualPatient.getCreatedBy().getFirstname() + " " + virtualPatient.getCreatedBy().getLastname() : "XML Import")
     @Mapping(target = "createdBy", expression = "java(virtualPatient.getCreatedBy() != null ? virtualPatient.getCreatedBy().getFirstname() + \" \" + virtualPatient.getCreatedBy().getLastname() : \"XML Import\")")
     VirtualPatientListDto virtualPatientEntityToVirtualPatientListDto(VirtualPatient virtualPatient);
-
+    @Mapping(target = "result", source = "result")
     List<VirtualPatientListDto> virtualPatientEntityToVirtualPatientListDto(List<VirtualPatient> virtualPatients);
 
 }
