@@ -2,33 +2,19 @@
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { usePatientStore } from '@/stores/patient.store';
+import type { VirtualPatient } from '@/models/virtual-patient/virtualPatient.model';
+import { onMounted, ref } from 'vue';
 import router from '@/router';
 import { Color } from '@/models/new-patient/color.model';
 
-interface Patient {
-  id: number;
-  sex: 'MALE' | 'FEMALE';
-  age: number;
-  diagnosis: string;
-}
+const patientStore = usePatientStore();
+const patients: VirtualPatient[] = ref();
 
-const patients: Patient[] = [
-  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
-  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
-  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
-  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
-  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
-  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
-  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
-  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
-  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
-  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
-  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
-  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' },
-  { id: 1, sex: 'MALE', age: 15, diagnosis: 'Schizophrenia' },
-  { id: 2, sex: 'MALE', age: 25, diagnosis: 'Dépression' },
-  { id: 3, sex: 'FEMALE', age: 35, diagnosis: 'Cancer' }
-];
+onMounted(async () => {
+  await patientStore.init();
+  patients.value = patientStore.getVirtualPatients;
+});
 
 const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme' : 'Femme');
 </script>
@@ -65,7 +51,7 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
               <td class="py-2">{{ patient.id }}</td>
               <td class="py-2">{{ getSexLabel(patient.sex) }}</td>
               <td class="py-2">{{ patient.age }}</td>
-              <td class="py-2">{{ patient.diagnosis }}</td>
+              <td class="py-2">{{ patient.result }}</td>
               <td class="py-2 flex justify-center gap-2">
                 <ActionButton
                   :color="Color.Grey"
@@ -88,8 +74,6 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
     </div>
   </AuthenticatedPageLayout>
 </template>
-
-
 
 <style scoped>
 /* Ajoutez ici des styles si nécessaire */
