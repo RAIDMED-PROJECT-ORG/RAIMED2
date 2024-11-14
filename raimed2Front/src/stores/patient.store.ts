@@ -1,24 +1,24 @@
 import type { VirtualPatient } from '@/models/virtual-patient/virtualPatient.model';
-import type { StoreDefinition } from 'pinia';
 import { defineStore } from 'pinia';
 import axiosInstance from '@/service/httpClient/axios.config';
+import type { Gender } from '@/models/virtual-patient/gender.enum';
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
 }
 
-export const usePatientStore: StoreDefinition<PatientState> = defineStore('patient', {
+export const usePatientStore = defineStore('patient', {
   state: (): PatientState => ({
-    virtualPatients: [] as VirtualPatient[]
+    virtualPatients: []
   }),
-  getters:{
+  getters: {
     getVirtualPatients(): VirtualPatient[] {
       return this.virtualPatients;
     }
   },
-  actions:{
+  actions: {
     async init() {
-      this.virtualPatients = []
+      this.virtualPatients = [];
       this.virtualPatients = await this.fetchVirtualPatients();
     },
     async fetchVirtualPatients() {
@@ -33,11 +33,12 @@ export const usePatientStore: StoreDefinition<PatientState> = defineStore('patie
       return {
         id: String(data.id),
         age: data.age,
-        gender: data.gender as Gender, // Assuming the gender is a valid Gender value
+        gender: data.gender as Gender,
         createdBy: data.createdBy,
-        createdAt: new Date(data.createdAt), // Parses date string to Date object
+        createdAt: new Date(data.createdAt),
+        actions: data.actions,
         result: String(data.result)
       };
     }
   }
-})
+});

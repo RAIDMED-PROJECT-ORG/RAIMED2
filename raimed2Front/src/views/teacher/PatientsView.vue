@@ -9,7 +9,7 @@ import router from '@/router';
 import { Color } from '@/models/new-patient/color.model';
 
 const patientStore = usePatientStore();
-const patients: VirtualPatient[] = ref();
+const patients = ref<VirtualPatient[]>([]);
 
 onMounted(async () => {
   await patientStore.init();
@@ -49,7 +49,7 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
               class="text-center"
             >
               <td class="py-2">{{ patient.id }}</td>
-              <td class="py-2">{{ getSexLabel(patient.sex) }}</td>
+              <td class="py-2">{{ getSexLabel(patient.gender) }}</td>
               <td class="py-2">{{ patient.age }}</td>
               <td class="py-2">{{ patient.result }}</td>
               <td class="py-2 flex justify-center gap-2">
