@@ -22,6 +22,7 @@ import CharacteristicModal from '@/components/modal/characteristicModal/Characte
 import { initializeNewPatient, type NewPatient } from '@/models/new-patient/newPatient.model';
 import type { Characteristics } from '@/models/new-patient/characteristics.model';
 import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
+import InspectionModal from '@/components/modal/inspectionModal/InspectionModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 
@@ -30,6 +31,7 @@ const isQuestionModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
 const errors = ref<string[]>([]);
 const newPatient = ref<NewPatient>(initializeNewPatient());
+const isInspectionModalOpen = ref(false);
 
 function handleSubmit() {
   errors.value = [];
@@ -55,12 +57,23 @@ function switchWarningModalVisibility() {
 
 function onCharacteristicValidation(data: Characteristics) {
   newPatient.value.characteristic = data;
+  console.log('nouveau Patient :', newPatient);
   switchCharacteristicModalVisibility();
 }
 
 function switchCharacteristicModalVisibility() {
   isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
 }
+
+function onInspectionValidation(data) {
+  console.log('Récap inspection : ', data);
+  isInspectionModalOpen.value = false;
+}
+
+function switchInspectionModalVisibility() {
+  isInspectionModalOpen.value = !isInspectionModalOpen.value;
+}
+
 
 function onQuestionValidation(data: Question[]) {
   newPatient.value.questions = data;
@@ -83,6 +96,11 @@ function switchQuestionModalVisibility() {
       v-if="isCharacteristicModalOpen"
       :onValidation="onCharacteristicValidation"
       :onBack="switchCharacteristicModalVisibility"
+    />
+    <InspectionModal
+      v-if="isInspectionModalOpen"
+      :onValidation="onInspectionValidation"
+      :onBack="switchInspectionModalVisibility"
     />
     <QuestionModal
       v-if="isQuestionModalOpen"
@@ -118,6 +136,7 @@ function switchQuestionModalVisibility() {
             :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
+            :onClick="switchInspectionModalVisibility"
           />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
