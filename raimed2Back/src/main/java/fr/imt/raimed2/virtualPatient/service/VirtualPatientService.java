@@ -30,6 +30,12 @@ public class VirtualPatientService {
     }
 
     @Transactional
+    public boolean deleteVirtualPatientById(Long id) throws NoSuchElementException {
+        virtualPatientRepository.deleteById(id);
+        return true;
+    }
+
+    @Transactional
     public void addVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
 
         VirtualPatient saved = virtualPatientRepository.save(virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML));

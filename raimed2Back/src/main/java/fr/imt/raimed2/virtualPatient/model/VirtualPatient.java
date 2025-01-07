@@ -39,10 +39,10 @@ public class VirtualPatient {
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @OneToMany(mappedBy = "virtualPatient")
+    @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Action> actions;
 
-    @OneToMany(mappedBy = "virtualPatient")
+    @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Diagnostic> diagnostics;
 
 }
