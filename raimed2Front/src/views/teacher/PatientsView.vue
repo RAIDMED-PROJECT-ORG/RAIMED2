@@ -17,6 +17,13 @@ onMounted(async () => {
 });
 
 const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme' : 'Femme');
+
+const deletePatient = async (id: string) => {
+  const ok : boolean = await patientStore.deleteVirtualPatient(id);
+  if (ok) {
+    patients.value = patientStore.getVirtualPatients;
+  }
+}
 </script>
 
 <template>
