@@ -7,10 +7,15 @@ defineProps<{
   question: string;
   answer: string;
 }>();
+
+defineEmits<{
+  (e: 'deleteQuestion'): void;
+  (e: 'updateQuestion'): void;
+}>();
 </script>
 
 <template>
-  <div class="flex justify-between gap-10 items-center border-b border-1 border-[#E7E7E7]">
+  <div class="flex justify-between gap-10 items-center border-b border-1 border-light-grey-border">
     <div>
       <span>{{ question }}</span>
       <div class="flex items-center gap-2">
@@ -19,8 +24,18 @@ defineProps<{
       </div>
     </div>
     <div class="flex gap-2">
-      <ActionButton :color="Color.Grey" :icon="faPenToSquare" size="small" />
-      <ActionButton :color="Color.Grey" :icon="faTrashCan" size="small" />
+      <ActionButton
+        :color="Color.Grey"
+        :icon="faPenToSquare"
+        size="small"
+        :on-click="() => $emit('updateQuestion')"
+      />
+      <ActionButton
+        :color="Color.Grey"
+        :icon="faTrashCan"
+        size="small"
+        :on-click="() => $emit('deleteQuestion')"
+      />
     </div>
   </div>
 </template>

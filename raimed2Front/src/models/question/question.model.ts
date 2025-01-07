@@ -6,4 +6,7 @@ export interface Question {
   content: string;
   type: QuestionType;
   filter: QuestionFilter;
+  isMutual: boolean;
+  answer?: string;
+  teacherId?: string;
 }

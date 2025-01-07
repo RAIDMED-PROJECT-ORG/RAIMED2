@@ -86,6 +86,7 @@ function switchQuestionModalVisibility() {
     />
     <QuestionModal
       v-if="isQuestionModalOpen"
+      :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
     />
