@@ -75,9 +75,9 @@ const buttonStyle = computed(() => {
   return { backgroundColor: props.color };
 });
 
-const handleClick = () => {
+const handleClick = (event) => {
   if (!props.disabled) {
-    props.onClick?.();
+    props.onClick?.(event);
   }
 };
 </script>
