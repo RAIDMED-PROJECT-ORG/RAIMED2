@@ -22,9 +22,18 @@ import CharacteristicModal from '@/components/modal/characteristicModal/Characte
 import { initializeNewPatient, type NewPatient } from '@/models/new-patient/newPatient.model';
 import type { Characteristics } from '@/models/new-patient/characteristics.model';
 import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
+import type { Question } from '@/models/question/question.model';
+import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
+import type { Prescription } from '@/models/prescription/prescription.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
 const isCharacteristicModalOpen = ref(false);
+const isQuestionModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
+const isPrescriptionModalOpen = ref(false);
+const prescriptionType = ref('');
+const initialPrescriptionType = ref<PrescriptionType>(PrescriptionType.BIOLOGY);
 const errors = ref<string[]>([]);
 const newPatient = ref<NewPatient>(initializeNewPatient());
 
@@ -52,26 +61,84 @@ function switchWarningModalVisibility() {
 
 function onCharacteristicValidation(data: Characteristics) {
   newPatient.value.characteristic = data;
-  console.log('nouveau Patient :', newPatient);
   switchCharacteristicModalVisibility();
 }
 
 function switchCharacteristicModalVisibility() {
   isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
 }
+
+function onQuestionValidation(data: Question[]) {
+  newPatient.value.questions = data;
+  switchQuestionModalVisibility();
+}
+
+function switchQuestionModalVisibility() {
+  isQuestionModalOpen.value = !isQuestionModalOpen.value;
+}
+
+function onPrescriptionValidation(data: Prescription[]) {
+  newPatient.value.prescriptions = data;
+  switchPrescriptionModalVisibility();
+}
+
+function switchPrescriptionModalVisibility(type = '', initialType = PrescriptionType.BIOLOGY) {
+  prescriptionType.value = type;
+  initialPrescriptionType.value = initialType;
+  isPrescriptionModalOpen.value = !isPrescriptionModalOpen.value;
+}
 </script>
 
 <template>
   <AuthenticatedPageLayout>
     <WarningModal
-      v-if="isWarningModalOpen"
-      :on-back="switchWarningModalVisibility"
-      :errors="errors"
+        v-if="isWarningModalOpen"
+        :on-back="switchWarningModalVisibility"
+        :errors="errors"
     />
     <CharacteristicModal
-      v-if="isCharacteristicModalOpen"
-      :onValidation="onCharacteristicValidation"
-      :onBack="switchCharacteristicModalVisibility"
+        v-if="isCharacteristicModalOpen"
+        :onValidation="onCharacteristicValidation"
+        :onBack="switchCharacteristicModalVisibility"
+    />
+    <QuestionModal
+        v-if="isQuestionModalOpen"
+        :questions="newPatient.questions ?? []"
+        :onValidation="onQuestionValidation"
+        :onBack="switchQuestionModalVisibility"
+    />
+    <PrescriptionModal
+        v-if="isPrescriptionModalOpen"
+        :prescriptions="newPatient.prescriptions ?? []"
+        :type="prescriptionType"
+        :initial-type="initialPrescriptionType"
+        :onValidation="onPrescriptionValidation"
+        :onBack="switchPrescriptionModalVisibility"
+        :existing-prescriptions="[{
+          id: '1',
+          type: PrescriptionType.BIOLOGY,
+          name: 'Examen de sang',
+          result: 'R.A.S'
+        },
+        {
+          id: '2',
+          type: PrescriptionType.IMAGERY,
+          name: 'IRM',
+          result: 'R.A.S'
+        },
+        {
+          id: '3',
+          type: PrescriptionType.BIOPSY,
+          name: 'Cytoponction',
+          result: 'R.A.S'
+        },
+        {
+        id: '4',
+        type: PrescriptionType.BIOPSY,
+        name: 'Examen des selles',
+        result: 'R.A.S',
+        teacherId: '1'
+      }]"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
@@ -83,73 +150,76 @@ function switchCharacteristicModalVisibility() {
       <div class="flex gap-8 my-8">
         <div class="flex flex-col w-1/3">
           <ActionButton
-            label="Caractéristiques du patient*"
-            :color="Color.Red"
-            :icon="faPerson"
-            :onClick="switchCharacteristicModalVisibility"
+              label="Caractéristiques du patient*"
+              :color="Color.Red"
+              :icon="faPerson"
+              :onClick="switchCharacteristicModalVisibility"
           />
-          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
-          <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" />
+          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen"/>
+          <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" :on-click="switchQuestionModalVisibility" />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
-            :color="Color.Blue"
-            :icon="faSquarePlus"
-          />
-        </div>
-        <div class="flex flex-col w-1/3">
-          <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
-            :color="Color.Orange"
-            :icon="faMagnifyingGlass"
-          />
-          <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
-            :color="Color.Orange"
-            :icon="faHandHoldingMedical"
-          />
-          <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
-            :color="Color.Orange"
-            :icon="faGavel"
-          />
-          <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
-            :color="Color.Orange"
-            :icon="faStethoscope"
+              :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
+              :color="Color.Blue"
+              :icon="faSquarePlus"
           />
         </div>
         <div class="flex flex-col w-1/3">
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faFileMedical"
+              :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
+              :color="Color.Orange"
+              :icon="faMagnifyingGlass"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faPersonRays"
+              :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
+              :color="Color.Orange"
+              :icon="faHandHoldingMedical"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faSyringe"
+              :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
+              :color="Color.Orange"
+              :icon="faGavel"
+          />
+          <ActionButton
+              :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
+              :color="Color.Orange"
+              :icon="faStethoscope"
+          />
+        </div>
+        <div class="flex flex-col w-1/3">
+          <ActionButton
+              :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faFileMedical"
+              :onClick="() => switchPrescriptionModalVisibility('Biologie/Microbiologie', PrescriptionType.BIOLOGY)"
+          />
+          <ActionButton
+              :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faPersonRays"
+              :onClick="() => switchPrescriptionModalVisibility('Imagerie', PrescriptionType.IMAGERY)"
+          />
+          <ActionButton
+              :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faSyringe"
+              :onClick="() => switchPrescriptionModalVisibility('Biopsies', PrescriptionType.BIOPSY)"
           />
         </div>
       </div>
       <p>* Champs requis</p>
       <div>
         <ActionButton
-          :disabled="newPatient.characteristic === null"
-          class="mt-8"
-          :onClick="handleSubmit"
-          label="Créer le patient"
-          :color="Color.Green"
+            :disabled="newPatient.characteristic === null"
+            class="mt-8"
+            :onClick="handleSubmit"
+            label="Créer le patient"
+            :color="Color.Green"
         />
         <ActionButton
-          class="mt-8"
-          :onClick="() => router.back()"
-          label="Annuler"
-          :color="Color.Grey"
+            class="mt-8"
+            :onClick="() => router.back()"
+            label="Annuler"
+            :color="Color.Grey"
         />
       </div>
     </div>
