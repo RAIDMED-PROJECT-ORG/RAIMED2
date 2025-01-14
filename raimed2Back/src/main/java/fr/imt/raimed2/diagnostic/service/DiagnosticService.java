@@ -18,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -145,26 +142,30 @@ public class DiagnosticService {
      */
     public List<Question> getDiagnosticClosedQuestion(Long diagnosticId) throws NoSuchElementException {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
-        // Retrieve all closed questions
-        List<Question> questions = questionService.getAllQuestion(QuestionType.CLOSED);
+        List<Question> returnedQuestions = new ArrayList<>();
 
-        System.out.println(questions);
         // Retrieve all closed questions of the virtual patient
         List<ActionClosedQuestion> closedQuestions = actionService.getAllClosedQuestionOfVirtualPatient(
             diagnostic.getVirtualPatient().getId()
         );
+
         // Retrieve all asked closed questions of the diagnostic
         List<ActionClosedQuestion> askedCloseQuestions = actionService.getAllClosedQuestionOfDiagnosticEvents(
             eventRepository.findAllByDiagnosticId(diagnosticId)
         );
+
         // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
-        questions.removeIf(
+        closedQuestions.removeIf(
             question -> (
-                closedQuestions.stream().noneMatch(q -> q.getQuestion().getId().equals(question.getId()))
-                || askedCloseQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getId()))
+                askedCloseQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))
             )
         );
-        return questions;
+
+        for(ActionClosedQuestion question : closedQuestions) {
+            returnedQuestions.add(question.getQuestion());
+        }
+
+        return returnedQuestions;
     }
 
     /**
@@ -175,8 +176,8 @@ public class DiagnosticService {
      */
     public List<Question> getDiagnosticOpenedQuestion(Long diagnosticId) throws NoSuchElementException {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
-        // Retrieve all opened questions
-        List<Question> questions = questionService.getAllQuestion(QuestionType.OPENED);
+        List<Question> returnedQuestions = new ArrayList<>();
+
         // Retrieve all opened questions of the virtual patient
         List<ActionOpenedQuestion> openedQuestions = actionService.getAllOpenedQuestionOfVirtualPatient(
             diagnostic.getVirtualPatient().getId()
@@ -186,13 +187,17 @@ public class DiagnosticService {
             eventRepository.findAllByDiagnosticId(diagnosticId)
         );
         // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
-        questions.removeIf(
+        openedQuestions.removeIf(
             question -> (
-                openedQuestions.stream().noneMatch(q -> q.getQuestion().getId().equals(question.getId()))
-                || askedOpenedQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getId()))
+                    askedOpenedQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))
             )
         );
-        return questions;
+
+        for(ActionOpenedQuestion question : openedQuestions){
+            returnedQuestions.add(question.getQuestion());
+        }
+
+        return returnedQuestions;
     }
 
     /**

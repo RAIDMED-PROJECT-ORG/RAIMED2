@@ -24,10 +24,10 @@ public class QuestionController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<Question>> getAllQuestion() {
-        return ResponseEntity.ok().body(questionService.getAllQuestion(null));
+        return ResponseEntity.ok().body(questionService.getAllQuestion(null, null, true));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @PostMapping
     public ResponseEntity<Question> createQuestion(@Valid @RequestBody CreateQuestionDto createQuestionDto) {
         return ResponseEntity

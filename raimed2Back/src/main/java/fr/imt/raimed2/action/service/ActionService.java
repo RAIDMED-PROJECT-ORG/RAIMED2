@@ -105,14 +105,15 @@ public class ActionService {
      * @param actionDTO The action in form of DTO
      * @return The ActionClosedQuestion saved object
      */
-    public ActionClosedQuestion saveActionClosedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO){
-        Question question = questionService.save(actionDTO.getActionClosedQuestionDTO().getQuestionLinked());
-        ActionClosedQuestion actionClosedQuestion = actionClosedQuestionsMapper.actionClosedQuestionsDtoToDao(actionDTO.getActionClosedQuestionDTO());
-        actionClosedQuestion.setQuestion(question);
-        actionClosedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
-        actionClosedQuestion.setVirtualPatient(virtualPatient);
-        return actionClosedQuestionRepository.save(actionClosedQuestion);
-    }
+      //TODO
+//    public ActionClosedQuestion saveActionClosedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO){
+//        Question question = questionService.save(actionDTO.getActionClosedQuestionDTO().getQuestionLinked());
+//        ActionClosedQuestion actionClosedQuestion = actionClosedQuestionsMapper.actionClosedQuestionsDtoToDao(actionDTO.getActionClosedQuestionDTO());
+//        actionClosedQuestion.setQuestion(question);
+//        actionClosedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+//        actionClosedQuestion.setVirtualPatient(virtualPatient);
+//        return actionClosedQuestionRepository.save(actionClosedQuestion);
+//    }
 
     /**
      * Save a ActionSpontaneousPatientSpeech
@@ -135,12 +136,13 @@ public class ActionService {
      * @param actionDTO The action in form of DTO
      * @return The ActionOpenedQuestion saved object
      */
-    public ActionOpenedQuestion saveActionOpenedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO) {
-        Question question = questionService.save(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked());
-        ActionOpenedQuestion actionOpenedQuestion = actionOpenedQuestionMapper.actionOpenedQuestionDtoToDao(actionDTO.getActionOpenedQuestionDTO());
-        actionOpenedQuestion.setQuestion(question);
-        actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
-        actionOpenedQuestion.setVirtualPatient(virtualPatient);
-        return actionOpenedQuestionRepository.save(actionOpenedQuestion);
-    }
+     //TODO
+//    public ActionOpenedQuestion saveActionOpenedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO) {
+//        Question question = questionService.save(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked());
+//        ActionOpenedQuestion actionOpenedQuestion = actionOpenedQuestionMapper.actionOpenedQuestionDtoToDao(actionDTO.getActionOpenedQuestionDTO());
+//        actionOpenedQuestion.setQuestion(question);
+//        actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+//        actionOpenedQuestion.setVirtualPatient(virtualPatient);
+//        return actionOpenedQuestionRepository.save(actionOpenedQuestion);
+//    }
 }
