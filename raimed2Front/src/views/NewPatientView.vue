@@ -22,11 +22,14 @@ import CharacteristicModal from '@/components/modal/characteristicModal/Characte
 import { initializeNewPatient, type NewPatient } from '@/models/new-patient/newPatient.model';
 import type { Characteristics } from '@/models/new-patient/characteristics.model';
 import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
+import InspectionModal from '@/components/modal/inspectionModal/InspectionModal.vue';
+import type { InspectionResult } from '@/models/diagnostic/inspections.model';
 
 const isCharacteristicModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
 const errors = ref<string[]>([]);
 const newPatient = ref<NewPatient>(initializeNewPatient());
+const isInspectionModalOpen = ref(false);
 
 function handleSubmit() {
   errors.value = [];
@@ -59,6 +62,16 @@ function onCharacteristicValidation(data: Characteristics) {
 function switchCharacteristicModalVisibility() {
   isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
 }
+
+function onInspectionValidation(data: InspectionResult[]) {
+  console.log('Inspection results: ', data);
+  isInspectionModalOpen.value = false;
+}
+
+function switchInspectionModalVisibility() {
+  isInspectionModalOpen.value = !isInspectionModalOpen.value;
+}
+
 </script>
 
 <template>
@@ -72,6 +85,11 @@ function switchCharacteristicModalVisibility() {
       v-if="isCharacteristicModalOpen"
       :onValidation="onCharacteristicValidation"
       :onBack="switchCharacteristicModalVisibility"
+    />
+    <InspectionModal
+      v-if="isInspectionModalOpen"
+      :onValidation="onInspectionValidation"
+      :onBack="switchInspectionModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
@@ -101,6 +119,7 @@ function switchCharacteristicModalVisibility() {
             :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
+            :onClick="switchInspectionModalVisibility"
           />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
