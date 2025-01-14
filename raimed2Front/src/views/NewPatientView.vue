@@ -25,6 +25,7 @@ import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
 import InspectionModal from '@/components/modal/inspectionModal/InspectionModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import type { InspectionResult } from '@/models/diagnostic/inspections.model';
 
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
@@ -65,8 +66,8 @@ function switchCharacteristicModalVisibility() {
   isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
 }
 
-function onInspectionValidation(data) {
-  console.log('Récap inspection : ', data);
+function onInspectionValidation(data: InspectionResult[]) {
+  console.log('Inspection results: ', data);
   isInspectionModalOpen.value = false;
 }
 
