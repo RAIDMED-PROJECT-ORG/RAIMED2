@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -30,11 +31,20 @@ public class QuestionService {
      * @param questionType The type of the question
      * @return The list of questions
      */
-    public List<Question> getAllQuestion(@Nullable QuestionType questionType) {
-        if (questionType == null) {
-            return questionRepository.findAll();
+    public List<Question> getAllQuestion(@Nullable QuestionType questionType, Long teacherId, boolean admin) {
+        List<Question> questionsList;
+
+        if (admin) return questionRepository.findAll();
+
+        if (questionType == null){
+            questionsList = questionRepository.findAllByIsMutualTrue();
+            questionsList.addAll(questionRepository.findAllByTeacherId(teacherId));
         }
-        return questionRepository.findAllByType(questionType);
+        else {
+            questionsList = questionRepository.findAllByIsMutualTrueAndType(questionType);
+            questionsList.addAll(questionRepository.findAllByTeacherIdAndType(teacherId, questionType));
+        }
+        return questionsList;
     }
 
     /**
@@ -46,6 +56,8 @@ public class QuestionService {
         Question createQuestion = Question.builder()
                 .filter(createQuestionDto.getFilter())
                 .content(createQuestionDto.getContent())
+                .answer(createQuestionDto.getAnswer())
+                .teacherId(createQuestionDto.getTeacherId())
                 .type(createQuestionDto.getType())
                 .build();
         return questionRepository.save(createQuestion);
@@ -79,22 +91,23 @@ public class QuestionService {
      * @param actionClosedQuestionsDTO The DTO object corresponding to the question
      * @return The question saved
      */
-    public Question save(QuestionLinkedDTO questionLinkedDTO){
+    public Question save(CreateQuestionDto questionLinkedDTO){
         // If QuestionLinked already exist in the question then we don't create it, we reuse it
-        List<Question> questions = this.getAllQuestion(null);
+        List<Question> questions = this.getAllQuestion(null, questionLinkedDTO.getTeacherId(), false);
 
         boolean isAlreadyInTheQuestions = questions.stream().anyMatch(n -> n.getContent().equals(questionLinkedDTO.getContent()));
         Question questionToSave = null;
 
-        if (!isAlreadyInTheQuestions){
-            questionToSave = questionRepository.save(questionLinkedMapper.questionLinkedDtoToQuestion(questionLinkedDTO));
-        }else {
+        //TODO
+//        if (!isAlreadyInTheQuestions){
+//            questionToSave = questionRepository.save(questionLinkedMapper.questionLinkedDtoToQuestion(questionLinkedDTO));
+//        }else {
             // We have to link the existing question to the new ActionClosedQuestion
             Optional<Question> questionAlreadyExisting = questions.stream().filter(n -> n.getContent().equals(questionLinkedDTO.getContent())).findFirst();
             if(questionAlreadyExisting.isPresent()){
                 questionToSave = questionAlreadyExisting.get();
             }
-        }
+//        }
         return questionToSave;
     }
 

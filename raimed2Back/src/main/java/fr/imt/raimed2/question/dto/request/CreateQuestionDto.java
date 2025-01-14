@@ -17,6 +17,11 @@ public class CreateQuestionDto {
     @NotBlank(message = "Question content is required")
     String content;
 
+    @NotBlank(message = "Question answer is required")
+    String answer;
+
+    Long teacherId;
+
     @NotNull(message = "Question type is required")
     QuestionType type;
 
