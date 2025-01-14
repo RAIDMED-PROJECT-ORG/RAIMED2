@@ -70,7 +70,7 @@ const deletePatient = async (id: string) => {
                 <ActionButton
                   :color="Color.Grey"
                   :icon="faTrashCan"
-                  :onClick="() => console.log('click')"
+                  :onClick="() => deletePatient(patient.id)"
                   :size="'small'"
                 />
               </td>
