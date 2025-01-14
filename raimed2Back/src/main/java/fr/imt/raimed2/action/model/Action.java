@@ -1,11 +1,13 @@
 package fr.imt.raimed2.action.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fr.imt.raimed2.diagnostic.model.Event;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -30,8 +32,11 @@ public abstract class Action {
     private String type;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "virtual_patient_id", nullable = false)
     private VirtualPatient virtualPatient;
+
+    @OneToMany(mappedBy = "action", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Event> events;
 
 }

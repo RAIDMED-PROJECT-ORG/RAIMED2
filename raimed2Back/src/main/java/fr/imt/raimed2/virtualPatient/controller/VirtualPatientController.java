@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/virtual-patient")
@@ -50,6 +51,15 @@ public class VirtualPatientController {
     public void addVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO){
         System.out.println(virtualPatientDTO);
         virtualPatientService.addVirtualPatientXML(virtualPatientDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean deleteVirtualPatientById(@PathVariable Long id) {
+        try{
+            return virtualPatientService.deleteVirtualPatientById(id);
+        }catch (NoSuchElementException ex){
+            return false;
+        }
     }
 
 }
