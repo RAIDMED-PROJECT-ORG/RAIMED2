@@ -12,10 +12,6 @@ const props = defineProps<{
   modelValue: string[];
 }>();
 
-/**
- * Use the "overload style" for event typing:
- *   (eventName: 'update:modelValue', payload: string[]) => void
- */
 const emits = defineEmits<{
   (event: 'update:modelValue', newValue: string[]): void;
 }>();
@@ -27,6 +23,16 @@ const componentRoot = ref<HTMLElement | null>(null);
 
 const highlightedIndex = ref(-1);
 const optionRefs = ref<(HTMLElement | null)[]>([]);
+
+const visibleLimit = 3;
+
+const visibleOptions = computed(() => {
+  return props.modelValue.slice(0, visibleLimit);
+});
+
+const remainingOptions = computed(() => {
+  return props.modelValue.length - visibleLimit;
+});
 
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
@@ -46,30 +52,27 @@ function handleOnInput() {
   highlightedIndex.value = 0;
 }
 
-/** Select an item from the dropdown */
 function selectItem(option: string) {
   if (option && !props.modelValue.includes(option)) {
     const newArray = [...props.modelValue, option];
-    emits('update:modelValue', newArray); // <--
+    emits('update:modelValue', newArray);
     input.value = '';
   }
   showDropdown.value = false;
   highlightedIndex.value = -1;
 }
 
-/** Unselect/remove a selected tag */
 function unselectOption(option: string) {
   const newArray = props.modelValue.filter((i) => i !== option);
-  emits('update:modelValue', newArray); // <--
+  emits('update:modelValue', newArray);
 }
 
-/** Remove the last tag on Backspace if input is empty */
 function removeLastTag(event: KeyboardEvent) {
   if (input.value === '') {
     if (props.modelValue.length > 0) {
       const newArray = [...props.modelValue];
       newArray.pop();
-      emits('update:modelValue', newArray); // <--
+      emits('update:modelValue', newArray);
       event.preventDefault();
     }
   }
@@ -107,7 +110,6 @@ watch(highlightedIndex, (newIndex) => {
   }
 });
 
-/** Close dropdown if clicked outside */
 function handleClickOutside(event: MouseEvent) {
   if (
     componentRoot.value &&
@@ -135,7 +137,7 @@ onUnmounted(() => {
     >
       <!-- Display currently selected items as tags -->
       <div
-        v-for="(option, index) in props.modelValue"
+        v-for="(option, index) in visibleOptions"
         :key="index"
         class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center space-x-2 cursor-pointer"
         @click.stop="unselectOption(option)"
@@ -143,6 +145,11 @@ onUnmounted(() => {
         <span>{{ option }}</span>
         <FontAwesomeIcon :icon="faXmark" class="w-2 h-2" />
       </div>
+
+      <!-- Indicate remaining options -->
+      <span v-if="remainingOptions > 0" class="text-gray-500">
+        +{{ remainingOptions }} autres
+      </span>
 
       <!-- The text input -->
       <input
