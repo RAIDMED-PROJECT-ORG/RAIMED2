@@ -18,7 +18,7 @@ defineProps<{
 
 <template>
   <div class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg"
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg"
          :style="{ width: width || 'auto', height: height || 'auto' }"
     >
       <div class="flex flex-col items-center">
