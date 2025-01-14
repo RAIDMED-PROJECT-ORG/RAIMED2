@@ -9,6 +9,7 @@
     @click="handleClick"
     :disabled="disabled"
     :style="buttonStyle"
+    :type="type ?? 'button'"
     @mouseover="hover = true"
     @mouseleave="hover = false"
   >
@@ -29,10 +30,11 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 const props = defineProps<{
   color: ColorType;
+  type?: 'button' | 'submit' | 'reset';
   size?: 'small' | 'medium' | 'tall';
   icon?: IconDefinition;
   label?: string;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent) => void;
   disabled?: boolean;
 }>();
 
@@ -52,7 +54,7 @@ const buttonStyle = computed(() => {
                 ? '#8fd9b0'
                 : props.color === Color.Grey
                   ? '#e6e6e6'
-                  : '#f9c0c1', // Default for Red
+                  : '#f9c0c1' // Default for Red
     };
   } else if (hover.value) {
     return {
@@ -67,7 +69,7 @@ const buttonStyle = computed(() => {
                 ? '#1e8e5b'
                 : props.color === Color.Grey
                   ? '#bfbfbf'
-                  : '#f26d6e', // Default for Red
+                  : '#f26d6e' // Default for Red
     };
   }
   return { backgroundColor: props.color };
