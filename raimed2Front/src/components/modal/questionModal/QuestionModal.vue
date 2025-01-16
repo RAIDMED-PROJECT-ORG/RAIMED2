@@ -12,18 +12,16 @@ const props = defineProps<{
   onBack: () => void;
 }>();
 
-console.log(props.questions);
-
 const questions = ref<Question[]>(props.questions);
 
-const questionToUpdate = ref<Question>();
+const questionToUpdate = ref<Question | null>(null);
 
 const deleteQuestion = (id: string) => {
   questions.value = questions.value.filter((question) => question.id !== id);
 };
 
 const updateQuestion = (id: string) => {
-  questionToUpdate.value = questions.value.find((question) => question.id === id);
+  questionToUpdate.value = questions.value.find((question) => question.id === id) ?? null;
 };
 
 const insertOrUpdateQuestion = (question: Question) => {
@@ -32,8 +30,13 @@ const insertOrUpdateQuestion = (question: Question) => {
     questions.value.push(question);
   } else {
     questions.value[index] = question;
+    questionToUpdate.value = null;
   }
 };
+
+const insertQuestions = (newQuestions: Question[]) => {
+  questions.value.push(...newQuestions);
+}
 
 const handleValidation = () => {
   props.onValidation(questions.value);
@@ -54,7 +57,12 @@ const handleValidation = () => {
         @delete-question="deleteQuestion"
         @update-question="updateQuestion"
       />
-      <QuestionForm @add-question="insertOrUpdateQuestion" :question-to-update="questionToUpdate" />
+      <QuestionForm
+        @add-question="insertOrUpdateQuestion"
+        @add-questions="insertQuestions"
+        :question-to-update="questionToUpdate"
+        :questions="questions"
+      />
     </div>
   </GenericModal>
 </template>

@@ -13,7 +13,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col border-r border-1 pr-5">
+  <div class="flex flex-col border-r border-1 pr-5 w-full">
     <h3 class="self-center text-black font-bold text-xl mb-3">Liste des questions</h3>
     <div class="pr-5 overflow-scroll">
       <div class="flex justify-between border-b border-1 border-[#9CA3AF] text-black font-bold">

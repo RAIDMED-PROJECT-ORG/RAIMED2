@@ -10,7 +10,6 @@ export interface NewPatient {
 }
 
 export const initializeNewPatient = (): NewPatient => {
-
   return {
     characteristic: null,
     questions: [

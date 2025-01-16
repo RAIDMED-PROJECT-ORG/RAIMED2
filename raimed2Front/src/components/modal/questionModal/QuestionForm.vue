@@ -12,18 +12,22 @@ import {
 } from '@/models/question/questionFilter.enum';
 import type { Question } from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
+import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
 const questionValue = ref<string>('');
 const answerValue = ref<string>('');
+const isModalOpen = ref<boolean>(false);
 
 const props = defineProps<{
-  questionToUpdate?: Question;
+  questionToUpdate?: Question | null;
+  questions: Question[];
 }>();
 
 const emits = defineEmits<{
   (e: 'addQuestion', question: Question): void;
+  (e: 'addQuestions', question: Question[]): void;
 }>();
 
 const submitForm = (event: SubmitEvent) => {
@@ -35,7 +39,7 @@ const submitForm = (event: SubmitEvent) => {
     answer: answerValue.value,
     type: typeValue.value,
     filter: genderValue.value,
-    isMutual: false,
+    isMutual: false
   });
 
   questionValue.value = '';
@@ -55,6 +59,10 @@ watch(
     }
   }
 );
+
+const switchModalVisibility = () => {
+  isModalOpen.value = !isModalOpen.value;
+};
 </script>
 
 <template>
@@ -174,9 +182,16 @@ watch(
         :icon="faSearch"
         :color="Color.Grey"
         class="w-11/12 self-center drop-shadow-sm"
+        :on-click="switchModalVisibility"
       />
     </div>
   </div>
+  <QuestionListModal
+    v-if="isModalOpen"
+    :selected-questions="questions"
+    @switch-modal-visibility="switchModalVisibility"
+    @add-questions="emits('addQuestions', $event)"
+  />
 </template>
 
 <style scoped>
