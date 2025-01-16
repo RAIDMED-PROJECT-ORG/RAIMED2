@@ -42,7 +42,7 @@ export const InspectionSigns = {
   [Zones.PERINEUM]: ['Aucune anomalie', 'Chancre', 'Cryptorchidie', 'Dépilation', 'Erosion', 'Erythème', 'Erythrodermie', 'Escarre', 'Folliculite', 'Furoncle', 'Hernie inguinale', 'Hirsutisme', 'Hypertrichose', 'Kératose', 'Macroorchidie', 'Macule achromique', 'Macule érythémateuse', 'Macule pigmentée', 'Microorchidie', 'Naevus', 'Nécrose', 'Nodule cutané', 'Papule érythémateuse', 'Plaque cutanée', 'Prolapsus rectal', 'Prolapsus utérin', 'Pustules', 'Tuméfaction', 'Tumeur cutanée', 'Ulcération', 'Vésicules', 'Vitiligo'],
 };
 
-export interface InspectionResult {
+export interface ExamResults {
   zone: Zones;
   signs: string[];
 }

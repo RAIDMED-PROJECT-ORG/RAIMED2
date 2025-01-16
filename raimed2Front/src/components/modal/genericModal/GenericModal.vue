@@ -3,8 +3,9 @@ import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { Color, type ColorType } from '@/models/new-patient/color.model';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { onMounted, onUnmounted } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   title: string;
   headerColor: ColorType;
   validationLabel: string;
@@ -13,6 +14,28 @@ defineProps<{
   width?: string;
   height?: string;
 }>();
+
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    props.onBack();
+    return;
+  }
+  if (event.key === 'Enter') {
+    props.onValidation();
+    return;
+  }
+}
+
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
+
+
 
 </script>
 
