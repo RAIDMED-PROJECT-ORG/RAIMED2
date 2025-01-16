@@ -69,7 +69,7 @@ function switchWarningModalVisibility() {
 
 function onCharacteristicValidation(data: Characteristics) {
   newPatient.value.characteristic = data;
-  console.log('nouveau Patient :', newPatient);
+  console.log('Patient :', newPatient);
   switchCharacteristicModalVisibility();
 }
 
@@ -80,6 +80,7 @@ function switchCharacteristicModalVisibility() {
 function onInspectionValidation(data: ExamResults[]) {
   console.log('Inspection results: ', data);
   isInspectionModalOpen.value = false;
+  newPatient.value.inspection = data;
 }
 
 function switchInspectionModalVisibility() {
@@ -93,6 +94,7 @@ function switchPercussionModalVisibility() {
 function onPercussionValidation(data: ExamResults[]) {
   console.log('Percussion results: ', data);
   isPercussionModalOpen.value = false;
+  newPatient.value.percussion = data;
 }
 
 function switchPalpationModalVisibility() {
@@ -102,6 +104,7 @@ function switchPalpationModalVisibility() {
 function onPalpationValidation(data: ExamResults[]) {
   console.log('Palpation results: ', data);
   isPalpationModalOpen.value = false;
+  newPatient.value.palpation = data;
 }
 function switchAuscultationModalVisibility() {
   isAuscultationModalOpen.value = !isAuscultationModalOpen.value;
@@ -110,6 +113,7 @@ function switchAuscultationModalVisibility() {
 function onAuscultationValidation(data: ExamResults[]) {
   console.log('Auscultation results: ', data);
   isAuscultationModalOpen.value = false;
+  newPatient.value.auscultation = data;
 }
 
 
@@ -127,7 +131,7 @@ function switchQuestionModalVisibility() {
   <AuthenticatedPageLayout>
     <WarningModal
       v-if="isWarningModalOpen"
-      :on-back="switchWarningModalVisibility"
+      :onBack="switchWarningModalVisibility"
       :errors="errors"
     />
     <CharacteristicModal
@@ -139,29 +143,33 @@ function switchQuestionModalVisibility() {
       v-if="isInspectionModalOpen"
       :onValidation="onInspectionValidation"
       :onBack="switchInspectionModalVisibility"
-      :exams="InspectionSigns"
-      :modal-title="'Inspection'"
+      :possibleExams="InspectionSigns"
+      :modalTitle="'Inspection'"
+      :currentExamResults="newPatient.inspection"
     />
     <ExamenModal
       v-if="isPalpationModalOpen"
       :onValidation="onPalpationValidation"
       :onBack="switchPalpationModalVisibility"
-      :exams="PalpationSigns"
-      :modal-title="'Palpation et manoeuvres'"
+      :possibleExams="PalpationSigns"
+      :modalTitle="'Palpation et manoeuvres'"
+      :currentExamResults="newPatient.palpation"
     />
     <ExamenModal
       v-if="isPercussionModalOpen"
       :onValidation="onPercussionValidation"
       :onBack="switchPercussionModalVisibility"
-      :exams="PercussionSigns"
-      :modal-title="'Percussion'"
+      :possibleExams="PercussionSigns"
+      :modalTitle="'Percussion'"
+      :currentExamResults="newPatient.percussion"
     />
     <ExamenModal
       v-if="isAuscultationModalOpen"
       :onValidation="onAuscultationValidation"
       :onBack="switchAuscultationModalVisibility"
-      :exams="AuscultationSigns"
-      :modal-title="'Auscultation'"
+      :possibleExams="AuscultationSigns"
+      :modalTitle="'Auscultation'"
+      :currentExamResults="newPatient.auscultation"
     />
 
     <QuestionModal
