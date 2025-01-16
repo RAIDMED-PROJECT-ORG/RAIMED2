@@ -12,15 +12,15 @@ const props = defineProps<{
   onValidation: (examResults: ExamResults[]) => void;
   onBack: () => void;
   modalTitle: string;
-  exams: Record<Zones, string[]>;
+  possibleExams: Record<Zones, string[]>;
+  currentExamResults: ExamResults[];
 }>();
 
 const emits = defineEmits<{
   (event: 'update:selectedZone', value: Zones): void;
   (event: 'update:selectedSigns', value: string[]): void;
 }>();
-
-const examResults = ref<ExamResults[]>([]);
+const examResults = ref<ExamResults[]>(props.currentExamResults);
 const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
 
@@ -215,7 +215,7 @@ function handleValidation() {
 
           <div>
             <label class="block font-semibold text-sm mb-1">{{ modalTitle }} :</label>
-            <MultipleSelector v-model="selectedSigns" :options="exams[`${selectedZone}`]" />
+            <MultipleSelector v-model="selectedSigns" :options="possibleExams[`${selectedZone}`]" />
           </div>
 
           <div class="mt-4">
@@ -235,11 +235,7 @@ function handleValidation() {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(item, index) in examResults"
-              :key="index"
-              class="border-b border-gray-100"
-            >
+            <tr v-for="(item, index) in examResults" :key="index" class="border-b border-gray-100">
               <td class="py-3 px-2">{{ item.zone }}</td>
               <td class="py-3 px-2">{{ item.signs.join(', ') }}</td>
               <td class="py-3 px-2 flex justify-center gap-2">
