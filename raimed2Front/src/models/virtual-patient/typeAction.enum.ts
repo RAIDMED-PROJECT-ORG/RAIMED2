@@ -4,7 +4,7 @@ export enum TypeAction {
   OPENED_QUESTION = 'OPENED_QUESTION',
   SPECIFY_SYMPTOM = 'SPECIFY_SYMPTOM',
   INSPECTION = 'INSPECTION',
-  PALPATATION = 'PALPATATION',
+  PALPATION = 'PALPATION',
   PERCUSSION = 'PERCUSSION',
   AUSCULTATION = 'AUSCULTATION',
   BIOLOGY_MICROBIOLOGY_PRESCRIPTION = 'BIOLOGY_MICROBIOLOGY_PRESCRIPTION',
@@ -24,7 +24,7 @@ export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
       return 'Préciser un symptôme';
     case TypeAction.INSPECTION:
       return 'Inspection';
-    case TypeAction.PALPATATION:
+    case TypeAction.PALPATION:
       return 'Palpation et manoeuvres';
     case TypeAction.PERCUSSION:
       return 'Percussion';

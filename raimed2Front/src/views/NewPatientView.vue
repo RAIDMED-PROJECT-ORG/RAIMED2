@@ -22,6 +22,14 @@ import CharacteristicModal from '@/components/modal/characteristicModal/Characte
 import { initializeNewPatient, type NewPatient } from '@/models/new-patient/newPatient.model';
 import type { Characteristics } from '@/models/new-patient/characteristics.model';
 import WarningModal from '@/components/modal/warningModal/WarningModal.vue';
+import {
+  AuscultationSigns,
+  type ExamResults,
+  InspectionSigns,
+  PalpationSigns,
+  PercussionSigns
+} from '@/models/diagnostic/exam.model';
+import ExamenModal from '@/components/modal/examenModal/ExamenModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 
@@ -30,6 +38,10 @@ const isQuestionModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
 const errors = ref<string[]>([]);
 const newPatient = ref<NewPatient>(initializeNewPatient());
+const isInspectionModalOpen = ref(false);
+const isAuscultationModalOpen = ref(false);
+const isPalpationModalOpen = ref(false);
+const isPercussionModalOpen = ref(false);
 
 function handleSubmit() {
   errors.value = [];
@@ -55,11 +67,52 @@ function switchWarningModalVisibility() {
 
 function onCharacteristicValidation(data: Characteristics) {
   newPatient.value.characteristic = data;
+  console.log('Patient :', newPatient);
   switchCharacteristicModalVisibility();
 }
 
 function switchCharacteristicModalVisibility() {
   isCharacteristicModalOpen.value = !isCharacteristicModalOpen.value;
+}
+
+function onInspectionValidation(data: ExamResults[]) {
+  console.log('Inspection results: ', data);
+  isInspectionModalOpen.value = false;
+  newPatient.value.inspection = data;
+}
+
+function switchInspectionModalVisibility() {
+  isInspectionModalOpen.value = !isInspectionModalOpen.value;
+}
+
+function switchPercussionModalVisibility() {
+  isPercussionModalOpen.value = !isPercussionModalOpen.value;
+}
+
+function onPercussionValidation(data: ExamResults[]) {
+  console.log('Percussion results: ', data);
+  isPercussionModalOpen.value = false;
+  newPatient.value.percussion = data;
+}
+
+function switchPalpationModalVisibility() {
+  isPalpationModalOpen.value = !isPalpationModalOpen.value;
+}
+
+function onPalpationValidation(data: ExamResults[]) {
+  console.log('Palpation results: ', data);
+  isPalpationModalOpen.value = false;
+  newPatient.value.palpation = data;
+}
+
+function switchAuscultationModalVisibility() {
+  isAuscultationModalOpen.value = !isAuscultationModalOpen.value;
+}
+
+function onAuscultationValidation(data: ExamResults[]) {
+  console.log('Auscultation results: ', data);
+  isAuscultationModalOpen.value = false;
+  newPatient.value.auscultation = data;
 }
 
 function onQuestionValidation(data: Question[]) {
@@ -76,7 +129,7 @@ function switchQuestionModalVisibility() {
   <AuthenticatedPageLayout>
     <WarningModal
       v-if="isWarningModalOpen"
-      :on-back="switchWarningModalVisibility"
+      :onBack="switchWarningModalVisibility"
       :errors="errors"
     />
     <CharacteristicModal
@@ -84,6 +137,39 @@ function switchQuestionModalVisibility() {
       :onValidation="onCharacteristicValidation"
       :onBack="switchCharacteristicModalVisibility"
     />
+    <ExamenModal
+      v-if="isInspectionModalOpen"
+      :onValidation="onInspectionValidation"
+      :onBack="switchInspectionModalVisibility"
+      :possibleExams="InspectionSigns"
+      :modalTitle="'Inspection'"
+      :currentExamResults="newPatient.inspection"
+    />
+    <ExamenModal
+      v-if="isPalpationModalOpen"
+      :onValidation="onPalpationValidation"
+      :onBack="switchPalpationModalVisibility"
+      :possibleExams="PalpationSigns"
+      :modalTitle="'Palpation et manoeuvres'"
+      :currentExamResults="newPatient.palpation"
+    />
+    <ExamenModal
+      v-if="isPercussionModalOpen"
+      :onValidation="onPercussionValidation"
+      :onBack="switchPercussionModalVisibility"
+      :possibleExams="PercussionSigns"
+      :modalTitle="'Percussion'"
+      :currentExamResults="newPatient.percussion"
+    />
+    <ExamenModal
+      v-if="isAuscultationModalOpen"
+      :onValidation="onAuscultationValidation"
+      :onBack="switchAuscultationModalVisibility"
+      :possibleExams="AuscultationSigns"
+      :modalTitle="'Auscultation'"
+      :currentExamResults="newPatient.auscultation"
+    />
+
     <QuestionModal
       v-if="isQuestionModalOpen"
       :questions="newPatient.questions ?? []"
@@ -105,8 +191,13 @@ function switchQuestionModalVisibility() {
             :icon="faPerson"
             :onClick="switchCharacteristicModalVisibility"
           />
-          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen"/>
-          <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" :on-click="switchQuestionModalVisibility" />
+          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
+          <ActionButton
+            label="Question"
+            :color="Color.Blue"
+            :icon="faPersonCircleQuestion"
+            :on-click="switchQuestionModalVisibility"
+          />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
             :color="Color.Blue"
@@ -118,21 +209,25 @@ function switchQuestionModalVisibility() {
             :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
+            :onClick="switchInspectionModalVisibility"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
+            :label="getTypeActionDisplayName(TypeAction.PALPATION)"
             :color="Color.Orange"
             :icon="faHandHoldingMedical"
+            :onClick="switchPalpationModalVisibility"
           />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
             :color="Color.Orange"
             :icon="faGavel"
+            :onClick="switchPercussionModalVisibility"
           />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
             :color="Color.Orange"
             :icon="faStethoscope"
+            :onClick="switchAuscultationModalVisibility"
           />
         </div>
         <div class="flex flex-col w-1/3">

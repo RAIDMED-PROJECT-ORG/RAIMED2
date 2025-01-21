@@ -31,7 +31,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
       return true;
     case TypeAction.INSPECTION:
       return true;
-    case TypeAction.PALPATATION:
+    case TypeAction.PALPATION:
       return true;
     case TypeAction.PERCUSSION:
       return true;
@@ -101,8 +101,8 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
         <ActionButton
           :color="Color.Orange"
           :icon="faHandHoldingMedical"
-          :label="getTypeActionDisplayName(TypeAction.PALPATATION)"
-          :disabled="isActionDisabled(TypeAction.PALPATATION)"
+          :label="getTypeActionDisplayName(TypeAction.PALPATION)"
+          :disabled="isActionDisabled(TypeAction.PALPATION)"
         />
 
         <!-- Percussion action button -->
