@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
-import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { ref, watch } from 'vue';
-import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
-import {
-  getQuestionFilterDisplayName,
-  QuestionFilter
-} from '@/models/question/questionFilter.enum';
-import type { Question } from '@/models/question/question.model';
-import { v4 as uuidv4 } from 'uuid';
-import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
-import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
+import {faCirclePlus, faSearch, faSliders, faVenusMars} from '@fortawesome/free-solid-svg-icons';
+import {faCircleQuestion, faMessage} from '@fortawesome/free-regular-svg-icons';
+import {Color} from '@/models/new-patient/color.model';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
+import {ref, watch} from 'vue';
+import {getQuestionTypeDisplayName, QuestionType} from '@/models/question/questionType.enum';
+import {getQuestionFilterDisplayName, QuestionFilter} from '@/models/question/questionFilter.enum';
+import type {Question} from '@/models/question/question.model';
+import {v4 as uuidv4} from 'uuid';
+import {useAuthStore} from '@/stores/auth.store';
+import {Role} from '@/models/auth/role.enum';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -29,12 +28,20 @@ const emits = defineEmits<{
   (e: 'addQuestions', question: Question[]): void;
 }>();
 
-const submitForm = () => {
+const submitForm = (event: SubmitEvent) => {
+  event.preventDefault();
+
+  const authStore = useAuthStore();
+  authStore.initialize();
+
+  let teacherId = (authStore.getUserRole === Role.TEACHER) ? authStore.getUserInfo.id : null;
+
   emits('addQuestion', {
     id: props.questionToUpdate ? props.questionToUpdate.id : uuidv4(),
     content: questionValue.value,
     answer: answerValue.value,
     type: typeValue.value,
+    teacherId: teacherId,
     filter: genderValue.value,
     isMutual: false
   });

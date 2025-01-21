@@ -35,6 +35,12 @@ public class QuestionController {
                 .body(this.questionService.createQuestion(createQuestionDto));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+    @PostMapping("/multiples")
+    public ResponseEntity<List<Question>> createMultipleQuestions(@Valid @RequestBody List<CreateQuestionDto> createQuestionDtos) {
+        return ResponseEntity.created(URI.create("/api/v1/question/multiples")).body(this.questionService.createMultipleQuestions(createQuestionDtos));
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Question> updateQuestion(
