@@ -14,3 +14,14 @@ export const getQuestionFilterDisplayName = (filter: QuestionFilter): string => 
       return 'Femme';
   }
 };
+
+export const getQuestionFilterByFirstLetter = (filter: string) => {
+  switch (filter) {
+    case QuestionFilter.MALE:
+      return 'H';
+    case QuestionFilter.FEMALE:
+      return 'F';
+    case QuestionFilter.MIXED:
+      return 'M';
+  }
+};

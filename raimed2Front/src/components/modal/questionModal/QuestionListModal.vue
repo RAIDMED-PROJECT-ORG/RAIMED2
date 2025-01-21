@@ -4,8 +4,11 @@ import { computed, ref } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import { getFakeQuestions, type Question } from '@/models/question/question.model';
 import QuestionListModalHeader from '@/components/modal/questionModal/QuestionListModalHeader.vue';
-import QuestionListModalRow from '@/components/modal/questionModal/QuestionListModalRow.vue';
-import { QuestionFilter } from '@/models/question/questionFilter.enum';
+import {
+  getQuestionFilterByFirstLetter,
+  QuestionFilter
+} from '@/models/question/questionFilter.enum';
+import QuestionRow from '@/components/modal/questionModal/QuestionRow.vue';
 
 const props = defineProps<{
   selectedQuestions: Question[];
@@ -33,23 +36,26 @@ const validationLabel = computed(() => {
 });
 
 const questionsToDisplay = computed(() => {
-  console.log(props.selectedQuestions)
   return allQuestions.value.filter((question) => {
     const nameMatch = question.content
       .toLowerCase()
       .includes(filters.value.nameFilter.toLowerCase());
     const genderMatch =
       !filters.value.genderFilter || question.filter === filters.value.genderFilter;
-    return nameMatch && genderMatch && !props.selectedQuestions.some(selectedQuestions => selectedQuestions.id === question.id);
+    return (
+      nameMatch &&
+      genderMatch &&
+      !props.selectedQuestions.some((selectedQuestions) => selectedQuestions.id === question.id)
+    );
   });
 });
 
-const addQuestion = (question: Question) => {
-  questionsToAdd.value.push(question);
-};
-
-const removeQuestion = (question: Question) => {
-  questionsToAdd.value = questionsToAdd.value.filter((q) => q.id !== question.id);
+const switchIsSelected = (question: Question, isSelected: boolean) => {
+  if (isSelected) {
+    questionsToAdd.value.push(question);
+  } else {
+    questionsToAdd.value = questionsToAdd.value.filter((q) => q.id !== question.id);
+  }
 };
 
 const addQuestions = () => {
@@ -75,14 +81,24 @@ const addQuestions = () => {
           <h4 class="w-2/12 flex justify-center">Type</h4>
           <h4 class="w-2/12 flex justify-center">Sélectionner</h4>
         </div>
-        <QuestionListModalRow
+        <QuestionRow
           v-for="question in questionsToDisplay"
           :key="question.id"
-          :question="question"
+          :question="question.content"
+          :answer="question.answer ?? ''"
           :is-already-selected="selectedQuestions.includes(question)"
-          @add-question="addQuestion(question)"
-          @remove-question="removeQuestion(question)"
-        />
+        >
+          <div class="w-2/12 flex justify-center">
+            {{ getQuestionFilterByFirstLetter(question.filter) }}
+          </div>
+          <div class="w-2/12 flex justify-center">
+            <input
+              type="checkbox"
+              :checked="questionsToAdd.includes(question)"
+              @change="(event) => switchIsSelected(question, (event.target as HTMLInputElement).checked)"
+            />
+          </div>
+        </QuestionRow>
       </div>
     </div>
   </GenericModal>
