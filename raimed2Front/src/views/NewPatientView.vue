@@ -30,10 +30,8 @@ import {
   PercussionSigns
 } from '@/models/diagnostic/exam.model';
 import ExamenModal from '@/components/modal/examenModal/ExamenModal.vue';
-import InspectionModal from '@/components/modal/inspectionModal/InspectionModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
-import type { InspectionResult } from '@/models/diagnostic/inspections.model';
 
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
@@ -106,6 +104,7 @@ function onPalpationValidation(data: ExamResults[]) {
   isPalpationModalOpen.value = false;
   newPatient.value.palpation = data;
 }
+
 function switchAuscultationModalVisibility() {
   isAuscultationModalOpen.value = !isAuscultationModalOpen.value;
 }
@@ -115,7 +114,6 @@ function onAuscultationValidation(data: ExamResults[]) {
   isAuscultationModalOpen.value = false;
   newPatient.value.auscultation = data;
 }
-
 
 function onQuestionValidation(data: Question[]) {
   newPatient.value.questions = data;
@@ -193,8 +191,13 @@ function switchQuestionModalVisibility() {
             :icon="faPerson"
             :onClick="switchCharacteristicModalVisibility"
           />
-          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen"/>
-          <ActionButton label="Question" :color="Color.Blue" :icon="faPersonCircleQuestion" :on-click="switchQuestionModalVisibility" />
+          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
+          <ActionButton
+            label="Question"
+            :color="Color.Blue"
+            :icon="faPersonCircleQuestion"
+            :on-click="switchQuestionModalVisibility"
+          />
           <ActionButton
             :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
             :color="Color.Blue"
