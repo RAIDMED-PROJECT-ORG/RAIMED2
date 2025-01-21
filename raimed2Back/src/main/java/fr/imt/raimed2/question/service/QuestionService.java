@@ -87,6 +87,19 @@ public class QuestionService {
     }
 
     /**
+     * Create multiples questions and save them in the database
+     * @param createQuestionDtos Dto List containing the information of the questions
+     * @return The created questions list
+     */
+    public List<Question> createMultipleQuestions(List<CreateQuestionDto> createQuestionDtos) {
+        List<Question> questionsList = new ArrayList<>();
+        for (CreateQuestionDto createQuestionDto : createQuestionDtos) {
+            questionsList.add(createQuestion(createQuestionDto));
+        }
+        return questionsList;
+    }
+
+    /**
      * Update a question
      * @param id The id of the question
      * @param updateQuestionDto Dto containing the information of the question
