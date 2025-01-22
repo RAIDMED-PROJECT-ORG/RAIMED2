@@ -25,7 +25,7 @@ export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
     case TypeAction.INSPECTION:
       return 'Inspection';
     case TypeAction.PALPATION:
-      return 'Palpation et manoeuvres';
+      return 'Palpation et manoeuvre';
     case TypeAction.PERCUSSION:
       return 'Percussion';
     case TypeAction.AUSCULTATION:

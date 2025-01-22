@@ -20,9 +20,10 @@ const emits = defineEmits<{
   (event: 'update:selectedZone', value: Zones): void;
   (event: 'update:selectedSigns', value: string[]): void;
 }>();
-const examResults = ref<ExamResults[]>(props.currentExamResults);
+const examResults = ref<ExamResults[]>([...props.currentExamResults]);
 const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
+const switchConfirmGoBackModalVisibility = ref(false);
 
 const iconEdit = faPen;
 const iconDelete = faTrashCan;
@@ -73,8 +74,26 @@ function handleEditExam(index: number) {
   examResults.value.splice(index, 1);
 }
 
-function handleValidation() {
+function handleOnValidation() {
   props.onValidation(examResults.value);
+}
+
+function handleOnBack() {
+  if (JSON.stringify(props.currentExamResults) !== JSON.stringify(examResults.value)) {
+    switchConfirmGoBackModalVisibility.value = true;
+    return;
+  }
+
+  props.onBack();
+}
+
+function handleGoBackValidation() {
+  switchConfirmGoBackModalVisibility.value = false;
+  props.onBack();
+}
+
+function handleGoBackCancel() {
+  switchConfirmGoBackModalVisibility.value = false;
 }
 </script>
 
@@ -83,8 +102,8 @@ function handleValidation() {
     :title="modalTitle"
     validationLabel="Valider"
     :headerColor="Color.Orange"
-    :onValidation="handleValidation"
-    :onBack="props.onBack"
+    :onValidation="handleOnValidation"
+    :onBack="handleOnBack"
     width="800px"
   >
     <div class="flex w-full h-full gap-6">
@@ -259,6 +278,17 @@ function handleValidation() {
         </table>
       </div>
     </div>
+  </GenericModal>
+  <GenericModal
+    v-if="switchConfirmGoBackModalVisibility.valueOf()"
+    title="Annulation"
+    :headerColor="Color.Orange"
+    validationLabel="Confirmer"
+    :onValidation="handleGoBackValidation"
+    :onBack="handleGoBackCancel"
+  >
+    <p class="mx-5 text-base">Des modifications n'ont pas été sauvegardés.</p>
+    <p class="text-base text-center">Êtes-vous sûr de vouloir annuler ?</p>
   </GenericModal>
 </template>
 

@@ -62,6 +62,12 @@ onUnmounted(() => {
       </div>
       <footer class="flex justify-center pt-4 pb-3">
         <ActionButton
+          :color="Color.Grey"
+          size="medium"
+          label="Retour"
+          :onClick="onBack"
+        />
+        <ActionButton
           :color="Color.Green"
           size="medium"
           :label="validationLabel"
