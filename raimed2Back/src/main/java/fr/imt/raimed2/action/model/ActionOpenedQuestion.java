@@ -1,5 +1,6 @@
 package fr.imt.raimed2.action.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.imt.raimed2.question.model.Question;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class ActionOpenedQuestion extends Action {
     private String openedAnswer;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "question_id")
     private Question question;
 

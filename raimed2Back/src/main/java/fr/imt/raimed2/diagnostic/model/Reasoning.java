@@ -1,5 +1,6 @@
 package fr.imt.raimed2.diagnostic.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public abstract class Reasoning {
     private Date date;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "diagnostic_id", nullable = false)
     private Diagnostic diagnostic;
 

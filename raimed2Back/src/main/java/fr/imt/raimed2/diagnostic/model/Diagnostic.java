@@ -1,6 +1,7 @@
 package fr.imt.raimed2.diagnostic.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.imt.raimed2.user.model.User;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import jakarta.persistence.*;
@@ -22,6 +23,7 @@ public class Diagnostic {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -30,6 +32,7 @@ public class Diagnostic {
     private DiagnosticStatus status;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "virtual_patient_id", nullable = false)
     private VirtualPatient virtualPatient;
 

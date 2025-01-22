@@ -46,6 +46,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Diagnostic> diagnostics;
 
