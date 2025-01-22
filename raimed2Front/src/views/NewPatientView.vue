@@ -150,7 +150,7 @@ function switchQuestionModalVisibility() {
       :onValidation="onPalpationValidation"
       :onBack="switchPalpationModalVisibility"
       :possibleExams="PalpationSigns"
-      :modalTitle="'Palpation et manoeuvres'"
+      :modalTitle="'Palpation et manoeuvre'"
       :currentExamResults="newPatient.palpation"
     />
     <ExamenModal
