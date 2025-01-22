@@ -1,5 +1,6 @@
 package fr.imt.raimed2.diagnostic.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.imt.raimed2.action.model.Action;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,10 +25,12 @@ public class Event {
     private Date date;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "diagnostic_id", nullable = false)
     private Diagnostic diagnostic;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 

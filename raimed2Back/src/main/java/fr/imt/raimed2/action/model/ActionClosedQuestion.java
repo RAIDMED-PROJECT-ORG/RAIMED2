@@ -1,5 +1,6 @@
 package fr.imt.raimed2.action.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.imt.raimed2.question.model.Question;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
