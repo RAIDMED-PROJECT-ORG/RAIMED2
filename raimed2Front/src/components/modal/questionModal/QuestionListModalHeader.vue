@@ -16,8 +16,8 @@ const model = defineModel<{
 </script>
 
 <template>
-  <div class="flex gap-5 px-10">
-    <span class="flex items-center gap-1">
+  <div class="flex justify-around gap-5">
+    <span class="flex items-center gap-3">
       <label for="question-search" class="whitespace-nowrap font-bold">Recherche par nom</label>
       <input
         type="text"
@@ -28,8 +28,8 @@ const model = defineModel<{
         v-model="model.nameFilter"
       />
     </span>
-    <span class="flex items-center gap-1">
-      <label for="filter-search" class="whitespace-nowrap font-bold">Filtre</label>
+    <span class="flex items-center gap-3">
+      <label for="filter-search" class="whitespace-nowrap font-bold">Genre</label>
       <select
         id="filter-search"
         class="w-full border border-gray-300 rounded-lg p-2"
