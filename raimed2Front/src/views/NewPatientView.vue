@@ -29,7 +29,7 @@ import {
   PalpationSigns,
   PercussionSigns
 } from '@/models/diagnostic/exam.model';
-import ExamenModal from '@/components/modal/examenModal/ExamenModal.vue';
+import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 
@@ -150,7 +150,7 @@ function switchQuestionModalVisibility() {
       :onValidation="onPalpationValidation"
       :onBack="switchPalpationModalVisibility"
       :possibleExams="PalpationSigns"
-      :modalTitle="'Palpation et manoeuvres'"
+      :modalTitle="'Palpation et manoeuvre'"
       :currentExamResults="newPatient.palpation"
     />
     <ExamenModal

@@ -20,9 +20,10 @@ const emits = defineEmits<{
   (event: 'update:selectedZone', value: Zones): void;
   (event: 'update:selectedSigns', value: string[]): void;
 }>();
-const examResults = ref<ExamResults[]>(props.currentExamResults);
+const examResults = ref<ExamResults[]>([...props.currentExamResults]);
 const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
+const confirmGoBack = ref<boolean>(false);
 
 const iconEdit = faPen;
 const iconDelete = faTrashCan;
@@ -35,10 +36,19 @@ watch(selectedSigns, (newSigns) => {
   emits('update:selectedSigns', newSigns);
 });
 
+watch(
+  examResults,
+  (newResults) => {
+    confirmGoBack.value = JSON.stringify(props.currentExamResults) !== JSON.stringify(newResults);
+  },
+  { deep: true }
+);
+
 function updateSelectedZone(zone: Zones) {
   console.log(zone);
   selectedZone.value = zone;
 }
+
 function handleAddExam() {
   if (!selectedZone.value || selectedSigns.value.length === 0) {
     return;
@@ -73,7 +83,7 @@ function handleEditExam(index: number) {
   examResults.value.splice(index, 1);
 }
 
-function handleValidation() {
+function handleOnValidation() {
   props.onValidation(examResults.value);
 }
 </script>
@@ -83,8 +93,9 @@ function handleValidation() {
     :title="modalTitle"
     validationLabel="Valider"
     :headerColor="Color.Orange"
-    :onValidation="handleValidation"
+    :onValidation="handleOnValidation"
     :onBack="props.onBack"
+    :confirmGoBack="confirmGoBack"
     width="800px"
   >
     <div class="flex w-full h-full gap-6">
@@ -266,6 +277,7 @@ function handleValidation() {
 .selected {
   background-color: rgb(241, 191, 109) !important;
 }
+
 .zone {
   border-radius: 9999px;
   position: absolute;
