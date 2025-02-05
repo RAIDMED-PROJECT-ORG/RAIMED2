@@ -46,6 +46,7 @@ const fetchExistingQuestions = async () => {
   }
 
   //2 - Les affiches (FRONT A FAIRE)
+  switchModalVisibility();
   //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
 };
 
@@ -152,7 +153,6 @@ const switchModalVisibility = () => {
         :color="Color.Grey"
         @click="fetchExistingQuestions"
         class="w-11/12 self-center drop-shadow-sm"
-        :on-click="switchModalVisibility"
       />
     </div>
 
