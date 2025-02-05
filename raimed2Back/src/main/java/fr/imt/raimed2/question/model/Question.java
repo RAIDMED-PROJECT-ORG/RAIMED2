@@ -3,7 +3,7 @@ package fr.imt.raimed2.question.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.rmi.server.UID;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,7 +29,7 @@ public class Question {
     private String answer;
 
     @Column(name = "teacher_id")
-    private Long teacherId;
+    private UUID teacherId;
 
     @Column(name = "is_mutual")
     private boolean isMutual;

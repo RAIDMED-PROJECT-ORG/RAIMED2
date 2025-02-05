@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class CreateQuestionDto {
@@ -20,7 +22,7 @@ public class CreateQuestionDto {
     @NotBlank(message = "Question answer is required")
     String answer;
 
-    Long teacherId;
+    UUID teacherId;
 
     @NotNull(message = "Question type is required")
     QuestionType type;

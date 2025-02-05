@@ -9,13 +9,11 @@ import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class QuestionService {
      * @param questionType The type of the question
      * @return The list of questions
      */
-    public List<Question> getAllQuestion(@Nullable QuestionType questionType, Long teacherId, boolean admin) {
+    public List<Question> getAllQuestion(@Nullable QuestionType questionType, UUID teacherId, boolean admin) {
         List<Question> questionsList;
 
         if (admin) return questionRepository.findAll();
@@ -53,14 +51,19 @@ public class QuestionService {
      * @return The created question
      */
     public Question createQuestion(CreateQuestionDto createQuestionDto) {
-        Question createQuestion = Question.builder()
-                .filter(createQuestionDto.getFilter())
-                .content(createQuestionDto.getContent())
-                .answer(createQuestionDto.getAnswer())
-                .teacherId(createQuestionDto.getTeacherId())
-                .type(createQuestionDto.getType())
-                .build();
-        return questionRepository.save(createQuestion);
+        try{
+            Question createQuestion = Question.builder()
+                    .filter(createQuestionDto.getFilter())
+                    .content(createQuestionDto.getContent())
+                    .answer(createQuestionDto.getAnswer())
+                    .teacherId(createQuestionDto.getTeacherId())
+                    .type(createQuestionDto.getType())
+                    .build();
+            return questionRepository.save(createQuestion);
+        }catch (DataIntegrityViolationException ex){
+            System.out.println("Question not saved because it already exists with content: " + createQuestionDto.getContent());
+            return null;
+        }
     }
 
     /**
