@@ -3,7 +3,7 @@ import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import QuestionListe from '@/components/modal/questionModal/QuestionListe.vue';
 import QuestionForm from '@/components/modal/questionModal/QuestionForm.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type { Question } from '@/models/question/question.model';
 
 const props = defineProps<{
@@ -12,9 +12,17 @@ const props = defineProps<{
   onBack: () => void;
 }>();
 
-const questions = ref<Question[]>(props.questions);
-
+const questions = ref<Question[]>([...props.questions]);
 const questionToUpdate = ref<Question | null>(null);
+const confirmGoBack = ref<boolean>(false);
+
+watch(
+  questions,
+  (newQuestions) => {
+    confirmGoBack.value = JSON.stringify(newQuestions) !== JSON.stringify(props.questions);
+  },
+  { deep: true }
+);
 
 const deleteQuestion = (id: string) => {
   questions.value = questions.value.filter((question) => question.id !== id);
@@ -36,7 +44,7 @@ const insertOrUpdateQuestion = (question: Question) => {
 
 const insertQuestions = (newQuestions: Question[]) => {
   questions.value.push(...newQuestions);
-}
+};
 
 const handleValidation = () => {
   props.onValidation(questions.value);
@@ -50,6 +58,7 @@ const handleValidation = () => {
     :onValidation="handleValidation"
     :headerColor="Color.Blue"
     :onBack="onBack"
+    :confirmGoBack="confirmGoBack"
   >
     <div class="w-[70vw] h-[60vh] flex px-10">
       <QuestionListe

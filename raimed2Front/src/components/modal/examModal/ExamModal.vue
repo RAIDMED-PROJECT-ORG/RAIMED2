@@ -23,7 +23,7 @@ const emits = defineEmits<{
 const examResults = ref<ExamResults[]>([...props.currentExamResults]);
 const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
-const switchConfirmGoBackModalVisibility = ref(false);
+const confirmGoBack = ref<boolean>(false);
 
 const iconEdit = faPen;
 const iconDelete = faTrashCan;
@@ -36,10 +36,19 @@ watch(selectedSigns, (newSigns) => {
   emits('update:selectedSigns', newSigns);
 });
 
+watch(
+  examResults,
+  (newResults) => {
+    confirmGoBack.value = JSON.stringify(props.currentExamResults) !== JSON.stringify(newResults);
+  },
+  { deep: true }
+);
+
 function updateSelectedZone(zone: Zones) {
   console.log(zone);
   selectedZone.value = zone;
 }
+
 function handleAddExam() {
   if (!selectedZone.value || selectedSigns.value.length === 0) {
     return;
@@ -77,24 +86,6 @@ function handleEditExam(index: number) {
 function handleOnValidation() {
   props.onValidation(examResults.value);
 }
-
-function handleOnBack() {
-  if (JSON.stringify(props.currentExamResults) !== JSON.stringify(examResults.value)) {
-    switchConfirmGoBackModalVisibility.value = true;
-    return;
-  }
-
-  props.onBack();
-}
-
-function handleGoBackValidation() {
-  switchConfirmGoBackModalVisibility.value = false;
-  props.onBack();
-}
-
-function handleGoBackCancel() {
-  switchConfirmGoBackModalVisibility.value = false;
-}
 </script>
 
 <template>
@@ -103,7 +94,8 @@ function handleGoBackCancel() {
     validationLabel="Valider"
     :headerColor="Color.Orange"
     :onValidation="handleOnValidation"
-    :onBack="handleOnBack"
+    :onBack="props.onBack"
+    :confirmGoBack="confirmGoBack"
     width="800px"
   >
     <div class="flex w-full h-full gap-6">
@@ -279,23 +271,13 @@ function handleGoBackCancel() {
       </div>
     </div>
   </GenericModal>
-  <GenericModal
-    v-if="switchConfirmGoBackModalVisibility.valueOf()"
-    title="Annulation"
-    :headerColor="Color.Orange"
-    validationLabel="Confirmer"
-    :onValidation="handleGoBackValidation"
-    :onBack="handleGoBackCancel"
-  >
-    <p class="mx-5 text-base">Des modifications n'ont pas été sauvegardés.</p>
-    <p class="text-base text-center">Êtes-vous sûr de vouloir annuler ?</p>
-  </GenericModal>
 </template>
 
 <style scoped>
 .selected {
   background-color: rgb(241, 191, 109) !important;
 }
+
 .zone {
   border-radius: 9999px;
   position: absolute;
