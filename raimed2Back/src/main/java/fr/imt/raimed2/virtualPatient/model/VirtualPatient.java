@@ -1,5 +1,6 @@
 package fr.imt.raimed2.virtualPatient.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.imt.raimed2.action.model.Action;
 import fr.imt.raimed2.diagnostic.model.Diagnostic;
 import fr.imt.raimed2.user.model.User;
@@ -36,12 +37,15 @@ public class VirtualPatient {
     private Date createdAt;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "created_by")
     private User createdBy;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Action> actions;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Diagnostic> diagnostics;
 
