@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { faCirclePlus, faSearch, faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { Color } from '@/models/new-patient/color.model';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
-import {
-  QuestionFilter, QuestionFilterDisplayNames
-} from '@/models/question/questionFilter.enum';
+import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
 import type { Question } from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
-import {useQuestionStore} from '@/stores/questions.store';
+import { useQuestionStore } from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
 import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
@@ -33,12 +29,12 @@ const props = defineProps<{
 const authStore = useAuthStore();
 const questionStore = useQuestionStore();
 
-const questionTypeOptions = Object.values(QuestionType).map(value => ({
+const questionTypeOptions = Object.values(QuestionType).map((value) => ({
   value,
   label: QuestionTypeDisplayNames[value as QuestionType]
 }));
 
-const genderOptions = Object.values(QuestionFilter).map(value => ({
+const genderOptions = Object.values(QuestionFilter).map((value) => ({
   value,
   label: QuestionFilterDisplayNames[value as QuestionFilter]
 }));
@@ -51,8 +47,8 @@ const emits = defineEmits<{
 const fetchExistingQuestions = async () => {
   //TODO
   //1 - Fetch les questions depuis le back
-  const teacherId = (authStore.getUserRole === Role.TEACHER) ? authStore.getUserInfo.id : null;
-  const questions : Question[]  = await questionStore.fetchExistingQuestions(teacherId);
+  const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
+  const questions: Question[] = await questionStore.fetchExistingQuestions(teacherId);
   for (const question of questions) {
     console.log(question);
   }
@@ -62,8 +58,7 @@ const fetchExistingQuestions = async () => {
   //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
 };
 
-const submitForm = (event: SubmitEvent) => {
-  event.preventDefault();
+const submitForm = () => {
   authStore.initialize();
 
   let teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
@@ -113,10 +108,7 @@ const switchModalVisibility = () => {
     <div class="flex justify-between">
       <div class="w-[45%]">
         <IconLabel for="type" :icon="faSliders" text="Type*" />
-        <ClassicSelector
-          :options="questionTypeOptions"
-          v-model="typeValue"
-        />
+        <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
       </div>
 
       <div class="w-[45%]">
@@ -124,18 +116,21 @@ const switchModalVisibility = () => {
         <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
       </div>
     </div>
-
-    <div class="flex flex-col items-center">
-      <h3 class="text-black font-bold text-xl mb-3">Importer une question</h3>
-      <ActionButton
-        label="Parcourir les questions existantes"
-        :icon="faSearch"
-        :color="Color.Grey"
-        @click="fetchExistingQuestions"
-        class="w-11/12 self-center drop-shadow-sm"
+    <div class="form-group">
+      <label for="question" class="font-bold">
+        <FontAwesomeIcon :icon="faCircleQuestion" class="icon" />
+        Question*
+      </label>
+      <input
+        type="text"
+        id="question"
+        class="select-input"
+        placeholder="Insérer la question à ajouter..."
+        v-model="questionValue"
+        aria-label="Texte de la question"
+        required
       />
     </div>
-
     <div class="form-group">
       <IconLabel for="answer" :icon="faMessage" text="Réponse*" />
       <input
