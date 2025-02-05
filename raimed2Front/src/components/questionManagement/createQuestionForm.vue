@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import { QuestionType } from '@/models/question/questionType.enum';
 import {
-  getQuestionFilterDisplayName,
   QuestionFilter
 } from '@/models/question/questionFilter.enum';
 import type { CreateQuestionDto } from '@/models/question/createQuestion.dto';
@@ -62,7 +61,7 @@ const handleOnCreateQuestion = (event: Event) => {
         v-bind:key="`${filter}`"
         :value="filter"
       >
-        {{ getQuestionFilterDisplayName(filter) }}
+        {{ QuestionFilterDisplayName[filter] }}
       </option>
     </select>
     <button type="submit" class="btn btn-success" :disabled="props.isLoading">

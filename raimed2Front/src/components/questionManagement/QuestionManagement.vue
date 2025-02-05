@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import type { Question } from '@/models/question/question.model';
 import type { QuestionType } from '@/models/question/questionType.enum';
 import {
-  getQuestionFilterDisplayName,
   QuestionFilter
 } from '@/models/question/questionFilter.enum';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -106,11 +105,11 @@ const handleOnUpdateQuestion = () => {
                   v-bind:key="`${filter}`"
                   :value="filter"
                 >
-                  {{ getQuestionFilterDisplayName(filter) }}
+                  {{ QuestionFilterDisplayNames[filter] }}
                 </option>
               </select>
             </template>
-            <template v-else>{{ getQuestionFilterDisplayName(question.filter) }}</template>
+            <template v-else>{{ QuestionFilterDisplayNames[question.filter] }}</template>
           </td>
           <td class="text-center">
             <button

@@ -5,10 +5,9 @@ import { Color } from '@/models/new-patient/color.model';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { ref, watch } from 'vue';
-import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
+import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 import {
-  getQuestionFilterDisplayName,
-  QuestionFilter
+  QuestionFilter, QuestionFilterDisplayNames
 } from '@/models/question/questionFilter.enum';
 import type { Question } from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +15,9 @@ import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
 import {useQuestionStore} from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
+import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
+import IconLabel from '@/components/iconLabel/IconLabel.vue';
+import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -30,6 +32,16 @@ const props = defineProps<{
 
 const authStore = useAuthStore();
 const questionStore = useQuestionStore();
+
+const questionTypeOptions = Object.values(QuestionType).map(value => ({
+  value,
+  label: QuestionTypeDisplayNames[value as QuestionType]
+}));
+
+const genderOptions = Object.values(QuestionFilter).map(value => ({
+  value,
+  label: QuestionFilterDisplayNames[value as QuestionFilter]
+}));
 
 const emits = defineEmits<{
   (e: 'addQuestion', question: Question): void;
@@ -100,48 +112,16 @@ const switchModalVisibility = () => {
   >
     <div class="flex justify-between">
       <div class="w-[45%]">
-        <label for="type" class="font-bold">
-          <FontAwesomeIcon :icon="faSliders" class="icon-rotate" />
-          Type*
-        </label>
-        <select
-          id="type"
-          class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
+        <IconLabel for="type" :icon="faSliders" text="Type*" />
+        <ClassicSelector
+          :options="questionTypeOptions"
           v-model="typeValue"
-          aria-label="Type de question"
-          required
-        >
-          <option :value="QuestionType.OPENED">
-            {{ getQuestionTypeDisplayName(QuestionType.OPENED) }}
-          </option>
-          <option :value="QuestionType.CLOSED">
-            {{ getQuestionTypeDisplayName(QuestionType.CLOSED) }}
-          </option>
-        </select>
+        />
       </div>
 
       <div class="w-[45%]">
-        <label for="gender" class="font-bold">
-          <FontAwesomeIcon :icon="faVenusMars" class="icon" />
-          Genre*
-        </label>
-        <select
-          id="gender"
-          class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
-          v-model="genderValue"
-          aria-label="Genre concerné"
-          required
-        >
-          <option :value="QuestionFilter.MIXED">
-            {{ getQuestionFilterDisplayName(QuestionFilter.MIXED) }}
-          </option>
-          <option :value="QuestionFilter.FEMALE">
-            {{ getQuestionFilterDisplayName(QuestionFilter.FEMALE) }}
-          </option>
-          <option :value="QuestionFilter.MALE">
-            {{ getQuestionFilterDisplayName(QuestionFilter.MIXED) }}
-          </option>
-        </select>
+        <IconLabel for="gender" :icon="faVenusMars" text="Genre*" />
+        <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
       </div>
     </div>
 
@@ -157,10 +137,7 @@ const switchModalVisibility = () => {
     </div>
 
     <div class="form-group">
-      <label for="answer" class="font-bold">
-        <FontAwesomeIcon :icon="faMessage" class="icon" />
-        Réponse*
-      </label>
+      <IconLabel for="answer" :icon="faMessage" text="Réponse*" />
       <input
         v-if="typeValue === QuestionType.OPENED"
         type="text"
@@ -197,5 +174,10 @@ const switchModalVisibility = () => {
   border: 1px solid #d6d6d6;
   border-radius: 8px;
   padding: 0.5rem;
+}
+
+.select-input:focus {
+  outline: none;
+  border: 2px solid #d6d6d6;
 }
 </style>
