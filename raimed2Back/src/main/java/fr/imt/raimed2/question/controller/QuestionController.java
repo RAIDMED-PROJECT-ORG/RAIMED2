@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/question")
@@ -21,18 +22,25 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestion() {
-        return ResponseEntity.ok().body(questionService.getAllQuestion(null));
+    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId) {
+        if (teacherId == null) return ResponseEntity.ok().body(questionService.getAllQuestion(null, null, true));
+        else return ResponseEntity.ok().body(questionService.getAllQuestion(null, teacherId, false));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @PostMapping
     public ResponseEntity<Question> createQuestion(@Valid @RequestBody CreateQuestionDto createQuestionDto) {
         return ResponseEntity
                 .created(URI.create("/api/v1/question"))
                 .body(this.questionService.createQuestion(createQuestionDto));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
+    @PostMapping("/multiples")
+    public ResponseEntity<List<Question>> createMultipleQuestions(@Valid @RequestBody List<CreateQuestionDto> createQuestionDtos) {
+        return ResponseEntity.created(URI.create("/api/v1/question/multiples")).body(this.questionService.createMultipleQuestions(createQuestionDtos));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

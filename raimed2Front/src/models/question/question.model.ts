@@ -8,7 +8,7 @@ export interface Question {
   filter: QuestionFilter;
   isMutual: boolean;
   answer?: string;
-  teacherId?: string;
+  teacherId?: string | null;
 }
 
 export const getFakeQuestions = (): Question[] => {

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faSearch, faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
+import { Color } from '@/models/new-patient/color.model';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { ref, watch } from 'vue';
 import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
 import {
@@ -10,8 +12,10 @@ import {
 } from '@/models/question/questionFilter.enum';
 import type { Question } from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
+import { useAuthStore } from '@/stores/auth.store';
+import { Role } from '@/models/auth/role.enum';
+import {useQuestionStore} from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
-import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -24,17 +28,40 @@ const props = defineProps<{
   questions: Question[];
 }>();
 
+const authStore = useAuthStore();
+const questionStore = useQuestionStore();
+
 const emits = defineEmits<{
   (e: 'addQuestion', question: Question): void;
   (e: 'addQuestions', question: Question[]): void;
 }>();
 
-const submitForm = () => {
+const fetchExistingQuestions = async () => {
+  //TODO
+  //1 - Fetch les questions depuis le back
+  const teacherId = (authStore.getUserRole === Role.TEACHER) ? authStore.getUserInfo.id : null;
+  const questions : Question[]  = await questionStore.fetchExistingQuestions(teacherId);
+  for (const question of questions) {
+    console.log(question);
+  }
+
+  //2 - Les affiches (FRONT A FAIRE)
+  switchModalVisibility();
+  //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
+};
+
+const submitForm = (event: SubmitEvent) => {
+  event.preventDefault();
+  authStore.initialize();
+
+  let teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
+
   emits('addQuestion', {
     id: props.questionToUpdate ? props.questionToUpdate.id : uuidv4(),
     content: questionValue.value,
     answer: answerValue.value,
     type: typeValue.value,
+    teacherId: teacherId,
     filter: genderValue.value,
     isMutual: false
   });
@@ -118,19 +145,14 @@ const switchModalVisibility = () => {
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="question" class="font-bold">
-        <FontAwesomeIcon :icon="faCircleQuestion" class="icon" />
-        Question*
-      </label>
-      <input
-        type="text"
-        id="question"
-        class="select-input"
-        placeholder="Insérer la question à ajouter..."
-        v-model="questionValue"
-        aria-label="Texte de la question"
-        required
+    <div class="flex flex-col items-center">
+      <h3 class="text-black font-bold text-xl mb-3">Importer une question</h3>
+      <ActionButton
+        label="Parcourir les questions existantes"
+        :icon="faSearch"
+        :color="Color.Grey"
+        @click="fetchExistingQuestions"
+        class="w-11/12 self-center drop-shadow-sm"
       />
     </div>
 

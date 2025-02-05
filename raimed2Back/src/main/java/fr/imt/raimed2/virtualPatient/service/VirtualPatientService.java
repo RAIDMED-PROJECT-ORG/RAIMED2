@@ -41,7 +41,6 @@ public class VirtualPatientService {
         VirtualPatient saved = virtualPatientRepository.save(virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML));
 
         for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
-
             if(actionDTO.getActionClosedQuestionDTO() != null) {
                 actionService.saveActionClosedQuestion(saved, actionDTO);
             }

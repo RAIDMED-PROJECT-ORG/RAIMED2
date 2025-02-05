@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,4 +16,8 @@ public class QuestionLinkedDTO implements Serializable {
     private String filter;
     @JacksonXmlProperty
     private String content;
+    @JacksonXmlProperty
+    private UUID teacherId;
+    @JacksonXmlProperty
+    private boolean isMutual;
 }

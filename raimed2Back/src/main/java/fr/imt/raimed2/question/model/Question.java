@@ -3,6 +3,8 @@ package fr.imt.raimed2.question.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Builder
@@ -22,6 +24,15 @@ public class Question {
 
     @Column(name = "content", nullable = false, unique = true)
     private String content;
+
+    @Column(name = "answer")
+    private String answer;
+
+    @Column(name = "teacher_id")
+    private UUID teacherId;
+
+    @Column(name = "is_mutual")
+    private boolean isMutual;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "filter", nullable = false)
