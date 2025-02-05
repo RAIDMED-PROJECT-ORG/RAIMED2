@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByIsMutualTrue();
 
+    List<Question> findAllByType(QuestionType type);
+
     List<Question> findAllByIsMutualTrueAndType(QuestionType type);
 
     List<Question> findAllByTeacherId(UUID teacherId);

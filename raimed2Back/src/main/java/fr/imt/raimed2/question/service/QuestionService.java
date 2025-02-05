@@ -24,6 +24,13 @@ public class QuestionService {
     private final QuestionLinkedMapper questionLinkedMapper;
     private final ActionDtoMapper actionDtoMapper;
 
+    public List<Question> getAllQuestion(@Nullable QuestionType questionType) {
+        if (questionType == null) {
+            return questionRepository.findAll();
+        }
+        return questionRepository.findAllByType(questionType);
+    }
+
     /**
      * Get all the questions
      * @param questionType The type of the question
@@ -107,23 +114,22 @@ public class QuestionService {
      * @param actionClosedQuestionsDTO The DTO object corresponding to the question
      * @return The question saved
      */
-    public Question save(CreateQuestionDto questionLinkedDTO){
+    public Question save(QuestionLinkedDTO questionLinkedDTO){
         // If QuestionLinked already exist in the question then we don't create it, we reuse it
-        List<Question> questions = this.getAllQuestion(null, questionLinkedDTO.getTeacherId(), false);
+        List<Question> questions = this.getAllQuestion(null);
 
         boolean isAlreadyInTheQuestions = questions.stream().anyMatch(n -> n.getContent().equals(questionLinkedDTO.getContent()));
         Question questionToSave = null;
 
-        //TODO
-//        if (!isAlreadyInTheQuestions){
-//            questionToSave = questionRepository.save(questionLinkedMapper.questionLinkedDtoToQuestion(questionLinkedDTO));
-//        }else {
+        if (!isAlreadyInTheQuestions){
+            questionToSave = questionRepository.save(questionLinkedMapper.questionLinkedDtoToQuestion(questionLinkedDTO));
+        }else {
             // We have to link the existing question to the new ActionClosedQuestion
             Optional<Question> questionAlreadyExisting = questions.stream().filter(n -> n.getContent().equals(questionLinkedDTO.getContent())).findFirst();
             if(questionAlreadyExisting.isPresent()){
                 questionToSave = questionAlreadyExisting.get();
             }
-//        }
+        }
         return questionToSave;
     }
 

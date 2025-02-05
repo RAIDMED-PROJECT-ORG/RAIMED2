@@ -113,7 +113,6 @@ class QuestionServiceTest {
         verify(questionRepository, times(1)).deleteById(id);
     }
 
-    /* TODO
     @Test
     void save() {
         QuestionLinkedDTO questionLinkedDTO = new QuestionLinkedDTO();
@@ -144,5 +143,4 @@ class QuestionServiceTest {
         assertEquals(existingQuestion, result);
         verify(questionRepository, never()).save(any(Question.class));
     }
-    */
 }

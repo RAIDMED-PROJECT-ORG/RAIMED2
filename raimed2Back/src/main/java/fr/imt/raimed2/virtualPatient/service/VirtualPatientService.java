@@ -41,18 +41,17 @@ public class VirtualPatientService {
         VirtualPatient saved = virtualPatientRepository.save(virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML));
 
         for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
-                //TODO
-//            if(actionDTO.getActionClosedQuestionDTO() != null) {
-//                actionService.saveActionClosedQuestion(saved, actionDTO);
-//            }
+            if(actionDTO.getActionClosedQuestionDTO() != null) {
+                actionService.saveActionClosedQuestion(saved, actionDTO);
+            }
 
             if(actionDTO.getActionSpontaneousPatientSpeech() != null){
                 actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
             }
-            //TODO
-//            if(actionDTO.getActionOpenedQuestionDTO() != null){
-//                actionService.saveActionOpenedQuestion(saved, actionDTO);
-//            }
+
+            if(actionDTO.getActionOpenedQuestionDTO() != null){
+                actionService.saveActionOpenedQuestion(saved, actionDTO);
+            }
 
         }
     }
