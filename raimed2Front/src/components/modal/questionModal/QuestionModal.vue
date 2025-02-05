@@ -16,8 +16,7 @@ const props = defineProps<{
 const questions = ref<Question[]>(props.questions);
 
 const questionsStore = useQuestionStore();
-
-const questionToUpdate = ref<Question>();
+const questionToUpdate = ref<Question | null>(null);
 
 const deleteQuestion = (id: string) => {
   questions.value = questions.value.filter((question) => question.id !== id);
@@ -37,8 +36,12 @@ const insertOrUpdateQuestion = (question: Question) => {
   }
 };
 
-const handleValidation = async () => {
-  await questionsStore.addQuestions(questions.value);
+const insertQuestions = (newQuestions: Question[]) => {
+  questions.value.push(...newQuestions);
+}
+
+const handleValidation = () => {
+  props.onValidation(questions.value);
 };
 </script>
 

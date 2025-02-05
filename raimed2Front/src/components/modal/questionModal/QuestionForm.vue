@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
 import {useQuestionStore} from '@/stores/questions.store';
+import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
