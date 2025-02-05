@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {faCirclePlus, faSearch, faSliders, faVenusMars} from '@fortawesome/free-solid-svg-icons';
-import {faCircleQuestion, faMessage} from '@fortawesome/free-regular-svg-icons';
-import {Color} from '@/models/new-patient/color.model';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import { faCirclePlus, faSearch, faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
+import { Color } from '@/models/new-patient/color.model';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { ref, watch } from 'vue';
 import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
