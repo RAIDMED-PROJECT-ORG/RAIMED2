@@ -53,6 +53,10 @@ public class VirtualPatientService {
                 actionService.saveActionOpenedQuestion(saved, actionDTO);
             }
 
+            // Prescriptions
+            if(actionDTO.getActionPrescription() != null){
+                actionService.saveActionPrescription(saved, actionDTO);
+            }
         }
     }
 }
