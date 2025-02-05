@@ -72,9 +72,9 @@ const addQuestions = () => {
     :onValidation="addQuestions"
     :onBack="() => emits('switchModalVisibility', false)"
   >
-    <div class="max-h-[60vh] flex flex-col py-5 px-10">
+    <div class="w-[70vw] h-[60vh] flex flex-col justify-start px-10">
       <QuestionListModalHeader v-model="filters" />
-      <div class="my-5 flex-grow border-t border-light-grey"></div>
+      <div class="my-5 border-t border-light-grey"></div>
       <div class="pr-5 overflow-scroll">
         <div class="flex justify-between border-b border-1 border-[#9CA3AF] text-black font-bold">
           <h4 class="w-8/12">Questions</h4>

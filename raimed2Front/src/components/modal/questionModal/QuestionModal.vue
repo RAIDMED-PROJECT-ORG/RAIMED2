@@ -51,7 +51,7 @@ const handleValidation = () => {
     :headerColor="Color.Blue"
     :onBack="onBack"
   >
-    <div class="max-h-[60vh] flex py-5 px-10">
+    <div class="w-[70vw] h-[60vh] flex px-10">
       <QuestionListe
         :questions="questions"
         @delete-question="deleteQuestion"
