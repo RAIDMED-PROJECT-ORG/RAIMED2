@@ -55,7 +55,7 @@ const handleValidation = () => {
     :confirmGoBack="confirmGoBack"
   >
     <div class="w-[70vw] h-[60vh] flex px-10">
-      <QuestionListe
+      <QuestionList
         :questions="questions"
         @delete-question="deleteQuestion"
         @update-question="updateQuestion"

@@ -32,6 +32,8 @@ import {
 import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
+import type { Listen } from '@/models/listen/listen.model';
 
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
@@ -42,6 +44,7 @@ const isInspectionModalOpen = ref(false);
 const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
+const isListenModalOpen = ref(false);
 
 function handleSubmit() {
   errors.value = [];
@@ -123,6 +126,15 @@ function onQuestionValidation(data: Question[]) {
 function switchQuestionModalVisibility() {
   isQuestionModalOpen.value = !isQuestionModalOpen.value;
 }
+
+function switchListenModalVisibility() {
+  isListenModalOpen.value = !isListenModalOpen.value;
+}
+
+function onListenValidation(data: Listen[]) {
+  isListenModalOpen.value = false;
+  newPatient.value.listen = data;
+}
 </script>
 
 <template>
@@ -170,12 +182,17 @@ function switchQuestionModalVisibility() {
       :modalTitle="'Auscultation'"
       :currentExamResults="newPatient.auscultation"
     />
-
     <QuestionModal
       v-if="isQuestionModalOpen"
       :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
+    />
+    <ListenModal
+      v-if="isListenModalOpen"
+      :listens="newPatient.listen ?? []"
+      :onValidation="onListenValidation"
+      :onBack="switchListenModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
@@ -192,7 +209,12 @@ function switchQuestionModalVisibility() {
             :icon="faPerson"
             :onClick="switchCharacteristicModalVisibility"
           />
-          <ActionButton label="Écouter" :color="Color.Blue" :icon="faEarListen" />
+          <ActionButton
+            label="Écouter"
+            :color="Color.Blue"
+            :icon="faEarListen"
+            :onClick="switchListenModalVisibility"
+          />
           <ActionButton
             label="Question"
             :color="Color.Blue"

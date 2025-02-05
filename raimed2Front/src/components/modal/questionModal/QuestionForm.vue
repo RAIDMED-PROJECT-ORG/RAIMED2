@@ -138,7 +138,7 @@ watch(typeValue, (newType) => {
       <input
         type="text"
         id="question"
-        class="select-input"
+        class="text-input"
         placeholder="Insérer la question à ajouter..."
         v-model="questionValue"
         aria-label="Texte de la question"
@@ -151,7 +151,7 @@ watch(typeValue, (newType) => {
         v-if="typeValue === QuestionType.OPENED"
         type="text"
         id="answer"
-        class="select-input"
+        class="text-input"
         placeholder="Insérer la réponse..."
         v-model="answerValue"
         aria-label="Texte de la réponse"
