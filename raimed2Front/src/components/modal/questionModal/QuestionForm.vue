@@ -5,7 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
-import type { Question } from '@/models/question/question.model';
+import {
+  ClosedQuestionAnswer,
+  ClosedQuestionAnswerDisplayNames,
+  type Question
+} from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
@@ -37,6 +41,11 @@ const questionTypeOptions = Object.values(QuestionType).map((value) => ({
 const genderOptions = Object.values(QuestionFilter).map((value) => ({
   value,
   label: QuestionFilterDisplayNames[value as QuestionFilter]
+}));
+
+const closedQuestionOptions = Object.values(ClosedQuestionAnswer).map((value) => ({
+  value,
+  label: ClosedQuestionAnswerDisplayNames[value as ClosedQuestionAnswer]
 }));
 
 const emits = defineEmits<{
@@ -79,6 +88,10 @@ const submitForm = () => {
   genderValue.value = QuestionFilter.MIXED;
 };
 
+const switchModalVisibility = () => {
+  isModalOpen.value = !isModalOpen.value;
+};
+
 watch(
   () => props.questionToUpdate,
   (questionToUpdate) => {
@@ -91,9 +104,14 @@ watch(
   }
 );
 
-const switchModalVisibility = () => {
-  isModalOpen.value = !isModalOpen.value;
-};
+watch(typeValue, (newType) => {
+  if (newType === QuestionType.CLOSED) {
+    answerValue.value = ClosedQuestionAnswer.YES;
+  } else {
+    answerValue.value = '';
+  }
+});
+
 </script>
 
 <template>
@@ -105,22 +123,18 @@ const switchModalVisibility = () => {
     @onsubmit="() => submitForm()"
     @open-modal="() => switchModalVisibility()"
   >
-    <div class="flex justify-between">
-      <div class="w-[45%]">
+    <div class="flex gap-2 flex-wrap">
+      <div>
         <IconLabel for="type" :icon="faSliders" text="Type*" />
         <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
       </div>
-
-      <div class="w-[45%]">
+      <div>
         <IconLabel for="gender" :icon="faVenusMars" text="Genre*" />
         <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
       </div>
     </div>
     <div class="form-group">
-      <label for="question" class="font-bold">
-        <FontAwesomeIcon :icon="faCircleQuestion" class="icon" />
-        Question*
-      </label>
+      <IconLabel for="question" :icon="faCircleQuestion" text="Question*" />
       <input
         type="text"
         id="question"
@@ -143,16 +157,12 @@ const switchModalVisibility = () => {
         aria-label="Texte de la réponse"
         required
       />
-      <select
-        v-else
+      <ClassicSelector
+        v-if="typeValue === QuestionType.CLOSED"
         id="answer"
-        class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
+        :options="closedQuestionOptions"
         v-model="answerValue"
-        required
-      >
-        <option value="Oui">Oui</option>
-        <option value="Non">Non</option>
-      </select>
+      />
     </div>
   </GenericForm>
   <QuestionListModal

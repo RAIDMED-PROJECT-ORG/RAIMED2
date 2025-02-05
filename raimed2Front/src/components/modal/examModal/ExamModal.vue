@@ -3,11 +3,10 @@ import { ref, watch } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import MultipleSelector from '@/components/multipleSelector/MultipleSelector.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { Color } from '@/models/new-patient/color.model';
 import { Zones, type ExamResults, ZoneDisplayNames } from '@/models/diagnostic/exam.model';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
-import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const props = defineProps<{
   onValidation: (examResults: ExamResults[]) => void;
@@ -26,8 +25,6 @@ const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
 const confirmGoBack = ref<boolean>(false);
 
-const iconEdit = faPen;
-const iconDelete = faTrashCan;
 const zoneOptions = Object.values(Zones).map((value) => ({
   value,
   label: ZoneDisplayNames[value as Zones]
@@ -241,13 +238,13 @@ function handleOnValidation() {
       </div>
 
       <div class="w-1/2 flex flex-col">
-        <h2 class="text-lg font-semibold mb-4">Récapitulatif des résultats</h2>
+        <h2 class="text-lg font-semibold mb-4 text-center">Récapitulatif des résultats</h2>
         <table class="w-[350px] border-collapse">
           <thead>
             <tr class="border-b border-gray-300">
-              <th class="text-left py-2 w-1/4">Zone</th>
-              <th class="text-left py-2 w-1/2">{{ modalTitle }}</th>
-              <th class="text-center py-2 w-1/4">Actions</th>
+              <th class="text-left py-2 w-1/4 font-bold">Zone</th>
+              <th class="text-left py-2 w-1/2 font-bold">{{ modalTitle }}</th>
+              <th class="text-center py-2 w-1/4 font-bold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -256,14 +253,14 @@ function handleOnValidation() {
               <td class="py-3 px-2">{{ item.signs.join(', ') }}</td>
               <td class="py-3 px-2 flex justify-center gap-2">
                 <ActionButton
-                  :icon="iconEdit"
+                  :icon="faPenToSquare"
                   :color="Color.Grey"
                   iconOnly
                   size="small"
                   @click="handleEditExam(index)"
                 />
                 <ActionButton
-                  :icon="iconDelete"
+                  :icon="faTrashCan"
                   :color="Color.Grey"
                   iconOnly
                   size="small"
