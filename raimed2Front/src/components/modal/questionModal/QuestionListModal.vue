@@ -70,7 +70,11 @@ const addQuestions = () => {
 
 onMounted(async () => {
   const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
-  allQuestions.value = await questionStore.fetchExistingQuestions(teacherId);
+  allQuestions.value = await questionStore.fetchExistingQuestions(
+    teacherId,
+    null,
+    QuestionFilter.MIXED
+  );
 });
 </script>
 
