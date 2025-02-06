@@ -1,13 +1,15 @@
+import { Gender, GenderDisplayNames } from '@/models/virtual-patient/gender.enum';
+
 export enum QuestionFilter {
   MIXED = 'MIXED',
-  MALE = 'MALE',
-  FEMALE = 'FEMALE'
+  MALE = Gender.MALE,
+  FEMALE = Gender.FEMALE
 }
 
 export const QuestionFilterDisplayNames: Record<QuestionFilter, string> = {
   [QuestionFilter.MIXED]: 'Mixte',
-  [QuestionFilter.MALE]: 'Homme',
-  [QuestionFilter.FEMALE]: 'Femme'
+  [QuestionFilter.MALE]: GenderDisplayNames[QuestionFilter.MALE],
+  [QuestionFilter.FEMALE]: GenderDisplayNames[QuestionFilter.FEMALE]
 };
 
 export const getQuestionFilterByFirstLetter = (filter: string) => {

@@ -22,7 +22,7 @@ const model = defineModel<{
       <input
         type="text"
         id="question-search"
-        class="w-[80%] border border-gray-300 rounded-lg p-2"
+        class="text-input"
         placeholder="Insérer le nom..."
         aria-label="Nom de la question à chercher"
         v-model="model.nameFilter"

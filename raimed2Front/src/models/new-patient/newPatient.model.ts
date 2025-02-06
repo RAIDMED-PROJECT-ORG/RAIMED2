@@ -4,6 +4,7 @@ import type { ExamResults } from '@/models/diagnostic/exam.model';
 import { v4 as uuidv4 } from 'uuid';
 import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
+import type { Listen } from '@/models/listen/listen.model';
 
 export interface NewPatient {
   characteristic: Characteristics | null;
@@ -12,6 +13,7 @@ export interface NewPatient {
   palpation: ExamResults[];
   percussion: ExamResults[];
   auscultation: ExamResults[];
+  listen: Listen[];
 }
 
 export const initializeNewPatient = (): NewPatient => {
@@ -46,6 +48,20 @@ export const initializeNewPatient = (): NewPatient => {
         filter: QuestionFilter.MALE,
         isMutual: false
       }
-    ]
+    ],
+    listen: [
+      {
+        id: uuidv4(),
+        content: 'Je ne me sens pas bien',
+      },
+      {
+        id: uuidv4(),
+        content: 'J\'ai mal à la tête',
+      },
+      {
+        id: uuidv4(),
+        content: 'Je suis fatigué',
+      },
+    ],
   };
 };
