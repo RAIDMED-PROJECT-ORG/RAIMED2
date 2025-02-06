@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import QuestionListe from '@/components/modal/questionModal/QuestionListe.vue';
+import QuestionListe from '@/components/modal/questionModal/QuestionList.vue';
 import QuestionForm from '@/components/modal/questionModal/QuestionForm.vue';
 import { ref, watch } from 'vue';
 import type { Question } from '@/models/question/question.model';

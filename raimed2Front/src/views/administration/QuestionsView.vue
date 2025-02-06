@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { useMutation } from '@tanstack/vue-query';
 import axiosInstance from '@/service/httpClient/axios.config';
 import type { Question } from '@/models/question/question.model';
-import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
+import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 import type { CreateQuestionDto } from '@/models/question/createQuestion.dto';
 import type { UpdateQuestionDto } from '@/models/question/updateQuestion.dto';
 import AuthenticatedViewLayout from '@/layouts/AuthenticatedViewLayout.vue';
@@ -87,7 +87,7 @@ const isLoaderDisplayed = computed<boolean>(
           :class="`tab ${tab === activeTab && 'tab-active'}`"
           @click="handleOnChangeTab(tab)"
         >
-          {{ getQuestionTypeDisplayName(tab) }}
+          {{ QuestionTypeDisplayNames[tab] }}
         </a>
       </div>
       <!-- Question management list -->

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
-  getQuestionFilterDisplayName,
-  QuestionFilter
+  QuestionFilter, QuestionFilterDisplayNames
 } from '@/models/question/questionFilter.enum';
+import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
 
 const model = defineModel<{
   nameFilter: string;
@@ -38,13 +38,13 @@ const model = defineModel<{
       >
         <option :value="null"></option>
         <option :value="QuestionFilter.MIXED">
-          {{ getQuestionFilterDisplayName(QuestionFilter.MIXED) }}
+          {{ QuestionFilterDisplayNames[QuestionFilter.MIXED] }}
         </option>
         <option :value="QuestionFilter.FEMALE">
-          {{ getQuestionFilterDisplayName(QuestionFilter.FEMALE) }}
+          {{ QuestionFilterDisplayNames[QuestionFilter.FEMALE] }}
         </option>
         <option :value="QuestionFilter.MALE">
-          {{ getQuestionFilterDisplayName(QuestionFilter.MALE) }}
+          {{ QuestionFilterDisplayNames[QuestionFilter.MALE] }}
         </option>
       </select>
     </span>

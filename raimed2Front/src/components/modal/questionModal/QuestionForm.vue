@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { faCirclePlus, faSearch, faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { Color } from '@/models/new-patient/color.model';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import ActionButton from '@/components/actionButton/ActionButton.vue';
 import { ref, watch } from 'vue';
-import { getQuestionTypeDisplayName, QuestionType } from '@/models/question/questionType.enum';
+import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
+import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
 import {
-  getQuestionFilterDisplayName,
-  QuestionFilter
-} from '@/models/question/questionFilter.enum';
-import type { Question } from '@/models/question/question.model';
+  ClosedQuestionAnswer,
+  ClosedQuestionAnswerDisplayNames,
+  type Question
+} from '@/models/question/question.model';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
-import {useQuestionStore} from '@/stores/questions.store';
+import { useQuestionStore } from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
+import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
+import IconLabel from '@/components/iconLabel/IconLabel.vue';
+import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -31,6 +33,21 @@ const props = defineProps<{
 const authStore = useAuthStore();
 const questionStore = useQuestionStore();
 
+const questionTypeOptions = Object.values(QuestionType).map((value) => ({
+  value,
+  label: QuestionTypeDisplayNames[value as QuestionType]
+}));
+
+const genderOptions = Object.values(QuestionFilter).map((value) => ({
+  value,
+  label: QuestionFilterDisplayNames[value as QuestionFilter]
+}));
+
+const closedQuestionOptions = Object.values(ClosedQuestionAnswer).map((value) => ({
+  value,
+  label: ClosedQuestionAnswerDisplayNames[value as ClosedQuestionAnswer]
+}));
+
 const emits = defineEmits<{
   (e: 'addQuestion', question: Question): void;
   (e: 'addQuestions', question: Question[]): void;
@@ -39,8 +56,8 @@ const emits = defineEmits<{
 const fetchExistingQuestions = async () => {
   //TODO
   //1 - Fetch les questions depuis le back
-  const teacherId = (authStore.getUserRole === Role.TEACHER) ? authStore.getUserInfo.id : null;
-  const questions : Question[]  = await questionStore.fetchExistingQuestions(teacherId);
+  const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
+  const questions: Question[] = await questionStore.fetchExistingQuestions(teacherId);
   for (const question of questions) {
     console.log(question);
   }
@@ -50,8 +67,7 @@ const fetchExistingQuestions = async () => {
   //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
 };
 
-const submitForm = (event: SubmitEvent) => {
-  event.preventDefault();
+const submitForm = () => {
   authStore.initialize();
 
   let teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
@@ -72,6 +88,10 @@ const submitForm = (event: SubmitEvent) => {
   genderValue.value = QuestionFilter.MIXED;
 };
 
+const switchModalVisibility = () => {
+  isModalOpen.value = !isModalOpen.value;
+};
+
 watch(
   () => props.questionToUpdate,
   (questionToUpdate) => {
@@ -84,9 +104,14 @@ watch(
   }
 );
 
-const switchModalVisibility = () => {
-  isModalOpen.value = !isModalOpen.value;
-};
+watch(typeValue, (newType) => {
+  if (newType === QuestionType.CLOSED) {
+    answerValue.value = ClosedQuestionAnswer.YES;
+  } else {
+    answerValue.value = '';
+  }
+});
+
 </script>
 
 <template>
@@ -98,69 +123,30 @@ const switchModalVisibility = () => {
     @onsubmit="() => submitForm()"
     @open-modal="() => switchModalVisibility()"
   >
-    <div class="flex justify-between">
-      <div class="w-[45%]">
-        <label for="type" class="font-bold">
-          <FontAwesomeIcon :icon="faSliders" class="icon-rotate" />
-          Type*
-        </label>
-        <select
-          id="type"
-          class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
-          v-model="typeValue"
-          aria-label="Type de question"
-          required
-        >
-          <option :value="QuestionType.OPENED">
-            {{ getQuestionTypeDisplayName(QuestionType.OPENED) }}
-          </option>
-          <option :value="QuestionType.CLOSED">
-            {{ getQuestionTypeDisplayName(QuestionType.CLOSED) }}
-          </option>
-        </select>
+    <div class="flex gap-2 flex-wrap">
+      <div>
+        <IconLabel for="type" :icon="faSliders" text="Type*" />
+        <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
       </div>
-
-      <div class="w-[45%]">
-        <label for="gender" class="font-bold">
-          <FontAwesomeIcon :icon="faVenusMars" class="icon" />
-          Genre*
-        </label>
-        <select
-          id="gender"
-          class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
-          v-model="genderValue"
-          aria-label="Genre concerné"
-          required
-        >
-          <option :value="QuestionFilter.MIXED">
-            {{ getQuestionFilterDisplayName(QuestionFilter.MIXED) }}
-          </option>
-          <option :value="QuestionFilter.FEMALE">
-            {{ getQuestionFilterDisplayName(QuestionFilter.FEMALE) }}
-          </option>
-          <option :value="QuestionFilter.MALE">
-            {{ getQuestionFilterDisplayName(QuestionFilter.MIXED) }}
-          </option>
-        </select>
+      <div>
+        <IconLabel for="gender" :icon="faVenusMars" text="Genre*" />
+        <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
       </div>
     </div>
-
-    <div class="flex flex-col items-center">
-      <h3 class="text-black font-bold text-xl mb-3">Importer une question</h3>
-      <ActionButton
-        label="Parcourir les questions existantes"
-        :icon="faSearch"
-        :color="Color.Grey"
-        @click="fetchExistingQuestions"
-        class="w-11/12 self-center drop-shadow-sm"
+    <div class="form-group">
+      <IconLabel for="question" :icon="faCircleQuestion" text="Question*" />
+      <input
+        type="text"
+        id="question"
+        class="select-input"
+        placeholder="Insérer la question à ajouter..."
+        v-model="questionValue"
+        aria-label="Texte de la question"
+        required
       />
     </div>
-
     <div class="form-group">
-      <label for="answer" class="font-bold">
-        <FontAwesomeIcon :icon="faMessage" class="icon" />
-        Réponse*
-      </label>
+      <IconLabel for="answer" :icon="faMessage" text="Réponse*" />
       <input
         v-if="typeValue === QuestionType.OPENED"
         type="text"
@@ -171,16 +157,12 @@ const switchModalVisibility = () => {
         aria-label="Texte de la réponse"
         required
       />
-      <select
-        v-else
+      <ClassicSelector
+        v-if="typeValue === QuestionType.CLOSED"
         id="answer"
-        class="w-full border border-[#D6D6D6] rounded-[8px] p-2"
+        :options="closedQuestionOptions"
         v-model="answerValue"
-        required
-      >
-        <option value="Oui">Oui</option>
-        <option value="Non">Non</option>
-      </select>
+      />
     </div>
   </GenericForm>
   <QuestionListModal
@@ -197,5 +179,10 @@ const switchModalVisibility = () => {
   border: 1px solid #d6d6d6;
   border-radius: 8px;
   padding: 0.5rem;
+}
+
+.select-input:focus {
+  outline: none;
+  border: 2px solid #d6d6d6;
 }
 </style>

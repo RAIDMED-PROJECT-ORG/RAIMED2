@@ -3,11 +3,7 @@ export enum QuestionType {
   CLOSED = 'CLOSED'
 }
 
-export const getQuestionTypeDisplayName = (type: QuestionType): string => {
-  switch (type) {
-    case QuestionType.OPENED:
-      return 'Questions ouvertes';
-    case QuestionType.CLOSED:
-      return 'Questions fermées';
-  }
+export const QuestionTypeDisplayNames: Record<QuestionType, string> = {
+  [QuestionType.OPENED]: 'Questions ouvertes',
+  [QuestionType.CLOSED]: 'Questions fermées'
 };

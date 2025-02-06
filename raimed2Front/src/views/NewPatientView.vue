@@ -136,6 +136,7 @@ function switchQuestionModalVisibility() {
       v-if="isCharacteristicModalOpen"
       :onValidation="onCharacteristicValidation"
       :onBack="switchCharacteristicModalVisibility"
+      :currentCharacteristics="newPatient.characteristic"
     />
     <ExamenModal
       v-if="isInspectionModalOpen"

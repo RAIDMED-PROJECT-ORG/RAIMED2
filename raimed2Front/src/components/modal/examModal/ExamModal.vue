@@ -3,10 +3,10 @@ import { ref, watch } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import MultipleSelector from '@/components/multipleSelector/MultipleSelector.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { Color } from '@/models/new-patient/color.model';
-import { Zones, type ExamResults } from '@/models/diagnostic/exam.model';
+import { Zones, type ExamResults, ZoneDisplayNames } from '@/models/diagnostic/exam.model';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
+import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const props = defineProps<{
   onValidation: (examResults: ExamResults[]) => void;
@@ -25,8 +25,10 @@ const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
 const confirmGoBack = ref<boolean>(false);
 
-const iconEdit = faPen;
-const iconDelete = faTrashCan;
+const zoneOptions = Object.values(Zones).map((value) => ({
+  value,
+  label: ZoneDisplayNames[value as Zones]
+}));
 
 watch(selectedZone, (newZone) => {
   emits('update:selectedZone', newZone);
@@ -220,8 +222,8 @@ function handleOnValidation() {
 
         <div class="bg-white border border-gray-200 rounded-md p-4 shadow-sm w-[350px]">
           <div class="mb-4">
-            <label class="block font-semibold text-sm mb-1">Zone sélectionnée : </label>
-            <ClassicSelector :options="Object.values(Zones)" v-model="selectedZone" />
+            <label for="zone" class="block font-semibold text-sm mb-1">Zone sélectionnée : </label>
+            <ClassicSelector id="zone" :options="zoneOptions" v-model="selectedZone" />
           </div>
 
           <div>
@@ -236,29 +238,29 @@ function handleOnValidation() {
       </div>
 
       <div class="w-1/2 flex flex-col">
-        <h2 class="text-lg font-semibold mb-4">Récapitulatif des résultats</h2>
+        <h2 class="text-lg font-semibold mb-4 text-center">Récapitulatif des résultats</h2>
         <table class="w-[350px] border-collapse">
           <thead>
             <tr class="border-b border-gray-300">
-              <th class="text-left py-2 w-1/4">Zone</th>
-              <th class="text-left py-2 w-1/2">{{ modalTitle }}</th>
-              <th class="text-center py-2 w-1/4">Actions</th>
+              <th class="text-left py-2 w-1/4 font-bold">Zone</th>
+              <th class="text-left py-2 w-1/2 font-bold">{{ modalTitle }}</th>
+              <th class="text-center py-2 w-1/4 font-bold">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in examResults" :key="index" class="border-b border-gray-100">
-              <td class="py-3 px-2">{{ item.zone }}</td>
+              <td class="py-3 px-2">{{ ZoneDisplayNames[item.zone] }}</td>
               <td class="py-3 px-2">{{ item.signs.join(', ') }}</td>
               <td class="py-3 px-2 flex justify-center gap-2">
                 <ActionButton
-                  :icon="iconEdit"
+                  :icon="faPenToSquare"
                   :color="Color.Grey"
                   iconOnly
                   size="small"
                   @click="handleEditExam(index)"
                 />
                 <ActionButton
-                  :icon="iconDelete"
+                  :icon="faTrashCan"
                   :color="Color.Grey"
                   iconOnly
                   size="small"

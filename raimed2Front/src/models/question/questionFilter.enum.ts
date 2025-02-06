@@ -4,15 +4,10 @@ export enum QuestionFilter {
   FEMALE = 'FEMALE'
 }
 
-export const getQuestionFilterDisplayName = (filter: QuestionFilter): string => {
-  switch (filter) {
-    case QuestionFilter.MIXED:
-      return 'Mixte';
-    case QuestionFilter.MALE:
-      return 'Homme';
-    case QuestionFilter.FEMALE:
-      return 'Femme';
-  }
+export const QuestionFilterDisplayNames: Record<QuestionFilter, string> = {
+  [QuestionFilter.MIXED]: 'Mixte',
+  [QuestionFilter.MALE]: 'Homme',
+  [QuestionFilter.FEMALE]: 'Femme'
 };
 
 export const getQuestionFilterByFirstLetter = (filter: string) => {

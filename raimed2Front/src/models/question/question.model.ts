@@ -11,6 +11,16 @@ export interface Question {
   teacherId?: string | null;
 }
 
+export enum ClosedQuestionAnswer {
+  YES = 'Oui',
+  NO = 'Non'
+}
+
+export const ClosedQuestionAnswerDisplayNames: Record<ClosedQuestionAnswer, string> = {
+  [ClosedQuestionAnswer.YES]: 'Oui',
+  [ClosedQuestionAnswer.NO]: 'Non'
+};
+
 export const getFakeQuestions = (): Question[] => {
   return [
     {
