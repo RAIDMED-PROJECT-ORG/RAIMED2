@@ -3,6 +3,7 @@ package fr.imt.raimed2.question.controller;
 import fr.imt.raimed2.question.dto.request.CreateQuestionDto;
 import fr.imt.raimed2.question.dto.request.UpdateQuestionDto;
 import fr.imt.raimed2.question.model.Question;
+import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class QuestionController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId) {
-        if (teacherId == null) return ResponseEntity.ok().body(questionService.getAllQuestion(null, null, true));
-        else return ResponseEntity.ok().body(questionService.getAllQuestion(null, teacherId, false));
+    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId, @RequestParam QuestionType questionType) {
+        if (teacherId == null) return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, null, true));
+        else return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, teacherId, false));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
