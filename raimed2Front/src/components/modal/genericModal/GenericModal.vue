@@ -10,6 +10,7 @@ const props = defineProps<{
   headerColor: ColorType;
   validationLabel: string;
   onValidation: () => void;
+  hideValidation?: boolean;
   onBack: () => void;
   confirmGoBack?: boolean;
   width?: string;
@@ -79,6 +80,7 @@ onUnmounted(() => {
           :onClick="confirmGoBack ? handleSwitchConfirmGoBackModalVisibility : onBack"
         />
         <ActionButton
+          v-if="!hideValidation"
           :color="Color.Green"
           size="medium"
           :label="validationLabel"

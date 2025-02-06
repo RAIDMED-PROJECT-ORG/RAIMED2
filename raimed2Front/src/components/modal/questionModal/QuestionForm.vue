@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
@@ -13,7 +12,6 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
-import { useQuestionStore } from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
 import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
@@ -31,7 +29,6 @@ const props = defineProps<{
 }>();
 
 const authStore = useAuthStore();
-const questionStore = useQuestionStore();
 
 const questionTypeOptions = Object.values(QuestionType).map((value) => ({
   value,
@@ -52,20 +49,6 @@ const emits = defineEmits<{
   (e: 'addQuestion', question: Question): void;
   (e: 'addQuestions', question: Question[]): void;
 }>();
-
-const fetchExistingQuestions = async () => {
-  //TODO
-  //1 - Fetch les questions depuis le back
-  const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
-  const questions: Question[] = await questionStore.fetchExistingQuestions(teacherId);
-  for (const question of questions) {
-    console.log(question);
-  }
-
-  //2 - Les affiches (FRONT A FAIRE)
-  switchModalVisibility();
-  //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
-};
 
 const submitForm = () => {
   authStore.initialize();
@@ -111,7 +94,6 @@ watch(typeValue, (newType) => {
     answerValue.value = '';
   }
 });
-
 </script>
 
 <template>
@@ -173,16 +155,4 @@ watch(typeValue, (newType) => {
   />
 </template>
 
-<style scoped>
-.select-input {
-  width: 100%;
-  border: 1px solid #d6d6d6;
-  border-radius: 8px;
-  padding: 0.5rem;
-}
-
-.select-input:focus {
-  outline: none;
-  border: 2px solid #d6d6d6;
-}
-</style>
+<style scoped></style>

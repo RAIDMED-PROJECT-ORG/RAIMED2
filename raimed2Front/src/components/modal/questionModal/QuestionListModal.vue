@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import { getFakeQuestions, type Question } from '@/models/question/question.model';
+import { type Question } from '@/models/question/question.model';
 import QuestionListModalHeader from '@/components/modal/questionModal/QuestionListModalHeader.vue';
 import {
   getQuestionFilterByFirstLetter,
   QuestionFilter
 } from '@/models/question/questionFilter.enum';
 import QuestionRow from '@/components/modal/questionModal/QuestionRow.vue';
+import { Role } from '@/models/auth/role.enum';
+import { useAuthStore } from '@/stores/auth.store';
+import { useQuestionStore } from '@/stores/questions.store';
 
 const props = defineProps<{
   selectedQuestions: Question[];
@@ -19,8 +22,10 @@ const emits = defineEmits<{
   (e: 'switchModalVisibility', visibility: Boolean): void;
 }>();
 
-const allQuestions = ref<Question[]>(getFakeQuestions());
+const allQuestions = ref<Question[]>([]);
 const questionsToAdd = ref<Question[]>([]);
+const authStore = useAuthStore();
+const questionStore = useQuestionStore();
 
 const filters = ref({
   nameFilter: '',
@@ -62,12 +67,18 @@ const addQuestions = () => {
   emits('addQuestions', questionsToAdd.value);
   emits('switchModalVisibility', false);
 };
+
+onMounted(async () => {
+  const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
+  allQuestions.value = await questionStore.fetchExistingQuestions(teacherId);
+});
 </script>
 
 <template>
   <GenericModal
     title="Liste des questions"
     :validationLabel="validationLabel"
+    :hide-validation="questionsToAdd.length === 0"
     :headerColor="Color.Blue"
     :onValidation="addQuestions"
     :onBack="() => emits('switchModalVisibility', false)"
@@ -95,7 +106,9 @@ const addQuestions = () => {
             <input
               type="checkbox"
               :checked="questionsToAdd.includes(question)"
-              @change="(event) => switchIsSelected(question, (event.target as HTMLInputElement).checked)"
+              @change="
+                (event) => switchIsSelected(question, (event.target as HTMLInputElement).checked)
+              "
             />
           </div>
         </QuestionRow>

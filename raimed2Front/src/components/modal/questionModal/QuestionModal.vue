@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import QuestionListe from '@/components/modal/questionModal/QuestionList.vue';
 import QuestionForm from '@/components/modal/questionModal/QuestionForm.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import type { Question } from '@/models/question/question.model';
-import {useQuestionStore} from '@/stores/questions.store';
+import QuestionList from '@/components/modal/questionModal/QuestionList.vue';
 
 const props = defineProps<{
   questions: Question[];
@@ -15,7 +14,6 @@ const props = defineProps<{
 
 const questions = ref<Question[]>(props.questions);
 
-const questionsStore = useQuestionStore();
 const questionToUpdate = ref<Question | null>(null);
 
 const deleteQuestion = (id: string) => {
@@ -38,7 +36,7 @@ const insertOrUpdateQuestion = (question: Question) => {
 
 const insertQuestions = (newQuestions: Question[]) => {
   questions.value.push(...newQuestions);
-}
+};
 
 const handleValidation = () => {
   props.onValidation(questions.value);
@@ -52,7 +50,7 @@ const handleValidation = () => {
     :onValidation="handleValidation"
     :headerColor="Color.Blue"
     :onBack="onBack"
-    :confirmGoBack="confirmGoBack"
+    :confirmGoBack="true"
   >
     <div class="w-[70vw] h-[60vh] flex px-10">
       <QuestionList
