@@ -6,6 +6,7 @@ import fr.imt.raimed2.question.dto.request.CreateQuestionDto;
 import fr.imt.raimed2.question.dto.request.UpdateQuestionDto;
 import fr.imt.raimed2.question.dto.xml.QuestionLinkedDTO;
 import fr.imt.raimed2.question.dto.xml.QuestionLinkedMapper;
+import fr.imt.raimed2.question.model.Filter;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.repository.QuestionRepository;
@@ -59,19 +60,19 @@ public class QuestionService {
      * @param questionType The type of the question
      * @return The list of questions
      */
-    public List<Question> getAllQuestion(@Nullable QuestionType questionType, UUID teacherId, boolean admin, String gender) {
+    public List<Question> getAllQuestion(@Nullable QuestionType questionType, UUID teacherId, boolean admin, @Nullable String gender) {
         if (StringUtils.isEmpty(gender)) return getAllQuestion(questionType, teacherId, admin);
 
         List<Question> questionsList;
-        if (admin) return questionRepository.findAllByFilter(gender);
+        if (admin) return questionRepository.findAllByFilter(Filter.valueOf(gender));
 
         if (questionType == null){
-            questionsList = questionRepository.findAllByIsMutualTrueAndFilter(gender);
-            questionsList.addAll(questionRepository.findAllByTeacherIdAndFilter(teacherId, gender));
+            questionsList = questionRepository.findAllByIsMutualTrueAndFilter(Filter.valueOf(gender));
+            questionsList.addAll(questionRepository.findAllByTeacherIdAndFilter(teacherId, Filter.valueOf(gender)));
         }
         else {
-            questionsList = questionRepository.findAllByIsMutualTrueAndTypeAndFilter(questionType, gender);
-            questionsList.addAll(questionRepository.findAllByTeacherIdAndTypeAndFilter(teacherId, questionType, gender));
+            questionsList = questionRepository.findAllByIsMutualTrueAndTypeAndFilter(questionType, Filter.valueOf(gender));
+            questionsList.addAll(questionRepository.findAllByTeacherIdAndTypeAndFilter(teacherId, questionType, Filter.valueOf(gender)));
         }
         return questionsList;
     }

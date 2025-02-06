@@ -26,9 +26,9 @@ public class QuestionController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId, @RequestParam QuestionType questionType, @RequestParam String gender) {
-        boolean admin = false;
-        if (teacherId == null) admin = true;
+    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam(required = false) UUID teacherId, @RequestParam(required = false) String type, @RequestParam(required = false) String gender) {
+        boolean admin = teacherId == null;
+        QuestionType questionType = (type == null) ? null : QuestionType.valueOf(type.toUpperCase());
         return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, teacherId, admin, gender));
     }
 
