@@ -7,6 +7,7 @@ import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,10 @@ public class QuestionController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId, @RequestParam QuestionType questionType) {
-        if (teacherId == null) return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, null, true));
-        else return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, teacherId, false));
+    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam UUID teacherId, @RequestParam QuestionType questionType, @RequestParam String gender) {
+        boolean admin = false;
+        if (teacherId == null) admin = true;
+        return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, teacherId, admin, gender));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")

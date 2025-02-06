@@ -1,5 +1,6 @@
 package fr.imt.raimed2.question.service;
 
+import com.ctc.wstx.util.StringUtil;
 import fr.imt.raimed2.action.dto.xml.ActionDtoMapper;
 import fr.imt.raimed2.question.dto.request.CreateQuestionDto;
 import fr.imt.raimed2.question.dto.request.UpdateQuestionDto;
@@ -8,6 +9,7 @@ import fr.imt.raimed2.question.dto.xml.QuestionLinkedMapper;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.repository.QuestionRepository;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.Nullable;
@@ -48,6 +50,28 @@ public class QuestionService {
         else {
             questionsList = questionRepository.findAllByIsMutualTrueAndType(questionType);
             questionsList.addAll(questionRepository.findAllByTeacherIdAndType(teacherId, questionType));
+        }
+        return questionsList;
+    }
+
+    /**
+     * Get all the questions
+     * @param questionType The type of the question
+     * @return The list of questions
+     */
+    public List<Question> getAllQuestion(@Nullable QuestionType questionType, UUID teacherId, boolean admin, String gender) {
+        if (StringUtils.isEmpty(gender)) return getAllQuestion(questionType, teacherId, admin);
+
+        List<Question> questionsList;
+        if (admin) return questionRepository.findAllByFilter(gender);
+
+        if (questionType == null){
+            questionsList = questionRepository.findAllByIsMutualTrueAndFilter(gender);
+            questionsList.addAll(questionRepository.findAllByTeacherIdAndFilter(teacherId, gender));
+        }
+        else {
+            questionsList = questionRepository.findAllByIsMutualTrueAndTypeAndFilter(questionType, gender);
+            questionsList.addAll(questionRepository.findAllByTeacherIdAndTypeAndFilter(teacherId, questionType, gender));
         }
         return questionsList;
     }
