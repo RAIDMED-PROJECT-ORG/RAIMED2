@@ -58,8 +58,8 @@ watch(
   <GenericForm
     title="Ajouter une prescription"
     button-label="Creer la prescription"
-    import-title=""
-    import-button-label=""
+    :import-title=null
+    :import-button-label=null
     @onsubmit="() => submitForm()"
   >
     <div class="form-group">

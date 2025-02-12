@@ -6,8 +6,8 @@ import { Color } from '@/models/new-patient/color.model';
 defineProps<{
   title: string;
   buttonLabel: string;
-  importTitle?: string | null;
-  importButtonLabel?: string | null;
+  importTitle: string | null;
+  importButtonLabel: string | null;
 }>();
 
 const emits = defineEmits<{
@@ -36,14 +36,14 @@ const submitForm = (event: SubmitEvent) => {
       />
     </form>
 
-    <div v-if="importTitle === null || importButtonLabel === null" class="flex items-center my-4">
+    <div v-if="importTitle !== null && importButtonLabel !== null" class="flex items-center my-4">
       <div class="flex-grow border-t border-light-grey"></div>
       <span class="mx-2 text-light-grey">ou</span>
       <div class="flex-grow border-t border-light-grey"></div>
     </div>
 
     <div
-      v-if="importTitle === null || importButtonLabel === null"
+      v-if="importTitle !== null && importButtonLabel !== null"
       class="flex flex-col items-center"
     >
       <h3 class="text-black font-bold text-xl mb-3">{{ importTitle }}</h3>
