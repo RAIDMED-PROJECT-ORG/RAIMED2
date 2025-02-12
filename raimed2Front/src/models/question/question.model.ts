@@ -9,6 +9,7 @@ export interface Question {
   isMutual: boolean;
   answer?: string;
   teacherId?: string | null;
+  primaryElement?: string | null;
 }
 
 export enum ClosedQuestionAnswer {
