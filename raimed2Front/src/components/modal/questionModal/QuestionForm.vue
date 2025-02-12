@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
-import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
+import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import {
   ClosedQuestionAnswer,
   ClosedQuestionAnswerDisplayNames,
@@ -13,11 +12,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth.store';
 import { Role } from '@/models/auth/role.enum';
-import { useQuestionStore } from '@/stores/questions.store';
 import QuestionListModal from '@/components/modal/questionModal/QuestionListModal.vue';
 import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
+import type { Gender } from '@/models/virtual-patient/gender.enum';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -28,19 +27,14 @@ const isModalOpen = ref<boolean>(false);
 const props = defineProps<{
   questionToUpdate?: Question | null;
   questions: Question[];
+  patientGender: Gender;
 }>();
 
 const authStore = useAuthStore();
-const questionStore = useQuestionStore();
 
 const questionTypeOptions = Object.values(QuestionType).map((value) => ({
   value,
   label: QuestionTypeDisplayNames[value as QuestionType]
-}));
-
-const genderOptions = Object.values(QuestionFilter).map((value) => ({
-  value,
-  label: QuestionFilterDisplayNames[value as QuestionFilter]
 }));
 
 const closedQuestionOptions = Object.values(ClosedQuestionAnswer).map((value) => ({
@@ -53,20 +47,6 @@ const emits = defineEmits<{
   (e: 'addQuestions', question: Question[]): void;
 }>();
 
-const fetchExistingQuestions = async () => {
-  //TODO
-  //1 - Fetch les questions depuis le back
-  const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
-  const questions: Question[] = await questionStore.fetchExistingQuestions(teacherId);
-  for (const question of questions) {
-    console.log(question);
-  }
-
-  //2 - Les affiches (FRONT A FAIRE)
-  switchModalVisibility();
-  //3 - Faire la méthode pour ajouter la question à partir de la liste dans la liste de questions du VueJS
-};
-
 const submitForm = () => {
   authStore.initialize();
 
@@ -78,7 +58,7 @@ const submitForm = () => {
     answer: answerValue.value,
     type: typeValue.value,
     teacherId: teacherId,
-    filter: genderValue.value,
+    filter: QuestionFilter[genderValue.value],
     isMutual: false
   });
 
@@ -111,7 +91,6 @@ watch(typeValue, (newType) => {
     answerValue.value = '';
   }
 });
-
 </script>
 
 <template>
@@ -123,22 +102,16 @@ watch(typeValue, (newType) => {
     @onsubmit="() => submitForm()"
     @open-modal="() => switchModalVisibility()"
   >
-    <div class="flex gap-2 flex-wrap">
-      <div>
-        <IconLabel for="type" :icon="faSliders" text="Type*" />
-        <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
-      </div>
-      <div>
-        <IconLabel for="gender" :icon="faVenusMars" text="Genre*" />
-        <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
-      </div>
+    <div class="form-group">
+      <IconLabel for="type" :icon="faSliders" text="Type*" />
+      <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
     </div>
     <div class="form-group">
       <IconLabel for="question" :icon="faCircleQuestion" text="Question*" />
       <input
         type="text"
         id="question"
-        class="select-input"
+        class="text-input"
         placeholder="Insérer la question à ajouter..."
         v-model="questionValue"
         aria-label="Texte de la question"
@@ -151,7 +124,7 @@ watch(typeValue, (newType) => {
         v-if="typeValue === QuestionType.OPENED"
         type="text"
         id="answer"
-        class="select-input"
+        class="text-input"
         placeholder="Insérer la réponse..."
         v-model="answerValue"
         aria-label="Texte de la réponse"
@@ -168,21 +141,10 @@ watch(typeValue, (newType) => {
   <QuestionListModal
     v-if="isModalOpen"
     :selected-questions="questions"
+    :patient-gender="patientGender"
     @switch-modal-visibility="switchModalVisibility"
     @add-questions="emits('addQuestions', $event)"
   />
 </template>
 
-<style scoped>
-.select-input {
-  width: 100%;
-  border: 1px solid #d6d6d6;
-  border-radius: 8px;
-  padding: 0.5rem;
-}
-
-.select-input:focus {
-  outline: none;
-  border: 2px solid #d6d6d6;
-}
-</style>
+<style scoped></style>

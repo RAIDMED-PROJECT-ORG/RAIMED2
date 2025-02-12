@@ -4,8 +4,9 @@ import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import { faCakeCandles, faMarsAndVenus, faQuestion } from '@fortawesome/free-solid-svg-icons';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
-import { type Characteristics, Sex, SexDisplayNames } from '@/models/new-patient/characteristics.model';
+import { type Characteristics } from '@/models/new-patient/characteristics.model';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
+import { Gender, GenderDisplayNames } from '@/models/virtual-patient/gender.enum';
 
 const props = defineProps<{
   onValidation: (data: Characteristics) => void;
@@ -13,7 +14,7 @@ const props = defineProps<{
   currentCharacteristics: Characteristics | null;
 }>();
 
-const sex = ref<Sex>(props.currentCharacteristics?.sex || Sex.MEN);
+const gender = ref<Gender>(props.currentCharacteristics?.gender || Gender.MALE);
 const age = ref<number>(props.currentCharacteristics?.age || 0);
 const diagnostic = ref<string>(props.currentCharacteristics?.diagnostic || '');
 
@@ -21,9 +22,9 @@ const ageErrorMessage = ref<string | null>(null);
 const diagnosticErrorMessage = ref<string | null>(null);
 const confirmGoBack = ref<boolean>(false);
 
-const sexOptions = Object.values(Sex).map((value) => ({
+const sexOptions = Object.values(Gender).map((value) => ({
   value,
-  label: SexDisplayNames[value as Sex]
+  label: GenderDisplayNames[value as Gender]
 }));
 
 watch(
@@ -55,13 +56,12 @@ function handleValidation() {
     if (age.value <= 0) {
       ageErrorMessage.value = 'L\'âge doit être supérieur à zéro.';
     }
-
   } else {
     ageErrorMessage.value = 'Champs requis.';
   }
 
   if (diagnostic.value !== '' && age.value !== null && age.value > 0) {
-    props.onValidation({ sex: sex.value, age: age.value, diagnostic: diagnostic.value });
+    props.onValidation({ gender: gender.value, age: age.value, diagnostic: diagnostic.value });
   }
 }
 </script>
@@ -77,8 +77,8 @@ function handleValidation() {
   >
     <div class="flex gap-4 flex-col ml-8 mr-8">
       <div>
-        <IconLabel for="sex" :icon="faMarsAndVenus" text="Sexe*" />
-        <ClassicSelector id="sex" :options="sexOptions" v-model="sex"/>
+        <IconLabel for="gender" :icon="faMarsAndVenus" text="Genre*" />
+        <ClassicSelector id="gender" :options="sexOptions" v-model="gender" />
       </div>
       <div>
         <div>
@@ -115,14 +115,15 @@ function handleValidation() {
 .text-red-500 {
   color: #f87171;
 }
+
 .input {
   border: 1px solid #d6d6d6;
   border-radius: 8px;
   padding: 0.5rem;
 }
+
 .input:focus {
   outline: none;
   border: 2px solid #d6d6d6;
 }
-
 </style>

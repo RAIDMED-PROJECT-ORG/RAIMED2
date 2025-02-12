@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import {
-  QuestionFilter, QuestionFilterDisplayNames
-} from '@/models/question/questionFilter.enum';
-import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
+import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
+import { Gender } from '@/models/virtual-patient/gender.enum';
+import { onMounted } from 'vue';
+import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
+
+const props = defineProps<{
+  patientGender: Gender;
+}>();
 
 const model = defineModel<{
   nameFilter: string;
   genderFilter: QuestionFilter | null;
+  typeFilter: QuestionType | null;
 }>({
   default: {
     nameFilter: '',
-    genderFilter: null
+    genderFilter: null,
+    typeFilter: null,
   }
+});
+
+onMounted(() => {
+  model.value.genderFilter = QuestionFilter[props.patientGender];
 });
 </script>
 
@@ -22,11 +32,28 @@ const model = defineModel<{
       <input
         type="text"
         id="question-search"
-        class="w-[80%] border border-gray-300 rounded-lg p-2"
+        class="text-input"
         placeholder="Insérer le nom..."
         aria-label="Nom de la question à chercher"
         v-model="model.nameFilter"
       />
+    </span>
+    <span class="flex items-center gap-3">
+      <label for="type-search" class="whitespace-nowrap font-bold">Type</label>
+      <select
+        id="type-search"
+        class="w-full border border-gray-300 rounded-lg p-2"
+        aria-label="type de question"
+        v-model="model.typeFilter"
+      >
+        <option :value="null"></option>
+        <option :value="QuestionType.CLOSED">
+          {{ QuestionTypeDisplayNames[QuestionType.CLOSED] }}
+        </option>
+        <option :value="QuestionType.OPENED">
+          {{ QuestionTypeDisplayNames[QuestionType.OPENED] }}
+        </option>
+      </select>
     </span>
     <span class="flex items-center gap-3">
       <label for="filter-search" class="whitespace-nowrap font-bold">Genre</label>
@@ -40,10 +67,10 @@ const model = defineModel<{
         <option :value="QuestionFilter.MIXED">
           {{ QuestionFilterDisplayNames[QuestionFilter.MIXED] }}
         </option>
-        <option :value="QuestionFilter.FEMALE">
+        <option v-if="patientGender === Gender.FEMALE" :value="QuestionFilter.FEMALE">
           {{ QuestionFilterDisplayNames[QuestionFilter.FEMALE] }}
         </option>
-        <option :value="QuestionFilter.MALE">
+        <option v-if="patientGender === Gender.MALE" :value="QuestionFilter.MALE">
           {{ QuestionFilterDisplayNames[QuestionFilter.MALE] }}
         </option>
       </select>
