@@ -4,3 +4,9 @@
     border-radius: 8px;
     padding: 0.5rem;
 }
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

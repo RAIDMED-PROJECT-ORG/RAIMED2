@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import PrescriptionListe from '@/components/modal/prescriptionModal/PrescriptionListe.vue';
-import PrescriptionForm from '@/components/modal/prescriptionModal/PrescriptionForm.vue';
 import { ref } from 'vue';
 import type { Prescription } from '@/models/prescription/prescription.model';
-import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import PrescriptionListe from '@/components/modal/prescriptionModal/PrescriptionListe.vue';
+import PrescriptionForm from '@/components/modal/prescriptionModal/PrescriptionForm.vue';
 
 const props = defineProps<{
   prescriptions: Prescription[];
-  initialType: PrescriptionType;
-  existingPrescriptions: Prescription[];
   onValidation: (data: Prescription[]) => void;
   onBack: () => void;
 }>();
@@ -43,24 +40,22 @@ const handleValidation = () => {
 
 <template>
   <GenericModal
-      :title="`Prescriptions`"
-      validationLabel="Valider"
-      :onValidation="handleValidation"
-      :headerColor="Color.Purple"
-      :onBack="onBack"
+    title="Prescriptions"
+    validationLabel="Valider"
+    :onValidation="handleValidation"
+    :headerColor="Color.Purple"
+    :onBack="onBack"
+    :confirmGoBack="true"
   >
-    <div class="max-h-[60vh] flex py-5 px-10">
+    <div class="w-[70vw] h-[60vh] flex px-10">
       <PrescriptionListe
-          :prescriptions="prescriptions"
-          @delete-prescription="deletePrescription"
-          @update-prescription="updatePrescription"
+        :prescriptions="prescriptions"
+        @delete-prescription="deletePrescription"
+        @update-prescription="updatePrescription"
       />
       <PrescriptionForm
-          @add-prescription="insertOrUpdatePrescription"
-          :prescription-to-update="prescriptionToUpdate"
-          :prescriptions="prescriptions"
-          :initial-type="props.initialType"
-          :existing-prescriptions="props.existingPrescriptions"
+        @add-prescription="insertOrUpdatePrescription"
+        :prescription-to-update="prescriptionToUpdate"
       />
     </div>
   </GenericModal>

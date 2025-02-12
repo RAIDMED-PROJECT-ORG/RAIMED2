@@ -35,7 +35,7 @@ const insertOrUpdateListen = (listen: Listen) => {
 };
 
 const insertListen = (newListens: Listen[]) => {
-  console.log(newListens)
+  console.log(newListens);
   listens.value.push(...newListens);
 };
 
@@ -51,13 +51,10 @@ const handleValidation = () => {
     :onValidation="handleValidation"
     :headerColor="Color.Blue"
     :onBack="onBack"
+    :confirmGoBack="true"
   >
     <div class="w-[70vw] h-[60vh] flex px-10">
-      <ListenList
-        :listens="listens"
-        @delete-listen="deleteListen"
-        @update-listen="updateListen"
-      />
+      <ListenList :listens="listens" @delete-listen="deleteListen" @update-listen="updateListen" />
       <ListenForm
         :listens="listens"
         :listenToUpdate="listenToUpdate"

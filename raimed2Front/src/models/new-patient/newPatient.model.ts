@@ -4,6 +4,8 @@ import type { ExamResults } from '@/models/diagnostic/exam.model';
 import { v4 as uuidv4 } from 'uuid';
 import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
+import type { Prescription } from '@/models/prescription/prescription.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import type { Listen } from '@/models/listen/listen.model';
 
 export interface NewPatient {
@@ -14,6 +16,7 @@ export interface NewPatient {
   percussion: ExamResults[];
   auscultation: ExamResults[];
   listen: Listen[];
+  prescription: Prescription[];
 }
 
 export const initializeNewPatient = (): NewPatient => {
@@ -23,6 +26,20 @@ export const initializeNewPatient = (): NewPatient => {
     palpation: [],
     percussion: [],
     auscultation: [],
+    prescription: [
+      {
+        id: uuidv4(),
+        type: PrescriptionType.BIOLOGY,
+        name: 'Bilan hépatique',
+        result: 'Bilan hépatique normal'
+      },
+      {
+        id: uuidv4(),
+        type: PrescriptionType.BIOLOGY,
+        name: 'Cytoponction foie',
+        result: 'Cellules sans signe de malginité'
+      }
+    ],
     questions: [
       {
         id: uuidv4(),
@@ -52,16 +69,16 @@ export const initializeNewPatient = (): NewPatient => {
     listen: [
       {
         id: uuidv4(),
-        content: 'Je ne me sens pas bien',
+        content: 'Je ne me sens pas bien'
       },
       {
         id: uuidv4(),
-        content: 'J\'ai mal à la tête',
+        content: 'J\'ai mal à la tête'
       },
       {
         id: uuidv4(),
-        content: 'Je suis fatigué',
-      },
-    ],
+        content: 'Je suis fatigué'
+      }
+    ]
   };
 };

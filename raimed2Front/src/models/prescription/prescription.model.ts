@@ -5,5 +5,4 @@ export interface Prescription {
     type: PrescriptionType;
     name: string;
     result?: string;
-    teacherId?: string;
 }

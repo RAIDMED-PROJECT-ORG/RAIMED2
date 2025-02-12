@@ -32,12 +32,14 @@ import {
 import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
 import ProgressBar from '@/components/progressBar/ProgressBar.vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
+import type { Prescription } from '@/models/prescription/prescription.model';
 
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
@@ -55,6 +57,7 @@ const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
 const isListenModalOpen = ref(false);
+const isPrescriptionModalOpen = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(newPatient.value));
@@ -177,13 +180,22 @@ function switchGoBackModalVisibility() {
   isGoBackModalOpen.value = !isGoBackModalOpen.value;
 }
 
+function onListenValidation(data: Listen[]) {
+  isListenModalOpen.value = false;
+  newPatient.value.listen = data;
+}
+
 function switchListenModalVisibility() {
   isListenModalOpen.value = !isListenModalOpen.value;
 }
 
-function onListenValidation(data: Listen[]) {
-  isListenModalOpen.value = false;
-  newPatient.value.listen = data;
+function onPrescriptionValidation(data: Prescription[]) {
+  newPatient.value.prescription = data;
+  switchPrescriptionModalVisibility();
+}
+
+function switchPrescriptionModalVisibility() {
+  isPrescriptionModalOpen.value = !isPrescriptionModalOpen.value;
 }
 
 function calculateProgress() {
@@ -290,13 +302,19 @@ function handleConfirmGoBack() {
       :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
-      :patient-gender="newPatient.characteristic?.gender ?? Gender.MALE"
+      :patient-gender="Gender.MALE"
     />
     <ListenModal
       v-if="isListenModalOpen"
       :listens="newPatient.listen ?? []"
       :onValidation="onListenValidation"
       :onBack="switchListenModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isPrescriptionModalOpen"
+      :prescriptions="newPatient.prescription ?? []"
+      :on-validation="onPrescriptionValidation"
+      :on-back="switchPrescriptionModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
@@ -373,7 +391,7 @@ function handleConfirmGoBack() {
             :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faFileMedical"
-            :onClick="() => console.log('Not implemented yet')"
+            :on-click="switchPrescriptionModalVisibility"
             :isCompleted="false"
           />
           <CategoryButton
