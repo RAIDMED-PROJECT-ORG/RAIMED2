@@ -210,7 +210,6 @@ function calculateProgress() {
   if (newPatient.value.listen.length) {
     progressCount++;
   }
-  console.log('Progress count: ', progressCount);
   return (progressCount / total) * 100;
 }
 
@@ -314,7 +313,7 @@ function handleConfirmGoBack() {
             label="Caractéristiques du patient"
             :color="Color.Red"
             :icon="faPerson"
-            :isCompleted="newPatient.characteristic"
+            :isCompleted="newPatient.characteristic !== null"
             :onClick="switchCharacteristicModalVisibility"
           />
           <CategoryButton

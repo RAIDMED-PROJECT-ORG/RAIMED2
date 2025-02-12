@@ -1,25 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps } from 'vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import { Color } from '@/models/new-patient/color.model';
 import IconDefinition from '@/components/iconLabel/IconLabel.vue';
+import { type ColorType } from '@/models/new-patient/color.model';
 
-defineProps({
-  label: { type: String, required: true },
-  color: { type: Color, required: true },
-  icon: { type: IconDefinition, required: true },
-  isCompleted: { type: Boolean, required: true },
-  onClick: { type: Function, required: true }
-});
+const props = defineProps<{
+  label: string;
+  color: ColorType;
+  icon: IconDefinition;
+  isCompleted: boolean;
+  onClick: () => void;
+}>();
 </script>
 
 <template>
   <div class="relative">
     <ActionButton
       class="w-full"
-      :label="label"
-      :color="color"
-      :icon="icon"
+      :label="props.label"
+      :color="props.color"
+      :icon="props.icon"
       @click="onClick"
     />
 
@@ -31,7 +31,7 @@ defineProps({
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <span v-if="isCompleted" class="absolute -top-1 -right-5 bg-[#4CAF50] text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">
+      <span v-if="props.isCompleted" class="absolute -top-1 -right-5 bg-[#4CAF50] text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">
         ✔ Remplie
       </span>
     </Transition>
