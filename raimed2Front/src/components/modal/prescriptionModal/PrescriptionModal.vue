@@ -5,9 +5,11 @@ import { ref } from 'vue';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import PrescriptionListe from '@/components/modal/prescriptionModal/PrescriptionListe.vue';
 import PrescriptionForm from '@/components/modal/prescriptionModal/PrescriptionForm.vue';
+import { type PrescriptionType, PrescriptionTypeDisplayNames } from '@/models/prescription/prescriptionType.enum';
 
 const props = defineProps<{
   prescriptions: Prescription[];
+  prescriptionType: PrescriptionType;
   onValidation: (data: Prescription[]) => void;
   onBack: () => void;
 }>();
@@ -40,7 +42,7 @@ const handleValidation = () => {
 
 <template>
   <GenericModal
-    title="Prescriptions"
+    :title="'Prescription ' + PrescriptionTypeDisplayNames[props.prescriptionType]"
     validationLabel="Valider"
     :onValidation="handleValidation"
     :headerColor="Color.Purple"
@@ -54,8 +56,9 @@ const handleValidation = () => {
         @update-prescription="updatePrescription"
       />
       <PrescriptionForm
-        @add-prescription="insertOrUpdatePrescription"
+        :prescription-type="props.prescriptionType"
         :prescription-to-update="prescriptionToUpdate"
+        @add-prescription="insertOrUpdatePrescription"
       />
     </div>
   </GenericModal>

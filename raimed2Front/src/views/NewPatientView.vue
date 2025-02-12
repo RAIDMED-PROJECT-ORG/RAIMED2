@@ -40,6 +40,7 @@ import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
@@ -57,7 +58,9 @@ const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
 const isListenModalOpen = ref(false);
-const isPrescriptionModalOpen = ref(false);
+const isBiologyModalOpen = ref(false);
+const isImageryModalOpen = ref(false);
+const isBiopsyModalOpen = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(newPatient.value));
@@ -189,13 +192,31 @@ function switchListenModalVisibility() {
   isListenModalOpen.value = !isListenModalOpen.value;
 }
 
-function onPrescriptionValidation(data: Prescription[]) {
-  newPatient.value.prescription = data;
-  switchPrescriptionModalVisibility();
+function onBiologyValidation(data: Prescription[]) {
+  newPatient.value.biology = data;
+  switchBiologyModalVisibility();
 }
 
-function switchPrescriptionModalVisibility() {
-  isPrescriptionModalOpen.value = !isPrescriptionModalOpen.value;
+function switchBiologyModalVisibility() {
+  isBiologyModalOpen.value = !isBiologyModalOpen.value;
+}
+
+function onImageryValidation(data: Prescription[]) {
+  newPatient.value.imagery = data;
+  switchImageryModalVisibility();
+}
+
+function switchImageryModalVisibility() {
+  isImageryModalOpen.value = !isImageryModalOpen.value;
+}
+
+function onBiopsyValidation(data: Prescription[]) {
+  newPatient.value.biopsy = data;
+  switchBiopsyModalVisibility();
+}
+
+function switchBiopsyModalVisibility() {
+  isBiopsyModalOpen.value = !isBiopsyModalOpen.value;
 }
 
 function calculateProgress() {
@@ -311,10 +332,25 @@ function handleConfirmGoBack() {
       :onBack="switchListenModalVisibility"
     />
     <PrescriptionModal
-      v-if="isPrescriptionModalOpen"
-      :prescriptions="newPatient.prescription ?? []"
-      :on-validation="onPrescriptionValidation"
-      :on-back="switchPrescriptionModalVisibility"
+      v-if="isBiologyModalOpen"
+      :prescription-type="PrescriptionType.BIOLOGY"
+      :prescriptions="newPatient.biology ?? []"
+      :on-validation="onBiologyValidation"
+      :on-back="switchBiologyModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isImageryModalOpen"
+      :prescription-type="PrescriptionType.IMAGERY"
+      :prescriptions="newPatient.imagery ?? []"
+      :on-validation="onImageryValidation"
+      :on-back="switchImageryModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isBiopsyModalOpen"
+      :prescription-type="PrescriptionType.BIOPSY"
+      :prescriptions="newPatient.biopsy ?? []"
+      :on-validation="onBiopsyValidation"
+      :on-back="switchBiopsyModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
@@ -391,22 +427,22 @@ function handleConfirmGoBack() {
             :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faFileMedical"
-            :on-click="switchPrescriptionModalVisibility"
-            :isCompleted="false"
+            :on-click="switchBiologyModalVisibility"
+            :isCompleted="newPatient.biology.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faPersonRays"
-            :onClick="() => console.log('Not implemented yet')"
-            :isCompleted="false"
+            :on-click="switchImageryModalVisibility"
+            :isCompleted="newPatient.imagery.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faSyringe"
-            :onClick="() => console.log('Not implemented yet')"
-            :isCompleted="false"
+            :on-click="switchBiopsyModalVisibility"
+            :isCompleted="newPatient.biopsy.length > 0"
           />
         </div>
       </div>

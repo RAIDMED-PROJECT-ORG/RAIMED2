@@ -1,8 +1,5 @@
-import type {PrescriptionType} from '@/models/prescription/prescriptionType.enum';
-
 export interface Prescription {
-    id: string;
-    type: PrescriptionType;
-    name: string;
-    result?: string;
+  id: string;
+  name: string;
+  result?: string;
 }

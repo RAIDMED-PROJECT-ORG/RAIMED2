@@ -18,10 +18,9 @@ defineEmits<{
     title="Liste des prescriptions"
     size="small"
     :columns="{
-      'Type': 15,
-      'Prescription': 25,
-      'Résultat': 45,
-      'Actions': 15
+      'Prescription': 30,
+      'Résultat': 50,
+      'Actions': 20
     }"
   >
     <PrescriptionRow

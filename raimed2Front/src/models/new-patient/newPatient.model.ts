@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
-import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import type { Listen } from '@/models/listen/listen.model';
 
 export interface NewPatient {
@@ -16,7 +15,9 @@ export interface NewPatient {
   percussion: ExamResults[];
   auscultation: ExamResults[];
   listen: Listen[];
-  prescription: Prescription[];
+  biology: Prescription[];
+  imagery: Prescription[];
+  biopsy: Prescription[];
 }
 
 export const initializeNewPatient = (): NewPatient => {
@@ -26,20 +27,20 @@ export const initializeNewPatient = (): NewPatient => {
     palpation: [],
     percussion: [],
     auscultation: [],
-    prescription: [
+    biology: [
       {
         id: uuidv4(),
-        type: PrescriptionType.BIOLOGY,
         name: 'Bilan hépatique',
         result: 'Bilan hépatique normal'
       },
       {
         id: uuidv4(),
-        type: PrescriptionType.BIOLOGY,
         name: 'Cytoponction foie',
         result: 'Cellules sans signe de malginité'
       }
     ],
+    imagery: [],
+    biopsy: [],
     questions: [
       {
         id: uuidv4(),
@@ -73,7 +74,7 @@ export const initializeNewPatient = (): NewPatient => {
       },
       {
         id: uuidv4(),
-        content: 'J\'ai mal à la tête'
+        content: "J'ai mal à la tête"
       },
       {
         id: uuidv4(),
