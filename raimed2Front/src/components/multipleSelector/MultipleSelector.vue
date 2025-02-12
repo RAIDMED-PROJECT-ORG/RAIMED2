@@ -36,6 +36,9 @@ const remainingOptions = computed(() => {
 
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
+  if (showDropdown.value) {
+    inputField.value?.focus();
+  }
 }
 
 const filteredOptions = computed(() => {
@@ -48,7 +51,7 @@ const filteredOptions = computed(() => {
 });
 
 function handleOnInput() {
-  showDropdown.value = input.value.length > 0;
+  showDropdown.value = true;
   highlightedIndex.value = 0;
 }
 
@@ -119,6 +122,10 @@ function handleClickOutside(event: MouseEvent) {
     inputField.value?.blur();
   }
 }
+function handleEsc() {
+  showDropdown.value = false;
+  inputField.value?.blur();
+}
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
@@ -159,9 +166,9 @@ onUnmounted(() => {
         v-model="input"
         @focus="showDropdown = true"
         @input="handleOnInput"
-        @keydown.enter.prevent="selectItem(filteredOptions[highlightedIndex])"
-        @keydown.tab.prevent="selectItem(filteredOptions[highlightedIndex])"
-        @keydown.esc="showDropdown = false"
+        @keydown.enter.stop.prevent="selectItem(filteredOptions[highlightedIndex])"
+        @keydown.tab.stop.prevent="selectItem(filteredOptions[highlightedIndex])"
+        @keydown.esc.stop.prevent="handleEsc"
         @keydown.backspace="removeLastTag"
         @keydown.down.prevent="highlightNext"
         @keydown.up.prevent="highlightPrevious"
