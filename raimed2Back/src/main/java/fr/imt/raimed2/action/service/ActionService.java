@@ -39,6 +39,8 @@ public class ActionService {
 
     private final ActionOpenedQuestionMapper actionOpenedQuestionMapper;
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ActionService.class);
+
     /**
      * Add a spontaneous patient speech action to the virtual patient
      * @param virtualPatientId The id of the virtual patient

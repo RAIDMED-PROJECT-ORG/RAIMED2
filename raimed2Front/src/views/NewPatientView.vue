@@ -41,6 +41,9 @@ import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import axios from 'axios';
+import * as js2xmlparser from 'js2xmlparser';
+import {QuestionType} from '@/models/question/questionType.enum';
 
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
@@ -114,6 +117,57 @@ function handleSubmit() {
 
   localStorage.removeItem(STORAGE_KEY);
   router.back();
+  const virtualPatientObj = {
+    age: newPatient.value.characteristic?.age,
+    gender: newPatient.value.characteristic?.gender,
+    createdAt: new Date().toISOString(),
+    actions: {
+      action: newPatient.value.questions.map((question) => {
+        // Base Action
+        const baseAction = {
+          type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+          primaryElement: question.content,
+        };
+        // Question Close
+        if (question.type === QuestionType.CLOSED) {
+          return {
+            ...baseAction,
+            actionClosedQuestion: {
+              closedAnswer : question.answer,
+              questionLinked: question,
+            },
+          };
+          // Question Open (pour l'instant on ne gère pas le reste)
+        } else {
+          return {
+            ...baseAction,
+            actionOpenedQuestion: {
+              openedAnswer : question.answer,
+              questionLinked: question,
+            },
+          };
+        }
+      })
+    },
+    result: newPatient.value.characteristic?.diagnostic,
+  };
+
+  // Conversion de l'objet en XML
+  const xml = js2xmlparser.parse('VirtualPatient', virtualPatientObj);
+
+  try {
+    const response = await axios.post('http://localhost:8080/api/v1/virtual-patient/xml', xml, {
+      headers: {
+        'Content-Type': 'application/xml'
+      }
+    });
+    console.log('Patient created successfully:', response.data);
+    router.back();
+  } catch (error) {
+    console.error('Error creating patient:', error);
+    errors.value.push('Erreur lors de la création du patient');
+    switchWarningModalVisibility();
+  }
 }
 
 function switchWarningModalVisibility() {
@@ -285,47 +339,47 @@ function handleConfirmGoBack() {
       </div>
     </GenericModal>
     <WarningModal
-      v-if="isWarningModalOpen"
-      :onBack="switchWarningModalVisibility"
-      :errors="errors"
+        v-if="isWarningModalOpen"
+        :onBack="switchWarningModalVisibility"
+        :errors="errors"
     />
     <CharacteristicModal
-      v-if="isCharacteristicModalOpen"
-      :onValidation="onCharacteristicValidation"
-      :onBack="switchCharacteristicModalVisibility"
-      :currentCharacteristics="newPatient.characteristic"
+        v-if="isCharacteristicModalOpen"
+        :onValidation="onCharacteristicValidation"
+        :onBack="switchCharacteristicModalVisibility"
+        :currentCharacteristics="newPatient.characteristic"
     />
     <ExamenModal
-      v-if="isInspectionModalOpen"
-      :onValidation="onInspectionValidation"
-      :onBack="switchInspectionModalVisibility"
-      :possibleExams="InspectionSigns"
-      :modalTitle="'Inspection'"
-      :currentExamResults="newPatient.inspection"
+        v-if="isInspectionModalOpen"
+        :onValidation="onInspectionValidation"
+        :onBack="switchInspectionModalVisibility"
+        :possibleExams="InspectionSigns"
+        :modalTitle="'Inspection'"
+        :currentExamResults="newPatient.inspection"
     />
     <ExamenModal
-      v-if="isPalpationModalOpen"
-      :onValidation="onPalpationValidation"
-      :onBack="switchPalpationModalVisibility"
-      :possibleExams="PalpationSigns"
-      :modalTitle="'Palpation et manoeuvre'"
-      :currentExamResults="newPatient.palpation"
+        v-if="isPalpationModalOpen"
+        :onValidation="onPalpationValidation"
+        :onBack="switchPalpationModalVisibility"
+        :possibleExams="PalpationSigns"
+        :modalTitle="'Palpation et manoeuvre'"
+        :currentExamResults="newPatient.palpation"
     />
     <ExamenModal
-      v-if="isPercussionModalOpen"
-      :onValidation="onPercussionValidation"
-      :onBack="switchPercussionModalVisibility"
-      :possibleExams="PercussionSigns"
-      :modalTitle="'Percussion'"
-      :currentExamResults="newPatient.percussion"
+        v-if="isPercussionModalOpen"
+        :onValidation="onPercussionValidation"
+        :onBack="switchPercussionModalVisibility"
+        :possibleExams="PercussionSigns"
+        :modalTitle="'Percussion'"
+        :currentExamResults="newPatient.percussion"
     />
     <ExamenModal
-      v-if="isAuscultationModalOpen"
-      :onValidation="onAuscultationValidation"
-      :onBack="switchAuscultationModalVisibility"
-      :possibleExams="AuscultationSigns"
-      :modalTitle="'Auscultation'"
-      :currentExamResults="newPatient.auscultation"
+        v-if="isAuscultationModalOpen"
+        :onValidation="onAuscultationValidation"
+        :onBack="switchAuscultationModalVisibility"
+        :possibleExams="AuscultationSigns"
+        :modalTitle="'Auscultation'"
+        :currentExamResults="newPatient.auscultation"
     />
     <QuestionModal
       v-if="isQuestionModalOpen"
@@ -458,11 +512,11 @@ function handleConfirmGoBack() {
       <p>* Champs requis</p>
       <div>
         <ActionButton
-          :disabled="newPatient.characteristic === null"
-          class="mt-8"
-          :onClick="handleSubmit"
-          label="Créer le patient"
-          :color="Color.Green"
+            :disabled="newPatient.characteristic === null"
+            class="mt-8"
+            :onClick="handleSubmit"
+            label="Créer le patient"
+            :color="Color.Green"
         />
         <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
       </div>
