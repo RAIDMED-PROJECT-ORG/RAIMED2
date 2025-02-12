@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
-import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
-import { ref, watch } from 'vue';
+import { faBookmark, faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
+import { computed, ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import {
@@ -17,18 +17,29 @@ import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
 import type { Gender } from '@/models/virtual-patient/gender.enum';
-
-const typeValue = ref<QuestionType>(QuestionType.OPENED);
-const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
-const questionValue = ref<string>('');
-const answerValue = ref<string>('');
-const isModalOpen = ref<boolean>(false);
+import SingleValueSelector from '@/components/singleValueSelector/SingleValueSelector.vue';
 
 const props = defineProps<{
   questionToUpdate?: Question | null;
   questions: Question[];
   patientGender: Gender;
 }>();
+
+const singleSelector = ref<InstanceType<typeof SingleValueSelector> | null>(null);
+const typeValue = ref<QuestionType>(QuestionType.OPENED);
+const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
+const questionValue = ref<string>('');
+const answerValue = ref<string>('');
+const primaryElementValue = ref<string | null>(null);
+const isModalOpen = ref<boolean>(false);
+
+const primaryElements = computed(() =>
+  Array.from(new Set(
+    props.questions
+      .filter((question) => question.primaryElement != null)
+      .map((question) => question.primaryElement as string)
+  ))
+);
 
 const authStore = useAuthStore();
 
@@ -47,6 +58,10 @@ const emits = defineEmits<{
   (e: 'addQuestions', question: Question[]): void;
 }>();
 
+watch(props.questions, (newQuestions) => {
+  console.log('WTF LOUAN', newQuestions);
+});
+
 const submitForm = () => {
   authStore.initialize();
 
@@ -56,16 +71,18 @@ const submitForm = () => {
     id: props.questionToUpdate ? props.questionToUpdate.id : uuidv4(),
     content: questionValue.value,
     answer: answerValue.value,
+    primaryElement: primaryElementValue.value,
     type: typeValue.value,
     teacherId: teacherId,
     filter: QuestionFilter[genderValue.value],
     isMutual: false
   });
-
   questionValue.value = '';
   answerValue.value = '';
+  primaryElementValue.value = null;
   typeValue.value = QuestionType.OPENED;
   genderValue.value = QuestionFilter.MIXED;
+  singleSelector.value?.clearInput();
 };
 
 const switchModalVisibility = () => {
@@ -91,6 +108,10 @@ watch(typeValue, (newType) => {
     answerValue.value = '';
   }
 });
+
+function handleSelectPrimaryElement(value: string) {
+  primaryElementValue.value = value;
+}
 </script>
 
 <template>
@@ -112,6 +133,7 @@ watch(typeValue, (newType) => {
         type="text"
         id="question"
         class="text-input"
+        :class="{ 'text-input--filled': questionValue.length > 0 }"
         placeholder="Insérer la question à ajouter..."
         v-model="questionValue"
         aria-label="Texte de la question"
@@ -125,6 +147,7 @@ watch(typeValue, (newType) => {
         type="text"
         id="answer"
         class="text-input"
+        :class="{ 'text-input--filled': answerValue.length > 0 }"
         placeholder="Insérer la réponse..."
         v-model="answerValue"
         aria-label="Texte de la réponse"
@@ -137,6 +160,11 @@ watch(typeValue, (newType) => {
         v-model="answerValue"
       />
     </div>
+    <div class="form-group">
+      <IconLabel for="primaryElement" :icon="faBookmark" text="Élément primaire" />
+      <SingleValueSelector ref="singleSelector" id="primaryElement" :options="primaryElements" @select="(value: string) => handleSelectPrimaryElement(value)" />
+    </div>
+    <p class="opacity-50">* champs requis</p>
   </GenericForm>
   <QuestionListModal
     v-if="isModalOpen"
