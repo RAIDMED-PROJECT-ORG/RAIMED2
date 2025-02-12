@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import ExistingPrescriptionRecherche
-  from '@/components/modal/existingPrescriptionModal/ExistingPrescriptionRecherche.vue';
-import ExistingPrescriptionListe from '@/components/modal/existingPrescriptionModal/ExistingPrescriptionListe.vue';
+import ExistingPrescriptionRecherche from '@/components/modal/prescriptionModal/existingPrescriptionModal/ExistingPrescriptionRecherche.vue';
+import ExistingPrescriptionListe from '@/components/modal/prescriptionModal/existingPrescriptionModal/ExistingPrescriptionListe.vue';
 
 const props = defineProps<{
   existingPrescriptions: Prescription[];
@@ -20,8 +19,8 @@ const selectedType = ref<PrescriptionType | null>(null);
 const selectedPrescriptions = ref<Set<string>>(new Set());
 
 const filteredPrescriptions = computed(() => {
-  const addedIds = new Set(props.patientPrescriptions.map(p => p.id));
-  return props.existingPrescriptions.filter(prescription => {
+  const addedIds = new Set(props.patientPrescriptions.map((p) => p.id));
+  return props.existingPrescriptions.filter((prescription) => {
     const matchesQuery = prescription.name.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesType = selectedType.value ? prescription.type === selectedType.value : true;
     const isNotAdded = !addedIds.has(prescription.id);
@@ -38,7 +37,9 @@ const toggleSelection = (id: string) => {
 };
 
 const addSelectedPrescriptions = () => {
-  const prescriptionsToAdd = props.existingPrescriptions.filter(prescription => selectedPrescriptions.value.has(prescription.id));
+  const prescriptionsToAdd = props.existingPrescriptions.filter((prescription) =>
+    selectedPrescriptions.value.has(prescription.id)
+  );
   props.onAddPrescriptions(prescriptionsToAdd);
   props.onClose();
 };
@@ -46,23 +47,23 @@ const addSelectedPrescriptions = () => {
 
 <template>
   <GenericModal
-      :title="`Liste des prescriptions existantes`"
-      :headerColor="Color.Purple"
-      validationLabel="Ajouter"
-      :onValidation="addSelectedPrescriptions"
-      :onBack="props.onClose"
+    :title="`Liste des prescriptions existantes`"
+    :headerColor="Color.Purple"
+    validationLabel="Ajouter"
+    :onValidation="addSelectedPrescriptions"
+    :onBack="props.onClose"
   >
     <div class="p-2.5">
       <ExistingPrescriptionRecherche
-          :searchQuery="searchQuery"
-          :selectedType="selectedType"
-          @updateSearchQuery="value => searchQuery = value"
-          @updateSelectedType="value => selectedType = value"
+        :searchQuery="searchQuery"
+        :selectedType="selectedType"
+        @updateSearchQuery="(value) => (searchQuery = value)"
+        @updateSelectedType="(value) => (selectedType = value)"
       />
       <ExistingPrescriptionListe
-          :prescriptions="filteredPrescriptions"
-          :selectedPrescriptions="selectedPrescriptions"
-          @toggleSelection="toggleSelection"
+        :prescriptions="filteredPrescriptions"
+        :selectedPrescriptions="selectedPrescriptions"
+        @toggleSelection="toggleSelection"
       />
     </div>
   </GenericModal>

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { faSearch, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
-const props = defineProps<{
+defineProps<{
   searchQuery: string;
   selectedType: PrescriptionType | null;
 }>();
@@ -32,12 +31,12 @@ const updateSelectedType = (event: Event) => {
         Recherche
       </label>
       <input
-          id="search"
-          type="text"
-          :value="searchQuery"
-          @input="updateSearchQuery"
-          class="w-full border border-gray-300 rounded p-2"
-          placeholder="Rechercher par nom..."
+        id="search"
+        type="text"
+        :value="searchQuery"
+        @input="updateSearchQuery"
+        class="w-full border border-gray-300 rounded p-2"
+        placeholder="Rechercher par nom..."
       />
     </div>
     <div class="flex-1">
@@ -46,10 +45,10 @@ const updateSelectedType = (event: Event) => {
         Type
       </label>
       <select
-          id="type"
-          :value="selectedType"
-          @change="updateSelectedType"
-          class="w-full border border-gray-300 rounded p-2"
+        id="type"
+        :value="selectedType"
+        @change="updateSelectedType"
+        class="w-full border border-gray-300 rounded p-2"
       >
         <option :value="null">Tous les types</option>
         <option :value="PrescriptionType.BIOLOGY">Biologie</option>
