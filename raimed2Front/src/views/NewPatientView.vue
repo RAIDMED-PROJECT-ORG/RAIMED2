@@ -35,6 +35,9 @@ import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
 import { Gender } from '@/models/virtual-patient/gender.enum';
+import axios from 'axios';
+import * as js2xmlparser from 'js2xmlparser';
+import {QuestionType} from '@/models/question/questionType.enum';
 
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
@@ -47,7 +50,7 @@ const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
 const isListenModalOpen = ref(false);
 
-function handleSubmit() {
+async function handleSubmit() {
   errors.value = [];
   if (!newPatient.value.characteristic) {
     errors.value.push('Caractéristiques du patient');
@@ -62,7 +65,57 @@ function handleSubmit() {
     return;
   }
 
-  router.back();
+  const virtualPatientObj = {
+    age: newPatient.value.characteristic?.age,
+    gender: newPatient.value.characteristic?.gender,
+    createdAt: new Date().toISOString(),
+    actions: {
+      action: newPatient.value.questions.map((question) => {
+        // Base Action
+        const baseAction = {
+          type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+          primaryElement: question.content,
+        };
+        // Question Close
+        if (question.type === QuestionType.CLOSED) {
+          return {
+            ...baseAction,
+            actionClosedQuestion: {
+              closedAnswer : question.answer,
+              questionLinked: question,
+            },
+          };
+          // Question Open (pour l'instant on ne gère pas le reste)
+        } else {
+          return {
+            ...baseAction,
+            actionOpenedQuestion: {
+              openedAnswer : question.answer,
+              questionLinked: question,
+            },
+          };
+        }
+      })
+    },
+    result: newPatient.value.characteristic?.diagnostic,
+  };
+
+  // Conversion de l'objet en XML
+  const xml = js2xmlparser.parse('VirtualPatient', virtualPatientObj);
+
+  try {
+    const response = await axios.post('http://localhost:8080/api/v1/virtual-patient/xml', xml, {
+      headers: {
+        'Content-Type': 'application/xml'
+      }
+    });
+    console.log('Patient created successfully:', response.data);
+    router.back();
+  } catch (error) {
+    console.error('Error creating patient:', error);
+    errors.value.push('Erreur lors de la création du patient');
+    switchWarningModalVisibility();
+  }
 }
 
 function switchWarningModalVisibility() {
@@ -141,47 +194,47 @@ function onListenValidation(data: Listen[]) {
 <template>
   <AuthenticatedPageLayout>
     <WarningModal
-      v-if="isWarningModalOpen"
-      :onBack="switchWarningModalVisibility"
-      :errors="errors"
+        v-if="isWarningModalOpen"
+        :onBack="switchWarningModalVisibility"
+        :errors="errors"
     />
     <CharacteristicModal
-      v-if="isCharacteristicModalOpen"
-      :onValidation="onCharacteristicValidation"
-      :onBack="switchCharacteristicModalVisibility"
-      :currentCharacteristics="newPatient.characteristic"
+        v-if="isCharacteristicModalOpen"
+        :onValidation="onCharacteristicValidation"
+        :onBack="switchCharacteristicModalVisibility"
+        :currentCharacteristics="newPatient.characteristic"
     />
     <ExamenModal
-      v-if="isInspectionModalOpen"
-      :onValidation="onInspectionValidation"
-      :onBack="switchInspectionModalVisibility"
-      :possibleExams="InspectionSigns"
-      :modalTitle="'Inspection'"
-      :currentExamResults="newPatient.inspection"
+        v-if="isInspectionModalOpen"
+        :onValidation="onInspectionValidation"
+        :onBack="switchInspectionModalVisibility"
+        :possibleExams="InspectionSigns"
+        :modalTitle="'Inspection'"
+        :currentExamResults="newPatient.inspection"
     />
     <ExamenModal
-      v-if="isPalpationModalOpen"
-      :onValidation="onPalpationValidation"
-      :onBack="switchPalpationModalVisibility"
-      :possibleExams="PalpationSigns"
-      :modalTitle="'Palpation et manoeuvre'"
-      :currentExamResults="newPatient.palpation"
+        v-if="isPalpationModalOpen"
+        :onValidation="onPalpationValidation"
+        :onBack="switchPalpationModalVisibility"
+        :possibleExams="PalpationSigns"
+        :modalTitle="'Palpation et manoeuvre'"
+        :currentExamResults="newPatient.palpation"
     />
     <ExamenModal
-      v-if="isPercussionModalOpen"
-      :onValidation="onPercussionValidation"
-      :onBack="switchPercussionModalVisibility"
-      :possibleExams="PercussionSigns"
-      :modalTitle="'Percussion'"
-      :currentExamResults="newPatient.percussion"
+        v-if="isPercussionModalOpen"
+        :onValidation="onPercussionValidation"
+        :onBack="switchPercussionModalVisibility"
+        :possibleExams="PercussionSigns"
+        :modalTitle="'Percussion'"
+        :currentExamResults="newPatient.percussion"
     />
     <ExamenModal
-      v-if="isAuscultationModalOpen"
-      :onValidation="onAuscultationValidation"
-      :onBack="switchAuscultationModalVisibility"
-      :possibleExams="AuscultationSigns"
-      :modalTitle="'Auscultation'"
-      :currentExamResults="newPatient.auscultation"
+        v-if="isAuscultationModalOpen"
+        :onValidation="onAuscultationValidation"
+        :onBack="switchAuscultationModalVisibility"
+        :possibleExams="AuscultationSigns"
+        :modalTitle="'Auscultation'"
+        :currentExamResults="newPatient.auscultation"
     />
     <QuestionModal
       v-if="isQuestionModalOpen"
@@ -199,17 +252,17 @@ function onListenValidation(data: Listen[]) {
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
       <p class="text-center pt-3 w-1/2">
-        Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
-        champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton “Créer le
-        patient”. Il sera ensuite visible dans votre liste des patients.
+        Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les champs demandés.
+        Ensuite, valider la création du patient en cliquant sur le bouton “Créer le patient”.
+        Il sera ensuite visible dans votre liste des patients.
       </p>
       <div class="flex gap-8 my-8">
         <div class="flex flex-col w-1/3">
           <ActionButton
-            label="Caractéristiques du patient*"
-            :color="Color.Red"
-            :icon="faPerson"
-            :onClick="switchCharacteristicModalVisibility"
+              label="Caractéristiques du patient*"
+              :color="Color.Red"
+              :icon="faPerson"
+              :onClick="switchCharacteristicModalVisibility"
           />
           <ActionButton
             label="Écouter"
@@ -224,69 +277,69 @@ function onListenValidation(data: Listen[]) {
             :on-click="switchQuestionModalVisibility"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
-            :color="Color.Blue"
-            :icon="faSquarePlus"
+              :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
+              :color="Color.Blue"
+              :icon="faSquarePlus"
           />
         </div>
         <div class="flex flex-col w-1/3">
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
-            :color="Color.Orange"
-            :icon="faMagnifyingGlass"
-            :onClick="switchInspectionModalVisibility"
+              :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
+              :color="Color.Orange"
+              :icon="faMagnifyingGlass"
+              :onClick="switchInspectionModalVisibility"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.PALPATION)"
-            :color="Color.Orange"
-            :icon="faHandHoldingMedical"
-            :onClick="switchPalpationModalVisibility"
+              :label="getTypeActionDisplayName(TypeAction.PALPATION)"
+              :color="Color.Orange"
+              :icon="faHandHoldingMedical"
+              :onClick="switchPalpationModalVisibility"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
-            :color="Color.Orange"
-            :icon="faGavel"
-            :onClick="switchPercussionModalVisibility"
+              :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
+              :color="Color.Orange"
+              :icon="faGavel"
+              :onClick="switchPercussionModalVisibility"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
-            :color="Color.Orange"
-            :icon="faStethoscope"
-            :onClick="switchAuscultationModalVisibility"
+              :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
+              :color="Color.Orange"
+              :icon="faStethoscope"
+              :onClick="switchAuscultationModalVisibility"
           />
         </div>
         <div class="flex flex-col w-1/3">
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faFileMedical"
+              :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faFileMedical"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faPersonRays"
+              :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faPersonRays"
           />
           <ActionButton
-            :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
-            :color="Color.Purple"
-            :icon="faSyringe"
+              :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
+              :color="Color.Purple"
+              :icon="faSyringe"
           />
         </div>
       </div>
       <p>* Champs requis</p>
       <div>
         <ActionButton
-          :disabled="newPatient.characteristic === null"
-          class="mt-8"
-          :onClick="handleSubmit"
-          label="Créer le patient"
-          :color="Color.Green"
+            :disabled="newPatient.characteristic === null"
+            class="mt-8"
+            :onClick="handleSubmit"
+            label="Créer le patient"
+            :color="Color.Green"
         />
         <ActionButton
-          class="mt-8"
-          :onClick="() => router.back()"
-          label="Annuler"
-          :color="Color.Grey"
+            class="mt-8"
+            :onClick="() => router.back()"
+            label="Annuler"
+            :color="Color.Grey"
         />
       </div>
     </div>

@@ -49,4 +49,7 @@ public class VirtualPatient {
     @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Diagnostic> diagnostics;
 
+    public String toString() {
+        return "VirtualPatient(id=" + this.getId() + ", age=" + this.getAge() + ")";
+    }
 }
