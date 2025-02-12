@@ -68,7 +68,7 @@ const saveToLocalStorage = () => {
 
 watch(
   newPatient,
-  (newVal) => {
+  () => {
     saveToLocalStorage();
     progress.value = calculateProgress();
   },
@@ -220,7 +220,7 @@ function switchBiopsyModalVisibility() {
 }
 
 function calculateProgress() {
-  const total = 8;
+  const total = 10;
   let progressCount = 0;
   if (newPatient.value.characteristic) {
     progressCount++;
@@ -241,6 +241,15 @@ function calculateProgress() {
     progressCount++;
   }
   if (newPatient.value.listen.length) {
+    progressCount++;
+  }
+  if (newPatient.value.biology.length) {
+    progressCount++;
+  }
+  if (newPatient.value.imagery.length) {
+    progressCount++;
+  }
+  if (newPatient.value.biopsy.length) {
     progressCount++;
   }
   return (progressCount / total) * 100;

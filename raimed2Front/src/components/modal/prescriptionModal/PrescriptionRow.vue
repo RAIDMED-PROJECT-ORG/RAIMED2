@@ -2,10 +2,8 @@
 import { Color } from '@/models/new-patient/color.model';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
 defineProps<{
-  type: PrescriptionType;
   name: string;
   result: string;
 }>();
