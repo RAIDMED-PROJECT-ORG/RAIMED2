@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import { type Question } from '@/models/question/question.model';
 import QuestionListModalHeader from '@/components/modal/questionModal/QuestionListModalHeader.vue';
@@ -12,9 +12,12 @@ import QuestionRow from '@/components/modal/questionModal/QuestionRow.vue';
 import { Role } from '@/models/auth/role.enum';
 import { useAuthStore } from '@/stores/auth.store';
 import { useQuestionStore } from '@/stores/questions.store';
+import type { Gender } from '@/models/virtual-patient/gender.enum';
+import { QuestionType } from '@/models/question/questionType.enum';
 
 const props = defineProps<{
   selectedQuestions: Question[];
+  patientGender: Gender;
 }>();
 
 const emits = defineEmits<{
@@ -27,9 +30,14 @@ const questionsToAdd = ref<Question[]>([]);
 const authStore = useAuthStore();
 const questionStore = useQuestionStore();
 
-const filters = ref({
+const filters = ref<{
+  nameFilter: string;
+  genderFilter: QuestionFilter | null;
+  typeFilter: QuestionType | null;
+}>({
   nameFilter: '',
-  genderFilter: null as QuestionFilter | null
+  genderFilter: null,
+  typeFilter: null
 });
 
 const validationLabel = computed(() => {
@@ -68,14 +76,35 @@ const addQuestions = () => {
   emits('switchModalVisibility', false);
 };
 
-onMounted(async () => {
+const fetchQuestions = async () => {
   const teacherId = authStore.getUserRole === Role.TEACHER ? authStore.getUserInfo.id : null;
+
+  const questionType = filters.value.typeFilter
+    ? QuestionType[filters.value.typeFilter]
+    : null;
+
+  const questionFilter = filters.value.genderFilter
+    ? QuestionFilter[filters.value.genderFilter]
+    : QuestionFilter[props.patientGender];
+
   allQuestions.value = await questionStore.fetchExistingQuestions(
     teacherId,
-    null,
-    QuestionFilter.MIXED
+    questionType,
+    questionFilter
   );
+};
+
+onMounted(async () => {
+  await fetchQuestions();
 });
+
+watch(
+  () => filters.value,
+  async () => {
+    await fetchQuestions();
+  },
+  {deep: true}
+);
 </script>
 
 <template>
@@ -88,7 +117,7 @@ onMounted(async () => {
     :onBack="() => emits('switchModalVisibility', false)"
   >
     <div class="w-[70vw] h-[60vh] flex flex-col justify-start px-10">
-      <QuestionListModalHeader v-model="filters" />
+      <QuestionListModalHeader :patient-gender="patientGender" v-model="filters" />
       <div class="my-5 border-t border-light-grey"></div>
       <div class="pr-5 overflow-scroll">
         <div class="flex justify-between border-b border-1 border-[#9CA3AF] text-black font-bold">

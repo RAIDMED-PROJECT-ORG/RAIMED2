@@ -34,6 +34,7 @@ import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
+import { Gender } from '@/models/virtual-patient/gender.enum';
 
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
@@ -187,6 +188,7 @@ function onListenValidation(data: Listen[]) {
       :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
+      :patient-gender="newPatient.characteristic?.gender ?? Gender.MALE"
     />
     <ListenModal
       v-if="isListenModalOpen"

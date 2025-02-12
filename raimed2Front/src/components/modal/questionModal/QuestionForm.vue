@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { faSliders, faVenusMars } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { faCircleQuestion, faMessage } from '@fortawesome/free-regular-svg-icons';
 import { ref, watch } from 'vue';
 import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
-import { QuestionFilter, QuestionFilterDisplayNames } from '@/models/question/questionFilter.enum';
+import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import {
   ClosedQuestionAnswer,
   ClosedQuestionAnswerDisplayNames,
@@ -16,6 +16,7 @@ import QuestionListModal from '@/components/modal/questionModal/QuestionListModa
 import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
 import ClassicSelector from '@/components/classicSelector/ClassicSelector.vue';
+import type { Gender } from '@/models/virtual-patient/gender.enum';
 
 const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
@@ -26,6 +27,7 @@ const isModalOpen = ref<boolean>(false);
 const props = defineProps<{
   questionToUpdate?: Question | null;
   questions: Question[];
+  patientGender: Gender;
 }>();
 
 const authStore = useAuthStore();
@@ -33,11 +35,6 @@ const authStore = useAuthStore();
 const questionTypeOptions = Object.values(QuestionType).map((value) => ({
   value,
   label: QuestionTypeDisplayNames[value as QuestionType]
-}));
-
-const genderOptions = Object.values(QuestionFilter).map((value) => ({
-  value,
-  label: QuestionFilterDisplayNames[value as QuestionFilter]
 }));
 
 const closedQuestionOptions = Object.values(ClosedQuestionAnswer).map((value) => ({
@@ -61,7 +58,7 @@ const submitForm = () => {
     answer: answerValue.value,
     type: typeValue.value,
     teacherId: teacherId,
-    filter: genderValue.value,
+    filter: QuestionFilter[genderValue.value],
     isMutual: false
   });
 
@@ -105,15 +102,9 @@ watch(typeValue, (newType) => {
     @onsubmit="() => submitForm()"
     @open-modal="() => switchModalVisibility()"
   >
-    <div class="flex gap-2 flex-wrap">
-      <div>
-        <IconLabel for="type" :icon="faSliders" text="Type*" />
-        <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
-      </div>
-      <div>
-        <IconLabel for="gender" :icon="faVenusMars" text="Genre*" />
-        <ClassicSelector id="gender" :options="genderOptions" v-model="genderValue" />
-      </div>
+    <div class="form-group">
+      <IconLabel for="type" :icon="faSliders" text="Type*" />
+      <ClassicSelector id="type" :options="questionTypeOptions" v-model="typeValue" />
     </div>
     <div class="form-group">
       <IconLabel for="question" :icon="faCircleQuestion" text="Question*" />
@@ -150,6 +141,7 @@ watch(typeValue, (newType) => {
   <QuestionListModal
     v-if="isModalOpen"
     :selected-questions="questions"
+    :patient-gender="patientGender"
     @switch-modal-visibility="switchModalVisibility"
     @add-questions="emits('addQuestions', $event)"
   />

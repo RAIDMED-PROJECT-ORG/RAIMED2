@@ -14,7 +14,7 @@ const props = defineProps<{
   currentCharacteristics: Characteristics | null;
 }>();
 
-const sex = ref<Gender>(props.currentCharacteristics?.sex || Gender.MALE);
+const gender = ref<Gender>(props.currentCharacteristics?.gender || Gender.MALE);
 const age = ref<number>(props.currentCharacteristics?.age || 0);
 const diagnostic = ref<string>(props.currentCharacteristics?.diagnostic || '');
 
@@ -61,7 +61,7 @@ function handleValidation() {
   }
 
   if (diagnostic.value !== '' && age.value !== null && age.value > 0) {
-    props.onValidation({ sex: sex.value, age: age.value, diagnostic: diagnostic.value });
+    props.onValidation({ gender: gender.value, age: age.value, diagnostic: diagnostic.value });
   }
 }
 </script>
@@ -77,8 +77,8 @@ function handleValidation() {
   >
     <div class="flex gap-4 flex-col ml-8 mr-8">
       <div>
-        <IconLabel for="sex" :icon="faMarsAndVenus" text="Sexe*" />
-        <ClassicSelector id="sex" :options="sexOptions" v-model="sex" />
+        <IconLabel for="gender" :icon="faMarsAndVenus" text="Genre*" />
+        <ClassicSelector id="gender" :options="sexOptions" v-model="gender" />
       </div>
       <div>
         <div>

@@ -5,9 +5,11 @@ import QuestionForm from '@/components/modal/questionModal/QuestionForm.vue';
 import { ref } from 'vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionList from '@/components/modal/questionModal/QuestionList.vue';
+import type { Gender } from '@/models/virtual-patient/gender.enum';
 
 const props = defineProps<{
   questions: Question[];
+  patientGender: Gender;
   onValidation: (data: Question[]) => void;
   onBack: () => void;
 }>();
@@ -61,6 +63,7 @@ const handleValidation = () => {
       <QuestionForm
         @add-question="insertOrUpdateQuestion"
         @add-questions="insertQuestions"
+        :patient-gender="patientGender"
         :question-to-update="questionToUpdate"
         :questions="questions"
       />
