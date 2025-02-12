@@ -3,7 +3,6 @@ import { computed } from 'vue';
 
 const props = defineProps<{
   title: string;
-  size: 'small' | 'medium' | 'large';
   columns: Record<string, number>;
 }>();
 
@@ -12,12 +11,6 @@ const columnStyles = computed(() => {
     column,
     style: { width: `${width}%` }
   }));
-});
-
-const textSize = computed(() => {
-  if (props.size === 'small') return 'text-[0.90rem]';
-  if (props.size === 'medium') return 'text-[1rem]';
-  return 'text-[1.25rem]';
 });
 </script>
 
@@ -29,7 +22,7 @@ const textSize = computed(() => {
         <h4
           v-for="{ column, style } in columnStyles"
           :key="column"
-          :class="[textSize, 'font-bold truncate']"
+          class="text-[1rem] font-bold truncate"
           :style="style"
         >
           {{ column }}

@@ -16,7 +16,6 @@ defineEmits<{
 <template>
   <GenericList
     title="Liste des prescriptions"
-    size="small"
     :columns="{
       'Prescription': 30,
       'Résultat': 50,

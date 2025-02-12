@@ -343,21 +343,21 @@ function handleConfirmGoBack() {
     <PrescriptionModal
       v-if="isBiologyModalOpen"
       :prescription-type="PrescriptionType.BIOLOGY"
-      :prescriptions="newPatient.biology ?? []"
+      :current-prescriptions="newPatient.biology ?? []"
       :on-validation="onBiologyValidation"
       :on-back="switchBiologyModalVisibility"
     />
     <PrescriptionModal
       v-if="isImageryModalOpen"
       :prescription-type="PrescriptionType.IMAGERY"
-      :prescriptions="newPatient.imagery ?? []"
+      :current-prescriptions="newPatient.imagery ?? []"
       :on-validation="onImageryValidation"
       :on-back="switchImageryModalVisibility"
     />
     <PrescriptionModal
       v-if="isBiopsyModalOpen"
       :prescription-type="PrescriptionType.BIOPSY"
-      :prescriptions="newPatient.biopsy ?? []"
+      :current-prescriptions="newPatient.biopsy ?? []"
       :on-validation="onBiopsyValidation"
       :on-back="switchBiopsyModalVisibility"
     />
