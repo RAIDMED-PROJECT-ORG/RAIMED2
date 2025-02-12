@@ -17,7 +17,14 @@ defineEmits<{
 </script>
 
 <template>
-  <GenericList title="Liste des questions" :columns="['Questions', 'Actions']">
+  <GenericList
+    title="Liste des questions"
+    size="medium"
+    :columns="{
+      Questions: 80,
+      Actions: 20
+    }"
+  >
     <QuestionRow
       v-for="(question, index) in questions"
       :key="index"
@@ -25,7 +32,7 @@ defineEmits<{
       :question="question.content"
       :answer="question.answer ?? ''"
     >
-      <div class="w-4/12 flex justify-end gap-2">
+      <div class="w-[20%] flex justify-end gap-2">
         <ActionButton
           :color="Color.Grey"
           :icon="faPenToSquare"

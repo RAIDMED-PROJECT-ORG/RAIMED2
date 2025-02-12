@@ -32,12 +32,15 @@ import {
 import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
 import ProgressBar from '@/components/progressBar/ProgressBar.vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
+import type { Prescription } from '@/models/prescription/prescription.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
@@ -55,6 +58,9 @@ const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
 const isListenModalOpen = ref(false);
+const isBiologyModalOpen = ref(false);
+const isImageryModalOpen = ref(false);
+const isBiopsyModalOpen = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(newPatient.value));
@@ -62,7 +68,7 @@ const saveToLocalStorage = () => {
 
 watch(
   newPatient,
-  (newVal) => {
+  () => {
     saveToLocalStorage();
     progress.value = calculateProgress();
   },
@@ -177,17 +183,44 @@ function switchGoBackModalVisibility() {
   isGoBackModalOpen.value = !isGoBackModalOpen.value;
 }
 
-function switchListenModalVisibility() {
-  isListenModalOpen.value = !isListenModalOpen.value;
-}
-
 function onListenValidation(data: Listen[]) {
   isListenModalOpen.value = false;
   newPatient.value.listen = data;
 }
 
+function switchListenModalVisibility() {
+  isListenModalOpen.value = !isListenModalOpen.value;
+}
+
+function onBiologyValidation(data: Prescription[]) {
+  newPatient.value.biology = data;
+  switchBiologyModalVisibility();
+}
+
+function switchBiologyModalVisibility() {
+  isBiologyModalOpen.value = !isBiologyModalOpen.value;
+}
+
+function onImageryValidation(data: Prescription[]) {
+  newPatient.value.imagery = data;
+  switchImageryModalVisibility();
+}
+
+function switchImageryModalVisibility() {
+  isImageryModalOpen.value = !isImageryModalOpen.value;
+}
+
+function onBiopsyValidation(data: Prescription[]) {
+  newPatient.value.biopsy = data;
+  switchBiopsyModalVisibility();
+}
+
+function switchBiopsyModalVisibility() {
+  isBiopsyModalOpen.value = !isBiopsyModalOpen.value;
+}
+
 function calculateProgress() {
-  const total = 8;
+  const total = 10;
   let progressCount = 0;
   if (newPatient.value.characteristic) {
     progressCount++;
@@ -208,6 +241,15 @@ function calculateProgress() {
     progressCount++;
   }
   if (newPatient.value.listen.length) {
+    progressCount++;
+  }
+  if (newPatient.value.biology.length) {
+    progressCount++;
+  }
+  if (newPatient.value.imagery.length) {
+    progressCount++;
+  }
+  if (newPatient.value.biopsy.length) {
     progressCount++;
   }
   return (progressCount / total) * 100;
@@ -290,13 +332,34 @@ function handleConfirmGoBack() {
       :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
-      :patient-gender="newPatient.characteristic?.gender ?? Gender.MALE"
+      :patient-gender="Gender.MALE"
     />
     <ListenModal
       v-if="isListenModalOpen"
       :listens="newPatient.listen ?? []"
       :onValidation="onListenValidation"
       :onBack="switchListenModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isBiologyModalOpen"
+      :prescription-type="PrescriptionType.BIOLOGY"
+      :current-prescriptions="newPatient.biology ?? []"
+      :on-validation="onBiologyValidation"
+      :on-back="switchBiologyModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isImageryModalOpen"
+      :prescription-type="PrescriptionType.IMAGERY"
+      :current-prescriptions="newPatient.imagery ?? []"
+      :on-validation="onImageryValidation"
+      :on-back="switchImageryModalVisibility"
+    />
+    <PrescriptionModal
+      v-if="isBiopsyModalOpen"
+      :prescription-type="PrescriptionType.BIOPSY"
+      :current-prescriptions="newPatient.biopsy ?? []"
+      :on-validation="onBiopsyValidation"
+      :on-back="switchBiopsyModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
@@ -373,22 +436,22 @@ function handleConfirmGoBack() {
             :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faFileMedical"
-            :onClick="() => console.log('Not implemented yet')"
-            :isCompleted="false"
+            :on-click="switchBiologyModalVisibility"
+            :isCompleted="newPatient.biology.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faPersonRays"
-            :onClick="() => console.log('Not implemented yet')"
-            :isCompleted="false"
+            :on-click="switchImageryModalVisibility"
+            :isCompleted="newPatient.imagery.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faSyringe"
-            :onClick="() => console.log('Not implemented yet')"
-            :isCompleted="false"
+            :on-click="switchBiopsyModalVisibility"
+            :isCompleted="newPatient.biopsy.length > 0"
           />
         </div>
       </div>

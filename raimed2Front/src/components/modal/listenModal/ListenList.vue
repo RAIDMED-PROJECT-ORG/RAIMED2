@@ -18,9 +18,16 @@ defineEmits<{
 </script>
 
 <template>
-  <GenericList title="Liste des phrases" :columns="['Phrases', 'Actions']">
+  <GenericList
+    title="Liste des phrases"
+    size="medium"
+    :columns="{
+      Phrases: 80,
+      Actions: 20
+    }"
+  >
     <ListenRow v-for="(listen, index) in listens" :key="index" :listen="listen.content">
-      <div class="w-4/12 flex justify-end gap-2">
+      <div class="w-[20%] flex justify-end gap-2">
         <ActionButton
           :color="Color.Grey"
           :icon="faPenToSquare"
