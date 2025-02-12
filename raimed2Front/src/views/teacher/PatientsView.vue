@@ -83,5 +83,4 @@ const deletePatient = async (id: string) => {
 </template>
 
 <style scoped>
-/* Ajoutez ici des styles si nécessaire */
 </style>

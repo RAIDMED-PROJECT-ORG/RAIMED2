@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import {
@@ -34,18 +34,62 @@ import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
+import ProgressBar from '@/components/progressBar/ProgressBar.vue';
+import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
+import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
 
+const STORAGE_KEY = 'newPatientData';
+const SESSION_KEY = 'pageActive';
+
+const errors = ref<string[]>([]);
+const newPatient = ref<NewPatient>(initializeNewPatient());
+const progress = ref<number>(calculateProgress());
+
+const isGoBackModalOpen = ref(false);
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
-const errors = ref<string[]>([]);
-const newPatient = ref<NewPatient>(initializeNewPatient());
 const isInspectionModalOpen = ref(false);
 const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
 const isListenModalOpen = ref(false);
+
+const saveToLocalStorage = () => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(newPatient.value));
+};
+
+watch(
+  newPatient,
+  (newVal) => {
+    saveToLocalStorage();
+    progress.value = calculateProgress();
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  const savedPatient = localStorage.getItem(STORAGE_KEY);
+  if (savedPatient) {
+    newPatient.value = JSON.parse(savedPatient);
+    progress.value = calculateProgress();
+  }
+  sessionStorage.setItem(SESSION_KEY, 'true');
+});
+
+const handleUnload = () => {
+  if (!sessionStorage.getItem(SESSION_KEY)) {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+};
+
+onUnmounted(() => {
+  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
+});
+
+window.addEventListener('beforeunload', handleUnload);
 
 function handleSubmit() {
   errors.value = [];
@@ -62,6 +106,7 @@ function handleSubmit() {
     return;
   }
 
+  localStorage.removeItem(STORAGE_KEY);
   router.back();
 }
 
@@ -128,6 +173,10 @@ function switchQuestionModalVisibility() {
   isQuestionModalOpen.value = !isQuestionModalOpen.value;
 }
 
+function switchGoBackModalVisibility() {
+  isGoBackModalOpen.value = !isGoBackModalOpen.value;
+}
+
 function switchListenModalVisibility() {
   isListenModalOpen.value = !isListenModalOpen.value;
 }
@@ -136,10 +185,63 @@ function onListenValidation(data: Listen[]) {
   isListenModalOpen.value = false;
   newPatient.value.listen = data;
 }
+
+function calculateProgress() {
+  const total = 8;
+  let progressCount = 0;
+  if (newPatient.value.characteristic) {
+    progressCount++;
+  }
+  if (newPatient.value.questions.length) {
+    progressCount++;
+  }
+  if (newPatient.value.inspection.length) {
+    progressCount++;
+  }
+  if (newPatient.value.palpation.length) {
+    progressCount++;
+  }
+  if (newPatient.value.percussion.length) {
+    progressCount++;
+  }
+  if (newPatient.value.auscultation.length) {
+    progressCount++;
+  }
+  if (newPatient.value.listen.length) {
+    progressCount++;
+  }
+  return (progressCount / total) * 100;
+}
+
+function handleOnBack() {
+  if (progress.value === 0) {
+    handleConfirmGoBack();
+    return;
+  }
+  isGoBackModalOpen.value = true;
+}
+
+function handleConfirmGoBack() {
+  localStorage.removeItem(STORAGE_KEY);
+  router.back();
+}
 </script>
 
 <template>
   <AuthenticatedPageLayout>
+    <GenericModal
+      v-if="isGoBackModalOpen"
+      title="Annuler la création du patient"
+      :headerColor="Color.Grey"
+      validationLabel="Confirmer"
+      :onValidation="handleConfirmGoBack"
+      :onBack="switchGoBackModalVisibility"
+    >
+      <div class="text-center ml-9 mr-9">
+        <p>Êtes-vous sûr de vouloir annuler la création du patient ?</p>
+        <p>Vous perdrez toutes vos modifications.</p>
+      </div>
+    </GenericModal>
     <WarningModal
       v-if="isWarningModalOpen"
       :onBack="switchWarningModalVisibility"
@@ -197,79 +299,96 @@ function onListenValidation(data: Listen[]) {
       :onBack="switchListenModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
-      <h1 class="text-2xl text-primary font-bold">Nouveau patient</h1>
+      <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
       <p class="text-center pt-3 w-1/2">
         Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
-        champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton “Créer le
-        patient”. Il sera ensuite visible dans votre liste des patients.
+        champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton "Créer le
+        patient". Il sera ensuite visible dans votre liste des patients.
       </p>
+      <h2 class="mt-2 text-xl font-bold">Progression</h2>
+      <ProgressBar :percentage="progress" />
       <div class="flex gap-8 my-8">
-        <div class="flex flex-col w-1/3">
-          <ActionButton
-            label="Caractéristiques du patient*"
+        <div class="flex flex-col w-1/3 gap-1">
+          <CategoryButton
+            label="Caractéristiques du patient"
             :color="Color.Red"
             :icon="faPerson"
+            :isCompleted="newPatient.characteristic !== null"
             :onClick="switchCharacteristicModalVisibility"
           />
-          <ActionButton
+          <CategoryButton
             label="Écouter"
             :color="Color.Blue"
             :icon="faEarListen"
+            :isCompleted="newPatient.listen.length > 0"
             :onClick="switchListenModalVisibility"
           />
-          <ActionButton
+          <CategoryButton
             label="Question"
             :color="Color.Blue"
             :icon="faPersonCircleQuestion"
-            :on-click="switchQuestionModalVisibility"
+            :onClick="switchQuestionModalVisibility"
+            :isCompleted="newPatient.questions.length > 0"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
             :color="Color.Blue"
             :icon="faSquarePlus"
+            :onClick="() => {}"
+            :isCompleted="false"
           />
         </div>
-        <div class="flex flex-col w-1/3">
-          <ActionButton
+        <div class="flex flex-col w-1/3 gap-1">
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
             :onClick="switchInspectionModalVisibility"
+            :isCompleted="newPatient.inspection.length > 0"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PALPATION)"
             :color="Color.Orange"
             :icon="faHandHoldingMedical"
             :onClick="switchPalpationModalVisibility"
+            :isCompleted="newPatient.palpation.length > 0"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
             :color="Color.Orange"
             :icon="faGavel"
             :onClick="switchPercussionModalVisibility"
+            :isCompleted="newPatient.percussion.length > 0"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
             :color="Color.Orange"
             :icon="faStethoscope"
             :onClick="switchAuscultationModalVisibility"
+            :isCompleted="newPatient.auscultation.length > 0"
           />
         </div>
-        <div class="flex flex-col w-1/3">
-          <ActionButton
+        <div class="flex flex-col w-1/3 gap-1">
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faFileMedical"
+            :onClick="() => console.log('Not implemented yet')"
+            :isCompleted="false"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faPersonRays"
+            :onClick="() => console.log('Not implemented yet')"
+            :isCompleted="false"
           />
-          <ActionButton
+          <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faSyringe"
+            :onClick="() => console.log('Not implemented yet')"
+            :isCompleted="false"
           />
         </div>
       </div>
@@ -282,12 +401,7 @@ function onListenValidation(data: Listen[]) {
           label="Créer le patient"
           :color="Color.Green"
         />
-        <ActionButton
-          class="mt-8"
-          :onClick="() => router.back()"
-          label="Annuler"
-          :color="Color.Grey"
-        />
+        <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
       </div>
     </div>
   </AuthenticatedPageLayout>
