@@ -54,6 +54,7 @@ export const usePatientStore = defineStore('patient', {
         createdAt: new Date().toISOString(), // Format ISO 8601,
         createdBy: {
           id: authStore.getUserInfo.id,
+          username: authStore.getUserInfo.username,
           firstname: authStore.getUserInfo.username,
           lastname: authStore.getUserInfo.lastname,
           email: authStore.getUserInfo.email,
