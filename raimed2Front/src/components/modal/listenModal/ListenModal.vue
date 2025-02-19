@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Color } from '@/models/new-patient/color.model';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ListenList from '@/components/modal/listenModal/ListenList.vue';
 import ListenForm from '@/components/modal/listenModal/ListenForm.vue';
 import type { Listen } from '@/models/listen/listen.model';
@@ -12,9 +12,17 @@ const props = defineProps<{
   onBack: () => void;
 }>();
 
-const listens = ref<Listen[]>(props.listens);
-
+const listens = ref<Listen[]>([...props.listens]);
 const listenToUpdate = ref<Listen | null>(null);
+const confirmGoBack = ref<boolean>(false);
+
+watch(
+  listens,
+  (newListens) => {
+    confirmGoBack.value = JSON.stringify(props.listens) !== JSON.stringify(newListens);
+  },
+  { deep: true }
+);
 
 const deleteListen = (id: string) => {
   listens.value = listens.value.filter((listen) => listen.id !== id);
@@ -35,7 +43,6 @@ const insertOrUpdateListen = (listen: Listen) => {
 };
 
 const insertListen = (newListens: Listen[]) => {
-  console.log(newListens);
   listens.value.push(...newListens);
 };
 
@@ -51,7 +58,7 @@ const handleValidation = () => {
     :onValidation="handleValidation"
     :headerColor="Color.Blue"
     :onBack="onBack"
-    :confirmGoBack="true"
+    :confirmGoBack="confirmGoBack"
   >
     <div class="w-[70vw] h-[60vh] flex px-10">
       <ListenList :listens="listens" @delete-listen="deleteListen" @update-listen="updateListen" />

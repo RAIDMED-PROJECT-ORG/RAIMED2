@@ -47,7 +47,6 @@ watch(
 );
 
 function updateSelectedZone(zone: Zones) {
-  console.log(zone);
   selectedZone.value = zone;
 }
 
