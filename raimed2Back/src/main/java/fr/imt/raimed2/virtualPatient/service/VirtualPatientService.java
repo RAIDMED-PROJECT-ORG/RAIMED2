@@ -1,7 +1,6 @@
 package fr.imt.raimed2.virtualPatient.service;
 
 import fr.imt.raimed2.action.dto.xml.ActionDTO;
-import fr.imt.raimed2.action.dto.xml.ActionsDTO;
 import fr.imt.raimed2.action.service.ActionService;
 import fr.imt.raimed2.virtualPatient.dto.xml.VirtualPatientDTO;
 import fr.imt.raimed2.virtualPatient.dto.xml.VirtualPatientXMLMapper;
@@ -52,19 +51,19 @@ public class VirtualPatientService {
 
         logger.info("Saving actions responses...");
         for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
-            logger.info("Action: {}", actionDTO.toString());
+
             if(actionDTO.getActionClosedQuestionDTO() != null) {
-                logger.info("Action closed question: {}", actionDTO.getActionClosedQuestionDTO().toString());
+                logger.info("Action closed question: {}", actionDTO.getActionClosedQuestionDTO());
                 actionService.saveActionClosedQuestion(saved, actionDTO);
             }
 
-            if(actionDTO.getActionSpontaneousPatientSpeech() != null){
-                logger.info("Action spontaneous patient speech: {}", actionDTO.getActionSpontaneousPatientSpeech().toString());
+            if(actionDTO.getActionSpontaneousPatientSpeechDTO() != null){
+                logger.info("Action spontaneous patient speech: {}", actionDTO.getActionSpontaneousPatientSpeechDTO());
                 actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
             }
 
             if(actionDTO.getActionOpenedQuestionDTO() != null){
-                logger.info("Action opened question: {}", actionDTO.getActionOpenedQuestionDTO().toString());
+                logger.info("Action opened question: {}", actionDTO.getActionOpenedQuestionDTO());
                 actionService.saveActionOpenedQuestion(saved, actionDTO);
             }
 

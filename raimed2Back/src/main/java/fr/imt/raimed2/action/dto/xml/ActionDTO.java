@@ -19,7 +19,7 @@ public class ActionDTO implements Serializable {
     private ActionClosedQuestionDTO actionClosedQuestionDTO;
 
     @JacksonXmlProperty(localName = "actionSpontaneousPatientSpeech")
-    private ActionSpontaneousPatientSpeechDTO actionSpontaneousPatientSpeech;
+    private ActionSpontaneousPatientSpeechDTO actionSpontaneousPatientSpeechDTO;
 
     @JacksonXmlProperty(localName = "actionOpenedQuestion")
     private ActionOpenedQuestionDTO actionOpenedQuestionDTO;

@@ -100,74 +100,111 @@ onUnmounted(() => {
 
 window.addEventListener('beforeunload', handleUnload);
 
-function handleSubmit() {
-  errors.value = [];
-  if (!newPatient.value.characteristic) {
-    errors.value.push('Caractéristiques du patient');
-  }
-
-  if (!newPatient.value.questions) {
-    errors.value.push('Questions ouvertes ou fermées');
-  }
+async function handleSubmit() {
+  errors.value = validateNewPatient(newPatient.value);
 
   if (errors.value.length > 0) {
     switchWarningModalVisibility();
     return;
   }
 
-  localStorage.removeItem(STORAGE_KEY);
-  router.back();
-  const virtualPatientObj = {
-    age: newPatient.value.characteristic?.age,
-    gender: newPatient.value.characteristic?.gender,
-    createdAt: new Date().toISOString(),
-    actions: {
-      action: newPatient.value.questions.map((question) => {
-        // Base Action
-        const baseAction = {
-          type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
-          primaryElement: question.content,
-        };
-        // Question Close
-        if (question.type === QuestionType.CLOSED) {
-          return {
-            ...baseAction,
-            actionClosedQuestion: {
-              closedAnswer : question.answer,
-              questionLinked: question,
-            },
-          };
-          // Question Open (pour l'instant on ne gère pas le reste)
-        } else {
-          return {
-            ...baseAction,
-            actionOpenedQuestion: {
-              openedAnswer : question.answer,
-              questionLinked: question,
-            },
-          };
-        }
-      })
-    },
-    result: newPatient.value.characteristic?.diagnostic,
-  };
-
-  // Conversion de l'objet en XML
+  const virtualPatientObj = createVirtualPatientObject(newPatient.value);
   const xml = js2xmlparser.parse('VirtualPatient', virtualPatientObj);
 
   try {
-    const response = await axios.post('http://localhost:8080/api/v1/virtual-patient/xml', xml, {
-      headers: {
-        'Content-Type': 'application/xml'
-      }
-    });
-    console.log('Patient created successfully:', response.data);
+    await submitVirtualPatient(xml);
+    localStorage.removeItem(STORAGE_KEY);
     router.back();
   } catch (error) {
-    console.error('Error creating patient:', error);
-    errors.value.push('Erreur lors de la création du patient');
-    switchWarningModalVisibility();
+    handleSubmissionError(error);
   }
+}
+
+function validateNewPatient(newPatient: NewPatient): string[] {
+  const errors: string[] = [];
+  if (!newPatient.characteristic) {
+    errors.push('Caractéristiques du patient');
+  }
+  if (!newPatient.questions) {
+    errors.push('Questions ouvertes ou fermées');
+  }
+  return errors;
+}
+
+function createVirtualPatientObject(newPatient: NewPatient) {
+  return {
+    age: newPatient.characteristic?.age,
+    gender: newPatient.characteristic?.gender,
+    createdAt: new Date().toISOString(),
+    actions: {
+      action: [
+        ...newPatient.questions.map((question) => createQuestionAction(question)),
+        ...newPatient.listen.map((listen) => createSpontaneousPatientSpeechAction(listen))
+      ]
+    },
+    result: newPatient.characteristic?.diagnostic,
+  };
+}
+
+function createQuestionAction(question: Question) {
+  const baseAction = {
+    type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+    primaryElement: question.content,
+  };
+
+  if (question.type === QuestionType.CLOSED) {
+    return {
+      ...baseAction,
+      actionClosedQuestion: {
+        closedAnswer: question.answer,
+        questionLinked: createQuestionLinked(question),
+      },
+    };
+  } else {
+    return {
+      ...baseAction,
+      actionOpenedQuestion: {
+        openedAnswer: question.answer,
+        questionLinked: createQuestionLinked(question),
+      },
+    };
+  }
+}
+
+function createSpontaneousPatientSpeechAction(listen: Listen) {
+  return {
+    type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
+    primaryElement: listen.content,
+    actionSpontaneousPatientSpeech: {
+      speech: listen.content,
+    }
+  };
+}
+
+function createQuestionLinked(question: Question) {
+  return {
+    id: question.id,
+    type: question.type,
+    filter: question.filter,
+    content: question.content,
+    isMutual: question.isMutual,
+    ...(question.teacherId ? { teacherId: question.teacherId } : {})
+  };
+}
+
+async function submitVirtualPatient(xml: string) {
+  const response = await axios.post('http://localhost:8080/api/v1/virtual-patient/xml', xml, {
+    headers: {
+      'Content-Type': 'application/xml'
+    }
+  });
+  console.log('Patient created successfully:', response.data);
+}
+
+function handleSubmissionError(error: any) {
+  console.error('Error creating patient:', error);
+  errors.value.push('Erreur lors de la création du patient');
+  switchWarningModalVisibility();
 }
 
 function switchWarningModalVisibility() {

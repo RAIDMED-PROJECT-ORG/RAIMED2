@@ -123,7 +123,7 @@ public class ActionService {
      * @return The ActionSpontaneousPatientSpeech saved object
      */
     public ActionSpontaneousPatientSpeech saveActionSpontaneousPatientSpeech(VirtualPatient virtualPatient, ActionDTO actionDTO){
-        ActionSpontaneousPatientSpeech actionSpontaneousPatientSpeech = actionSpontaneousPatientSpeechMapper.actionSpontaneousPatientSpeechDtoToDao(actionDTO.getActionSpontaneousPatientSpeech());
+        ActionSpontaneousPatientSpeech actionSpontaneousPatientSpeech = actionSpontaneousPatientSpeechMapper.actionSpontaneousPatientSpeechDtoToDao(actionDTO.getActionSpontaneousPatientSpeechDTO());
         actionSpontaneousPatientSpeech.setVirtualPatient(virtualPatient);
         actionSpontaneousPatientSpeech.setPrimaryElement(actionDTO.getPrimaryElement());
         actionSpontaneousPatientSpeech.setType(actionDTO.getType());
