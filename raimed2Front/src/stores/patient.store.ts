@@ -10,6 +10,7 @@ import { parse } from 'js2xmlparser';
 import {useAuthStore} from '@/stores/auth.store';
 import type {Listen} from "@/models/listen/listen.model";
 import type {Question} from "@/models/question/question.model";
+import type {ExamResults} from "@/models/diagnostic/exam.model";
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
@@ -96,7 +97,11 @@ function createVirtualPatient(newPatient: NewPatient) {
     actions: {
       action: [
         ...createQuestionActions(newPatient.questions),
-        ...newPatient.listen.map(createSpontaneousPatientSpeechAction)
+        ...newPatient.listen.map(createSpontaneousPatientSpeechAction),
+        ...newPatient.inspection.map(result => createExamenAction(result, TypeAction.INSPECTION)),
+        ...newPatient.palpation.map(result => createExamenAction(result, TypeAction.PALPATION)),
+        ...newPatient.percussion.map(result => createExamenAction(result, TypeAction.PERCUSSION)),
+        ...newPatient.auscultation.map(result => createExamenAction(result, TypeAction.AUSCULTATION))
       ]
     }
   };
@@ -128,4 +133,15 @@ function createQuestionActions(questions: Question[]) {
       },
     }),
   }));
+}
+
+function createExamenAction(examResult: ExamResults, type: TypeAction) {
+  return {
+    type: type,
+    primaryElement: examResult.zone,
+    actionExamen: {
+      zone: examResult.zone,
+      signs: examResult.signs,
+    }
+  };
 }
