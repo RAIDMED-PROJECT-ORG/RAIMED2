@@ -61,7 +61,6 @@ function createNewValue() {
 }
 
 function clearInput() {
-  console.log("pas normal");
   input.value = '';
   isSelected.value = false;
 }

@@ -58,10 +58,6 @@ const emits = defineEmits<{
   (e: 'addQuestions', question: Question[]): void;
 }>();
 
-watch(props.questions, (newQuestions) => {
-  console.log('WTF LOUAN', newQuestions);
-});
-
 const submitForm = () => {
   authStore.initialize();
 
