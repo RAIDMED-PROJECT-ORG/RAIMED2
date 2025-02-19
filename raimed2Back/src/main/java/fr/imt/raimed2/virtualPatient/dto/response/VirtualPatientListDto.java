@@ -20,4 +20,6 @@ public class VirtualPatientListDto {
 
     private String createdAt;
 
+    private String result;
+
 }

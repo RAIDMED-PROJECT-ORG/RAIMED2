@@ -30,4 +30,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByTeacherIdAndType(UUID teacherId, QuestionType type);
 
     List<Question> findAllByTeacherIdAndTypeAndFilter(UUID teacherId, QuestionType type, Filter filter);
+
+    Question findOneByContent(String content);
 }

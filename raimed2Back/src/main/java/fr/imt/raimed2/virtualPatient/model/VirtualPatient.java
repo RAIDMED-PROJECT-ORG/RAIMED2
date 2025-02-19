@@ -42,7 +42,7 @@ public class VirtualPatient {
     private User createdBy;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "virtualPatient", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<Action> actions;
 
     @JsonIgnore

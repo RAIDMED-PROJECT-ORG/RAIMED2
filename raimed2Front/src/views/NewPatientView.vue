@@ -32,7 +32,7 @@ import {
 import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
-import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
+import {usePatientStore} from '@/stores/patient.store';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
 import ProgressBar from '@/components/progressBar/ProgressBar.vue';
@@ -57,6 +57,7 @@ const isInspectionModalOpen = ref(false);
 const isAuscultationModalOpen = ref(false);
 const isPalpationModalOpen = ref(false);
 const isPercussionModalOpen = ref(false);
+const patientStore = usePatientStore();
 const isListenModalOpen = ref(false);
 const isBiologyModalOpen = ref(false);
 const isImageryModalOpen = ref(false);
@@ -112,7 +113,7 @@ function handleSubmit() {
     return;
   }
 
-  localStorage.removeItem(STORAGE_KEY);
+  patientStore.saveNewPatient(newPatient.value);
   router.back();
 }
 

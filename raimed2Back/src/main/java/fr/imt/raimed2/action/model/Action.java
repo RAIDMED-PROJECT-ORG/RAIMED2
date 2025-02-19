@@ -32,12 +32,12 @@ public abstract class Action {
     private String type;
 
     //@JsonIgnore
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "virtual_patient_id", nullable = false)
     private VirtualPatient virtualPatient;
 
     //@JsonIgnore
-    @OneToMany(mappedBy = "action", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events;
 
 }

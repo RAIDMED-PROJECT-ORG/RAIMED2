@@ -8,6 +8,7 @@ import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import fr.imt.raimed2.virtualPatient.repository.VirtualPatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,22 +38,25 @@ public class VirtualPatientService {
 
     @Transactional
     public void addVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
-
-        VirtualPatient saved = virtualPatientRepository.save(virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML));
-
-        for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
-            if(actionDTO.getActionClosedQuestionDTO() != null) {
-                actionService.saveActionClosedQuestion(saved, actionDTO);
+        VirtualPatient virtualPatient = virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML);
+        if (virtualPatient.getActions() != null) {
+            virtualPatient.getActions().forEach(action -> action.setVirtualPatient(virtualPatient));
+        }
+        try{
+            VirtualPatient saved = virtualPatientRepository.save(virtualPatient);
+            for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
+                if(actionDTO.getActionClosedQuestionDTO() != null) {
+                    actionService.saveActionClosedQuestion(saved, actionDTO);
+                }
+                if(actionDTO.getActionSpontaneousPatientSpeech() != null){
+                    actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
+                }
+                if(actionDTO.getActionOpenedQuestionDTO() != null){
+                    actionService.saveActionOpenedQuestion(saved, actionDTO);
+                }
             }
-
-            if(actionDTO.getActionSpontaneousPatientSpeech() != null){
-                actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
-            }
-
-            if(actionDTO.getActionOpenedQuestionDTO() != null){
-                actionService.saveActionOpenedQuestion(saved, actionDTO);
-            }
-
+        }catch(DataIntegrityViolationException ex){
+            System.out.println(ex.getMessage());
         }
     }
 }
