@@ -50,6 +50,13 @@ export const usePatientStore = defineStore('patient', {
       this.virtualPatients = patients;
       return patients;
     },
+    async fetchVirtualPatient(id: string): Promise<VirtualPatient | null> {
+        const res = await axiosInstance.get(`/virtual-patient/${id}`);
+        if (res && res.status === 200) {
+            return this.parseVirtualPatient(res.data);
+        }
+        return null;
+    },
     async deleteVirtualPatient(id: string): Promise<boolean> {
       const res = await axiosInstance.delete(`/virtual-patient/${id}`);
       return res && res.status === 200;
