@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import IconDefinition from '@/components/iconLabel/IconLabel.vue';
 import { type ColorType } from '@/models/new-patient/color.model';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 const props = defineProps<{
   label: string;

@@ -30,8 +30,8 @@ const typeValue = ref<QuestionType>(QuestionType.OPENED);
 const genderValue = ref<QuestionFilter>(QuestionFilter.FEMALE);
 const questionValue = ref<string>('');
 const answerValue = ref<string>('');
-const primaryElementValue = ref<string | null>(null);
 const isModalOpen = ref<boolean>(false);
+const primaryElementValue = ref<string | undefined>(undefined);
 
 const primaryElements = computed(() =>
   Array.from(new Set(
@@ -79,7 +79,7 @@ const submitForm = () => {
   });
   questionValue.value = '';
   answerValue.value = '';
-  primaryElementValue.value = null;
+  primaryElementValue.value = undefined;
   typeValue.value = QuestionType.OPENED;
   genderValue.value = QuestionFilter.MIXED;
   singleSelector.value?.clearInput();
@@ -97,6 +97,7 @@ watch(
       answerValue.value = questionToUpdate.answer ?? '';
       typeValue.value = questionToUpdate.type;
       genderValue.value = questionToUpdate.filter;
+      primaryElementValue.value = questionToUpdate?.primaryElement || '';
     }
   }
 );
@@ -162,7 +163,7 @@ function handleSelectPrimaryElement(value: string) {
     </div>
     <div class="form-group">
       <IconLabel for="primaryElement" :icon="faBookmark" text="Élément primaire" />
-      <SingleValueSelector ref="singleSelector" id="primaryElement" :options="primaryElements" @select="(value: string) => handleSelectPrimaryElement(value)" />
+      <SingleValueSelector ref="singleSelector" id="primaryElement" v-model="primaryElementValue" :options="primaryElements" @select="(value: string) => handleSelectPrimaryElement(value)" />
     </div>
     <p class="opacity-50">* champs requis</p>
   </GenericForm>

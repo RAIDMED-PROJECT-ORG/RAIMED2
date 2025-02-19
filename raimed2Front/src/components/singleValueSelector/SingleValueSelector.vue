@@ -6,19 +6,20 @@ import { faChevronDown, faChevronUp, faPlus } from '@fortawesome/free-solid-svg-
 const props = defineProps<{
   id: string;
   options: string[];
+  modelValue: string | undefined;
 }>();
 
 const emits = defineEmits<{
-  (event: 'select', newValue: string): void;
+  (event: 'update:modelValue', value: string): void;
 }>();
 
 const showDropdown = ref(false);
-const input = ref('');
+const input = ref(props.modelValue || '');
 const inputField = ref<HTMLInputElement | null>(null);
 const componentRoot = ref<HTMLElement | null>(null);
 const highlightedIndex = ref(-1);
 const optionRefs = ref<(HTMLElement | null)[]>([]);
-const isSelected = ref(false);
+const isSelected = ref(!!props.modelValue);
 
 const filteredOptions = computed(() => {
   const lowerInput = input.value.toLowerCase();
@@ -29,6 +30,15 @@ const isNewValue = computed(() => {
   return input.value.trim() !== '' && !props.options.includes(input.value.trim());
 });
 
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    input.value = newValue || '';
+    isSelected.value = !!newValue;
+  },
+  { immediate: true }
+);
+
 watch(input, (oldValue, newValue) => {
   if (oldValue.length < newValue.length) {
     isSelected.value = false;
@@ -36,7 +46,7 @@ watch(input, (oldValue, newValue) => {
 });
 
 function selectItem(option: string) {
-  emits('select', option);
+  emits('update:modelValue', option);
   input.value = option;
   showDropdown.value = false;
   isSelected.value = true;
@@ -44,13 +54,14 @@ function selectItem(option: string) {
 
 function createNewValue() {
   if (isNewValue.value) {
-    emits('select', input.value.trim());
+    emits('update:modelValue', input.value.trim());
     showDropdown.value = false;
     isSelected.value = true;
   }
 }
 
 function clearInput() {
+  console.log("pas normal");
   input.value = '';
   isSelected.value = false;
 }
@@ -113,12 +124,13 @@ defineExpose({ clearInput });
 </script>
 
 <template>
-  <div :id="props.id" ref="componentRoot" class="relative w-full" @click="focusInput">
+  <div ref="componentRoot" class="relative w-full" @click="focusInput">
     <div
       class="flex items-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer focus-within:ring-2 focus-within:ring-gray-300 transition-all"
       :class="{ 'border-green-500 bg-green-50': isSelected }"
     >
       <input
+        :id="props.id"
         ref="inputField"
         class="w-full outline-none text-gray-700 placeholder-gray-500 bg-transparent"
         type="text"

@@ -2,7 +2,8 @@
 
 defineProps<{
   question: string;
-  answer ?: string;
+  answer: string;
+  primaryElement: string;
 }>();
 </script>
 
@@ -10,12 +11,15 @@ defineProps<{
   <div
     class="flex justify-between gap-10 items-center border-b border-1 border-light-grey-border py-2"
   >
-    <div class="w-[80%]">
+    <div class="w-[50%]">
       <span>{{ question }}</span>
       <div class="flex items-center gap-2" v-if="answer">
         <hr class="border-[#9CA3AF] w-[7%]" />
         {{ answer }}
       </div>
+    </div>
+    <div class="w-[30%]">
+      <span>{{ primaryElement }}</span>
     </div>
     <slot></slot>
   </div>

@@ -1,6 +1,7 @@
 export interface Listen {
   id: string;
   content: string;
+  primaryElement?: string;
 }
 
 export const getFakeListens = (): Listen[] => {
