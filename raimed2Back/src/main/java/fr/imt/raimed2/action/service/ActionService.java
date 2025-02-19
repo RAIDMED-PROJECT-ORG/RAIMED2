@@ -106,7 +106,8 @@ public class ActionService {
      * @return The ActionClosedQuestion saved object
      */
     public ActionClosedQuestion saveActionClosedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO){
-        Question question = questionService.save(actionDTO.getActionClosedQuestionDTO().getQuestionLinked());
+        Question question = questionService.getQuestionByContent(actionDTO.getActionClosedQuestionDTO().getQuestionLinked().getContent());
+        if (question == null) question = questionService.save(actionDTO.getActionClosedQuestionDTO().getQuestionLinked());
         ActionClosedQuestion actionClosedQuestion = actionClosedQuestionsMapper.actionClosedQuestionsDtoToDao(actionDTO.getActionClosedQuestionDTO());
         actionClosedQuestion.setQuestion(question);
         actionClosedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
@@ -136,7 +137,8 @@ public class ActionService {
      * @return The ActionOpenedQuestion saved object
      */
     public ActionOpenedQuestion saveActionOpenedQuestion(VirtualPatient virtualPatient, ActionDTO actionDTO) {
-        Question question = questionService.save(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked());
+        Question question = questionService.getQuestionByContent(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked().getContent());
+        if (question == null) question = questionService.save(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked());
         ActionOpenedQuestion actionOpenedQuestion = actionOpenedQuestionMapper.actionOpenedQuestionDtoToDao(actionDTO.getActionOpenedQuestionDTO());
         actionOpenedQuestion.setQuestion(question);
         actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());

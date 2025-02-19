@@ -19,5 +19,7 @@ public class QuestionLinkedDTO implements Serializable {
     @JacksonXmlProperty
     private UUID teacherId;
     @JacksonXmlProperty
+    private String answer;
+    @JacksonXmlProperty
     private boolean isMutual;
 }

@@ -2,7 +2,7 @@ import type { Question } from '../question/question.model';
 import type { TypeAction } from './typeAction.enum';
 
 export interface Action {
-  id: string;
+  id?: string;
   type: TypeAction;
   primaryElement: string;
 

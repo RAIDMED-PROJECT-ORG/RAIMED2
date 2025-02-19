@@ -34,6 +34,13 @@ public class QuestionService {
         return questionRepository.findAllByType(questionType);
     }
 
+    public Question getQuestionByContent(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return null;
+        }
+        return questionRepository.findOneByContent(content);
+    }
+
     /**
      * Get all the questions
      * @param questionType The type of the question
