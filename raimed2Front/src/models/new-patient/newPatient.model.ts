@@ -6,10 +6,12 @@ import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { Listen } from '@/models/listen/listen.model';
+import type { Precision } from '@/models/question/precision.model';
 
 export interface NewPatient {
   characteristic: Characteristics | null;
   questions: Question[];
+  precisions: Precision[];
   inspection: ExamResults[];
   palpation: ExamResults[];
   percussion: ExamResults[];
@@ -46,14 +48,7 @@ export const initializeNewPatient = (): NewPatient => {
         id: uuidv4(),
         content: 'Quels sont vos antécédents familiaux ?',
         answer: 'De multiples cancers',
-        type: QuestionType.OPENED,
-        filter: QuestionFilter.FEMALE,
-        isMutual: false
-      },
-      {
-        id: uuidv4(),
-        content: 'Quels sont vos antécédents familiaux ?',
-        answer: 'De multiples cancers',
+        primaryElement: 'Cancer',
         type: QuestionType.OPENED,
         filter: QuestionFilter.MIXED,
         isMutual: false
@@ -62,6 +57,7 @@ export const initializeNewPatient = (): NewPatient => {
         id: uuidv4(),
         content: 'Êtes-vous malade ?',
         answer: 'Oui',
+        primaryElement: 'Malade',
         type: QuestionType.CLOSED,
         filter: QuestionFilter.MALE,
         isMutual: false
@@ -74,12 +70,15 @@ export const initializeNewPatient = (): NewPatient => {
       },
       {
         id: uuidv4(),
-        content: "J'ai mal à la tête"
+        content: 'J\'ai mal à la tête',
+        primaryElement: 'Mal de tête'
       },
       {
         id: uuidv4(),
-        content: 'Je suis fatigué'
+        content: 'Je suis fatigué',
+        primaryElement: 'Fatigue'
       }
-    ]
+    ],
+    precisions: []
   };
-};
+}
