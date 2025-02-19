@@ -8,12 +8,24 @@ import { QuestionType } from '@/models/question/questionType.enum';
 
 import { parse } from 'js2xmlparser';
 import {useAuthStore} from '@/stores/auth.store';
+import type {Listen} from "@/models/listen/listen.model";
+import type {Question} from "@/models/question/question.model";
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
 }
 
 const authStore = useAuthStore()
+
+function createSpontaneousPatientSpeechAction(listen: Listen) {
+  return {
+    type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
+    primaryElement: listen.content,
+    actionSpontaneousPatientSpeech: {
+      speech: listen.content,
+    }
+  };
+}
 
 export const usePatientStore = defineStore('patient', {
   state: (): PatientState => ({
@@ -40,10 +52,8 @@ export const usePatientStore = defineStore('patient', {
     },
     async deleteVirtualPatient(id: string): Promise<boolean> {
       const res = await axiosInstance.delete(`/virtual-patient/${id}`);
-      if (res && res.status === 200) {
-        return true;
-      }
-      return false;
+      return res && res.status === 200;
+
     },
     async saveNewPatient(newPatient: NewPatient): Promise<boolean> {
       const virtualPatient = {
@@ -107,17 +117,14 @@ export const usePatientStore = defineStore('patient', {
       };
 
 
+      const virtualPatient = createVirtualPatient(newPatient);
       const virtualPatientXML = parse('VirtualPatient', virtualPatient);
-
       const res = await axiosInstance.post('/virtual-patient/xml', virtualPatientXML, {
         headers: {
           'Content-Type': 'application/xml'
         }
       });
-      if (res && res.status === 200) {
-        return true;
-      }
-      return false;
+      return res && res.status === 200;
     },
     parseVirtualPatient(data: any): VirtualPatient {
       return {
@@ -132,3 +139,47 @@ export const usePatientStore = defineStore('patient', {
     }
   }
 });
+
+function createVirtualPatient(newPatient: NewPatient) {
+  return {
+    age: newPatient.characteristic?.age,
+    gender: newPatient.characteristic?.gender,
+    result: newPatient.characteristic?.diagnostic,
+    createdAt: new Date().toISOString(),
+    createdBy: createCreatedBy(),
+    actions: {
+      action: [
+        ...createQuestionActions(newPatient.questions),
+        ...newPatient.listen.map(createSpontaneousPatientSpeechAction)
+      ]
+    }
+  };
+}
+
+function createCreatedBy() {
+  return {
+    id: authStore.getUserInfo.id,
+    firstname: authStore.getUserInfo.username,
+    lastname: authStore.getUserInfo.lastname,
+    email: authStore.getUserInfo.email,
+    role: authStore.getUserInfo.role,
+  };
+}
+
+function createQuestionActions(questions: Question[]) {
+  return questions.map((question) => ({
+    type: (question.type === QuestionType.CLOSED) ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+    primaryElement: question.content,
+    ...(question.type === QuestionType.CLOSED ? {
+      actionClosedQuestion: {
+        closedAnswer: question.answer,
+        questionLinked: question,
+      },
+    } : {
+      actionOpenedQuestion: {
+        openedAnswer: question.answer,
+        questionLinked: question,
+      },
+    }),
+  }));
+}
