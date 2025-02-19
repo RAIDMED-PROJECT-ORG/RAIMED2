@@ -1,5 +1,6 @@
 package fr.imt.raimed2.virtualPatient.dto.xml;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import fr.imt.raimed2.action.dto.xml.ActionsDTO;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JacksonXmlRootElement(localName = "VirtualPatient")
 @Getter
 @Setter

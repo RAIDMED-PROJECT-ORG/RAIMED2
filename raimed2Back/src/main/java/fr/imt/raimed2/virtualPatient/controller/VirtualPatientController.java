@@ -6,6 +6,7 @@ import fr.imt.raimed2.virtualPatient.dto.VirtualPatientEntityDtoMapper;
 import fr.imt.raimed2.virtualPatient.dto.response.VirtualPatientDto;
 import fr.imt.raimed2.virtualPatient.dto.response.VirtualPatientListDto;
 import fr.imt.raimed2.virtualPatient.dto.xml.VirtualPatientDTO;
+import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import fr.imt.raimed2.virtualPatient.service.VirtualPatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class VirtualPatientController {
 
     @GetMapping("/{id}")
     public VirtualPatientDto getVirtualPatientById(@PathVariable Long id) {
-        fr.imt.raimed2.virtualPatient.model.VirtualPatient virtualPatient = virtualPatientService.getVirtualPatientById(id);
+        VirtualPatient virtualPatient = virtualPatientService.getVirtualPatientById(id);
         return virtualPatientEntityDtoMapper.virtualPatientEntityToVirtualPatientDto(virtualPatient);
     }
 
