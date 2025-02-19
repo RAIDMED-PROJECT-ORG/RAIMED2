@@ -1,10 +1,10 @@
-export interface Listen {
+export interface Speech {
   id: string;
   content: string;
   primaryElement?: string;
 }
 
-export const getFakeListens = (): Listen[] => {
+export const getFakeListens = (): Speech[] => {
   return [
     {
       id: 'id1',

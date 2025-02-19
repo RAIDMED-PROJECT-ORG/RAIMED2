@@ -48,5 +48,4 @@ public class VirtualPatient {
     @JsonIgnore
     @OneToMany(mappedBy = "virtualPatient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Diagnostic> diagnostics;
-
 }

@@ -39,11 +39,15 @@ public class VirtualPatientService {
     @Transactional
     public void addVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
         VirtualPatient virtualPatient = virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML);
+        virtualPatient.setId(virtualPatientDTOXML.getId());
         if (virtualPatient.getActions() != null) {
             virtualPatient.getActions().forEach(action -> action.setVirtualPatient(virtualPatient));
         }
         try{
             VirtualPatient saved = virtualPatientRepository.save(virtualPatient);
+            if (virtualPatientDTOXML.getActions().getAction() == null) {
+                return;
+            }
             for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
                 if(actionDTO.getActionClosedQuestionDTO() != null) {
                     actionService.saveActionClosedQuestion(saved, actionDTO);
@@ -61,7 +65,7 @@ public class VirtualPatientService {
                     actionService.saveActionExamen(saved, actionDTO);
                 }
             }
-        }catch(DataIntegrityViolationException ex){
+        } catch(DataIntegrityViolationException ex){
             System.out.println(ex.getMessage());
         }
     }

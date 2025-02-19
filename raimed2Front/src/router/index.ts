@@ -50,7 +50,15 @@ const router = createRouter({
     {
       path: '/teacher/patients/new',
       name: 'newPatient',
-      component: () => import('@/views/NewPatientView.vue'),
+      component: () => import('@/views/teacher/NewPatientView.vue'),
+      meta: {
+        roles: [Role.TEACHER]
+      }
+    },
+    {
+      path: '/teacher/patients/edit/:id',
+      name: 'editPatient',
+      component: () => import('@/views/teacher/EditPatientView.vue'),
       meta: {
         roles: [Role.TEACHER]
       }
