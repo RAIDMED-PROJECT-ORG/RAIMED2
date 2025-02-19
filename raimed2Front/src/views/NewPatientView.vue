@@ -32,6 +32,7 @@ import {
 import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
+import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
 import {usePatientStore} from '@/stores/patient.store';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
@@ -114,6 +115,7 @@ function handleSubmit() {
   }
 
   patientStore.saveNewPatient(newPatient.value);
+  localStorage.removeItem(STORAGE_KEY);
   router.back();
 }
 
