@@ -12,8 +12,7 @@ const patientStore = usePatientStore();
 const patients = ref<VirtualPatient[]>([]);
 
 onMounted(async () => {
-  await patientStore.init();
-  patients.value = patientStore.getVirtualPatients;
+  await refreshPatients();
 });
 
 
@@ -21,12 +20,17 @@ const getSexLabel = (sex: 'MALE' | 'FEMALE'): string => (sex === 'MALE' ? 'Homme
 
 const deletePatient = async (id: string | undefined) => {
   if (id === undefined) return;
-  const ok : boolean = await patientStore.deleteVirtualPatient(id);
-  if (ok) {
-    patients.value = patientStore.getVirtualPatients;
-    location.reload();
+  const success = await patientStore.deleteVirtualPatient(id);
+  if (success) {
+    await refreshPatients();
   }
 }
+
+const refreshPatients = async () => {
+  await patientStore.init();
+  patients.value = patientStore.getVirtualPatients;
+}
+
 </script>
 
 <template>
@@ -59,14 +63,14 @@ const deletePatient = async (id: string | undefined) => {
               class="text-center"
             >
               <td class="py-2">{{ patient.id }}</td>
-              <td class="py-2">{{ getSexLabel(patient.gender) }}</td>
+              <td class="py-2">{{ patient.gender ? getSexLabel(patient.gender) : '' }}</td>
               <td class="py-2">{{ patient.age }}</td>
               <td class="py-2">{{ patient.result }}</td>
               <td class="py-2 flex justify-center gap-2">
                 <ActionButton
                   :color="Color.Grey"
                   :icon="faPen"
-                  :onClick="() => console.log('click')"
+                  :onClick="() => router.push({ name: 'editPatient', params: { id: patient.id } })"
                   :iconOnly="true"
                   :size="'small'"
                 />

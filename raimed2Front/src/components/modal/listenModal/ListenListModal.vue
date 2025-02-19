@@ -2,21 +2,21 @@
 import { Color } from '@/models/new-patient/color.model';
 import { computed, ref } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import { getFakeListens, type Listen } from '@/models/listen/listen.model';
+import { getFakeListens, type Speech } from '@/models/listen/listen.model';
 import ListenRow from '@/components/modal/listenModal/ListenRow.vue';
 import ListenListModalHeader from '@/components/modal/listenModal/ListenListModalHeader.vue';
 
 const props = defineProps<{
-  selectedListens: Listen[];
+  selectedListens: Speech[];
 }>();
 
 const emits = defineEmits<{
-  (e: 'addListens', listens: Listen[]): void;
+  (e: 'addListens', listens: Speech[]): void;
   (e: 'switchModalVisibility', visibility: Boolean): void;
 }>();
 
-const allListens = ref<Listen[]>(getFakeListens());
-const listensToAdd = ref<Listen[]>([]);
+const allListens = ref<Speech[]>(getFakeListens());
+const listensToAdd = ref<Speech[]>([]);
 const filter = ref({
   nameFilter: ''
 });
@@ -41,7 +41,7 @@ const listensToDisplay = computed(() => {
   });
 });
 
-const switchIsSelected = (listen: Listen, isSelected: boolean) => {
+const switchIsSelected = (listen: Speech, isSelected: boolean) => {
   if (isSelected) {
     listensToAdd.value.push(listen);
   } else {

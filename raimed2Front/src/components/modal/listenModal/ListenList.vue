@@ -4,10 +4,10 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import GenericList from '@/components/modal/genericModal/GenericList.vue';
 import ListenRow from '@/components/modal/listenModal/ListenRow.vue';
-import type { Listen } from '@/models/listen/listen.model';
+import type { Speech } from '@/models/listen/listen.model';
 
 defineProps<{
-  listens: Listen[];
+  listens: Speech[];
 }>();
 
 defineEmits<{

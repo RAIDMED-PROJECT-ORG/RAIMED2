@@ -48,8 +48,13 @@ import type { Precision } from '@/models/question/precision.model';
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
 
+
+const props = defineProps<{
+  patient?: NewPatient;
+}>();
+
 const errors = ref<string[]>([]);
-const newPatient = ref<NewPatient>(initializeNewPatient());
+const newPatient = ref<NewPatient>(props.patient ?? initializeNewPatient());
 const progress = ref<number>(calculateProgress());
 
 const isGoBackModalOpen = ref(false);
@@ -429,7 +434,7 @@ function handleConfirmGoBack() {
       :onBack="switchBiopsyModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
-      <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
+      <h1 class="text-3xl text-primary font-bold">{{ patient ? 'Mise à jour d\'un patient' : 'Nouveau patient' }}</h1>
       <p class="text-center pt-3 w-1/2">
         Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
         champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton "Créer le
@@ -525,14 +530,14 @@ function handleConfirmGoBack() {
       </div>
       <p>* Champs requis</p>
       <div>
+        <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
         <ActionButton
           :disabled="newPatient.characteristic === null"
           class="mt-8"
           :onClick="handleSubmit"
-          label="Créer le patient"
+          :label="patient ? 'Mettre à jour le patient' : 'Créer le patient'"
           :color="Color.Green"
         />
-        <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
       </div>
     </div>
   </AuthenticatedPageLayout>
