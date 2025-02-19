@@ -79,8 +79,6 @@ export const usePatientStore = defineStore('patient', {
       };
       const virtualPatientXML = parse('VirtualPatient', virtualPatient);
 
-      console.log(virtualPatientXML);
-
       const res = await axiosInstance.post('/virtual-patient/xml', virtualPatientXML, {
         headers: {
           'Content-Type': 'application/xml'
@@ -92,14 +90,12 @@ export const usePatientStore = defineStore('patient', {
       return false;
     },
     parseVirtualPatient(data: any): VirtualPatient {
-      console.log(data)
       return {
         id: String(data.id),
         age: data.age,
         gender: data.gender as Gender,
         createdBy: data.createdBy,
         createdAt: data.createdAt,
-        //createdAt: new Date(data.createdAt).toISOString(),
         actions: data.actions,
         result: data.result
       };
