@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted, defineExpose } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faChevronDown, faChevronUp, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronUp, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const props = defineProps<{
   id: string;
@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (event: 'update:modelValue', value: string): void;
+  (event: 'update:modelValue', value: string | undefined): void;
 }>();
 
 const showDropdown = ref(false);
@@ -20,21 +20,29 @@ const componentRoot = ref<HTMLElement | null>(null);
 const highlightedIndex = ref(-1);
 const optionRefs = ref<(HTMLElement | null)[]>([]);
 const isSelected = ref(!!props.modelValue);
+const isNewValue = ref(false);
 
 const filteredOptions = computed(() => {
-  const lowerInput = input.value.toLowerCase();
-  return props.options.filter((option) => option.toLowerCase().includes(lowerInput));
+  const value = typeof input.value === 'string' ? input.value.toLowerCase() : '';
+  return props.options.filter((option) => option.toLowerCase().includes(value));
 });
 
-const isNewValue = computed(() => {
-  return input.value.trim() !== '' && !props.options.includes(input.value.trim());
+watch(input, () => {
+  if (typeof input.value === 'string') {
+    isNewValue.value = input.value.trim() !== '' && !props.options.includes(input.value.trim());
+  }
 });
 
 watch(
   () => props.modelValue,
-  (newValue) => {
-    input.value = newValue || '';
-    isSelected.value = !!newValue;
+  (newValue, oldValue) => {
+    if (newValue === undefined || newValue === null) {
+      input.value = '';
+      isSelected.value = false;
+    } else if (newValue !== oldValue && newValue !== input.value) {
+      input.value = newValue;
+      isSelected.value = true;
+    }
   },
   { immediate: true }
 );
@@ -53,7 +61,7 @@ function selectItem(option: string) {
 }
 
 function createNewValue() {
-  if (isNewValue.value) {
+  if (isNewValue.value && typeof input.value === 'string') {
     emits('update:modelValue', input.value.trim());
     showDropdown.value = false;
     isSelected.value = true;
@@ -63,6 +71,7 @@ function createNewValue() {
 function clearInput() {
   input.value = '';
   isSelected.value = false;
+  emits('update:modelValue', undefined);
 }
 
 function handleClickOutside(event: MouseEvent) {
@@ -99,6 +108,7 @@ function toggleDropdown() {
     inputField.value?.focus();
   }
 }
+
 function handleEsc() {
   showDropdown.value = false;
   inputField.value?.blur();
@@ -110,6 +120,10 @@ watch(highlightedIndex, (newIndex) => {
     el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 });
+
+function preventSelectEvent(event: Event) {
+  event.stopPropagation();
+}
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
@@ -134,9 +148,9 @@ defineExpose({ clearInput });
         class="w-full outline-none text-gray-700 placeholder-gray-500 bg-transparent"
         type="text"
         v-model="input"
+        @select.stop="preventSelectEvent"
         placeholder="Choisir ou ajouter une valeur"
         @focus="showDropdown = true"
-        @input="showDropdown = true"
         @keydown.esc.stop.prevent="handleEsc"
         @keydown.enter.stop.prevent="createNewValue"
         @keydown.down.prevent="highlightNext"
@@ -144,7 +158,13 @@ defineExpose({ clearInput });
       />
 
       <FontAwesomeIcon
-        class="ml-2 text-gray-500"
+        v-if="input.length > 0"
+        class="ml-2 text-gray-500 cursor-pointer"
+        :icon="faTimes"
+        @click.stop="clearInput"
+      />
+      <FontAwesomeIcon
+        class="ml-2 text-gray-500 cursor-pointer"
         :icon="showDropdown ? faChevronUp : faChevronDown"
         @click.stop="toggleDropdown"
       />

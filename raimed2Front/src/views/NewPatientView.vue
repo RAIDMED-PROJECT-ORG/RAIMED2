@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import {
@@ -33,7 +33,7 @@ import ExamenModal from '@/components/modal/examModal/ExamModal.vue';
 import type { Question } from '@/models/question/question.model';
 import QuestionModal from '@/components/modal/questionModal/QuestionModal.vue';
 import PrescriptionModal from '@/components/modal/prescriptionModal/PrescriptionModal.vue';
-import {usePatientStore} from '@/stores/patient.store';
+import { usePatientStore } from '@/stores/patient.store';
 import ListenModal from '@/components/modal/listenModal/ListenModal.vue';
 import type { Listen } from '@/models/listen/listen.model';
 import ProgressBar from '@/components/progressBar/ProgressBar.vue';
@@ -42,6 +42,8 @@ import CategoryButton from '@/components/categoryButton/CategoryButton.vue';
 import { Gender } from '@/models/virtual-patient/gender.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import PrecisionModal from '@/components/modal/precisionModal/PrecisionModal.vue';
+import type { Precision } from '@/models/question/precision.model';
 
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
@@ -53,6 +55,7 @@ const progress = ref<number>(calculateProgress());
 const isGoBackModalOpen = ref(false);
 const isCharacteristicModalOpen = ref(false);
 const isQuestionModalOpen = ref(false);
+const isPrecisionModalOpen = ref(false);
 const isWarningModalOpen = ref(false);
 const isInspectionModalOpen = ref(false);
 const isAuscultationModalOpen = ref(false);
@@ -68,6 +71,10 @@ const saveToLocalStorage = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(newPatient.value));
 };
 
+const allPrimaryElements = computed(() => {
+  return getPrimaryElements(newPatient.value);
+});
+
 watch(
   newPatient,
   () => {
@@ -75,6 +82,28 @@ watch(
     progress.value = calculateProgress();
   },
   { deep: true }
+);
+
+watch(
+  allPrimaryElements,
+  (newPrimary, oldPrimary) => {
+    if (newPrimary.length === 0) {
+      newPatient.value.precisions = [];
+      return;
+    }
+
+    const deleted = oldPrimary.filter(
+      oldElem => !newPrimary.includes(oldElem)
+    );
+
+    const filtered = newPatient.value.precisions.filter(
+      p => p.primaryElement && !deleted.includes(p.primaryElement)
+    );
+
+    if (filtered.length !== newPatient.value.precisions.length) {
+      newPatient.value.precisions = filtered;
+    }
+  }
 );
 
 onMounted(() => {
@@ -117,6 +146,21 @@ function handleSubmit() {
   patientStore.saveNewPatient(newPatient.value);
   localStorage.removeItem(STORAGE_KEY);
   router.back();
+}
+
+function getPrimaryElements(value: NewPatient) {
+  const primaryElements = new Set<string>();
+  value.questions.forEach((question) => {
+    if (question.primaryElement) {
+      primaryElements.add(question.primaryElement);
+    }
+  });
+  value.listen.forEach((listen) => {
+    if (listen.primaryElement) {
+      primaryElements.add(listen.primaryElement);
+    }
+  });
+  return Array.from(primaryElements);
 }
 
 function switchWarningModalVisibility() {
@@ -174,8 +218,18 @@ function onAuscultationValidation(data: ExamResults[]) {
 }
 
 function onQuestionValidation(data: Question[]) {
+  console.log('Questions results: ', data);
   newPatient.value.questions = data;
   switchQuestionModalVisibility();
+}
+
+function onPrecisionValidation(data: Precision[]) {
+  newPatient.value.precisions = data;
+  switchPrecisionModalVisibility();
+}
+
+function switchPrecisionModalVisibility() {
+  isPrecisionModalOpen.value = !isPrecisionModalOpen.value;
 }
 
 function switchQuestionModalVisibility() {
@@ -229,6 +283,9 @@ function calculateProgress() {
     progressCount++;
   }
   if (newPatient.value.questions.length) {
+    progressCount++;
+  }
+  if (newPatient.value.precisions.length) {
     progressCount++;
   }
   if (newPatient.value.inspection.length) {
@@ -335,7 +392,7 @@ function handleConfirmGoBack() {
       :questions="newPatient.questions ?? []"
       :onValidation="onQuestionValidation"
       :onBack="switchQuestionModalVisibility"
-      :patient-gender="Gender.MALE"
+      :patientGender="Gender.MALE"
     />
     <ListenModal
       v-if="isListenModalOpen"
@@ -343,26 +400,33 @@ function handleConfirmGoBack() {
       :onValidation="onListenValidation"
       :onBack="switchListenModalVisibility"
     />
+    <PrecisionModal
+      v-if="isPrecisionModalOpen"
+      :precisions="newPatient.precisions ?? []"
+      :primaryElements="allPrimaryElements"
+      :onValidation="onPrecisionValidation"
+      :onBack="switchPrecisionModalVisibility"
+    />
     <PrescriptionModal
       v-if="isBiologyModalOpen"
-      :prescription-type="PrescriptionType.BIOLOGY"
-      :current-prescriptions="newPatient.biology ?? []"
-      :on-validation="onBiologyValidation"
-      :on-back="switchBiologyModalVisibility"
+      :prescriptionType="PrescriptionType.BIOLOGY"
+      :currentPrescriptions="newPatient.biology ?? []"
+      :onValidation="onBiologyValidation"
+      :onBack="switchBiologyModalVisibility"
     />
     <PrescriptionModal
       v-if="isImageryModalOpen"
-      :prescription-type="PrescriptionType.IMAGERY"
-      :current-prescriptions="newPatient.imagery ?? []"
-      :on-validation="onImageryValidation"
-      :on-back="switchImageryModalVisibility"
+      :prescriptionType="PrescriptionType.IMAGERY"
+      :currentPrescriptions="newPatient.imagery ?? []"
+      :onValidation="onImageryValidation"
+      :onBack="switchImageryModalVisibility"
     />
     <PrescriptionModal
       v-if="isBiopsyModalOpen"
-      :prescription-type="PrescriptionType.BIOPSY"
-      :current-prescriptions="newPatient.biopsy ?? []"
-      :on-validation="onBiopsyValidation"
-      :on-back="switchBiopsyModalVisibility"
+      :prescriptionType="PrescriptionType.BIOPSY"
+      :currentPrescriptions="newPatient.biopsy ?? []"
+      :onValidation="onBiopsyValidation"
+      :onBack="switchBiopsyModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-3xl text-primary font-bold">Nouveau patient</h1>
@@ -379,14 +443,14 @@ function handleConfirmGoBack() {
             label="Caractéristiques du patient"
             :color="Color.Red"
             :icon="faPerson"
-            :isCompleted="newPatient.characteristic !== null"
+            :completed="newPatient.characteristic !== null"
             :onClick="switchCharacteristicModalVisibility"
           />
           <CategoryButton
             label="Écouter"
             :color="Color.Blue"
             :icon="faEarListen"
-            :isCompleted="newPatient.listen.length > 0"
+            :completed="newPatient.listen.length > 0"
             :onClick="switchListenModalVisibility"
           />
           <CategoryButton
@@ -394,14 +458,15 @@ function handleConfirmGoBack() {
             :color="Color.Blue"
             :icon="faPersonCircleQuestion"
             :onClick="switchQuestionModalVisibility"
-            :isCompleted="newPatient.questions.length > 0"
+            :completed="newPatient.questions.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
             :color="Color.Blue"
             :icon="faSquarePlus"
-            :onClick="() => {}"
-            :isCompleted="false"
+            :onClick="switchPrecisionModalVisibility"
+            :completed="newPatient.precisions.length > 0"
+            :disabled="allPrimaryElements.length === 0"
           />
         </div>
         <div class="flex flex-col w-1/3 gap-1">
@@ -410,28 +475,28 @@ function handleConfirmGoBack() {
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
             :onClick="switchInspectionModalVisibility"
-            :isCompleted="newPatient.inspection.length > 0"
+            :completed="newPatient.inspection.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PALPATION)"
             :color="Color.Orange"
             :icon="faHandHoldingMedical"
             :onClick="switchPalpationModalVisibility"
-            :isCompleted="newPatient.palpation.length > 0"
+            :completed="newPatient.palpation.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
             :color="Color.Orange"
             :icon="faGavel"
             :onClick="switchPercussionModalVisibility"
-            :isCompleted="newPatient.percussion.length > 0"
+            :completed="newPatient.percussion.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
             :color="Color.Orange"
             :icon="faStethoscope"
             :onClick="switchAuscultationModalVisibility"
-            :isCompleted="newPatient.auscultation.length > 0"
+            :completed="newPatient.auscultation.length > 0"
           />
         </div>
         <div class="flex flex-col w-1/3 gap-1">
@@ -440,21 +505,21 @@ function handleConfirmGoBack() {
             :color="Color.Purple"
             :icon="faFileMedical"
             :on-click="switchBiologyModalVisibility"
-            :isCompleted="newPatient.biology.length > 0"
+            :completed="newPatient.biology.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faPersonRays"
             :on-click="switchImageryModalVisibility"
-            :isCompleted="newPatient.imagery.length > 0"
+            :completed="newPatient.imagery.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
             :color="Color.Purple"
             :icon="faSyringe"
             :on-click="switchBiopsyModalVisibility"
-            :isCompleted="newPatient.biopsy.length > 0"
+            :completed="newPatient.biopsy.length > 0"
           />
         </div>
       </div>

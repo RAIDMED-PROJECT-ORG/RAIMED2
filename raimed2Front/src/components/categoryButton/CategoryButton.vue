@@ -8,8 +8,9 @@ const props = defineProps<{
   label: string;
   color: ColorType;
   icon: IconDefinition;
-  isCompleted: boolean;
+  completed: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }>();
 </script>
 
@@ -21,6 +22,7 @@ const props = defineProps<{
       :color="props.color"
       :icon="props.icon"
       @click="onClick"
+      :disabled="props.disabled"
     />
 
     <Transition
@@ -31,7 +33,7 @@ const props = defineProps<{
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <span v-if="props.isCompleted" class="absolute -top-1 -right-5 bg-[#4CAF50] text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">
+      <span v-if="props.completed" class="absolute -top-1 -right-5 bg-[#4CAF50] text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">
         ✔ Remplie
       </span>
     </Transition>
