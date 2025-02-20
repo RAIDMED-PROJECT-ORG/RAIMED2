@@ -4,11 +4,14 @@ import fr.imt.raimed2.action.dto.request.CreateActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.dto.xml.*;
 import fr.imt.raimed2.action.model.ActionClosedQuestion;
 import fr.imt.raimed2.action.model.ActionOpenedQuestion;
+import fr.imt.raimed2.action.model.ActionPrescription;
 import fr.imt.raimed2.action.model.ActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.repository.ActionClosedQuestionRepository;
 import fr.imt.raimed2.action.repository.ActionOpenedQuestionRepository;
 import fr.imt.raimed2.action.repository.ActionRepository;
 import fr.imt.raimed2.diagnostic.model.Event;
+import fr.imt.raimed2.prescription.model.Prescription;
+import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.service.QuestionService;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
@@ -33,11 +36,14 @@ public class ActionService {
 
     private final QuestionService questionService;
 
+    private final PrescriptionService prescriptionService;
+
     private final ActionClosedQuestionsMapper actionClosedQuestionsMapper;
 
     private final ActionSpontaneousPatientSpeechMapper actionSpontaneousPatientSpeechMapper;
 
     private final ActionOpenedQuestionMapper actionOpenedQuestionMapper;
+    private final ActionPrescriptionMapper actionPrescriptionMapper;
 
     /**
      * Add a spontaneous patient speech action to the virtual patient
@@ -126,8 +132,18 @@ public class ActionService {
         actionSpontaneousPatientSpeech.setVirtualPatient(virtualPatient);
         actionSpontaneousPatientSpeech.setPrimaryElement(actionDTO.getPrimaryElement());
         actionSpontaneousPatientSpeech.setType(actionDTO.getType());
-
         return actionRepository.save(actionSpontaneousPatientSpeech);
+    }
+
+    public ActionPrescription saveActionPrescription (VirtualPatient virtualPatient, ActionDTO actionDTO){
+        Prescription prescription = prescriptionService.getPrescriptionByContentAndResult(actionDTO.getActionPrescriptionDTO().getPrescription().getContent(), actionDTO.getActionPrescriptionDTO().getPrescription().getResult());
+        if (prescription == null) prescription = prescriptionService.save(actionDTO.getActionPrescriptionDTO().getPrescription());
+        ActionPrescription actionPrescription = actionPrescriptionMapper.actionPrescriptionDTOtoDao(actionDTO.getActionPrescriptionDTO());
+        actionPrescription.setVirtualPatient(virtualPatient);
+        actionPrescription.setPrescription(prescription);
+        actionPrescription.setPrimaryElement(actionDTO.getPrimaryElement());
+        actionPrescription.setType(actionDTO.getType());
+        return actionRepository.save(actionPrescription);
     }
 
     /**

@@ -51,6 +51,9 @@ public class VirtualPatientService {
                 if(actionDTO.getActionSpontaneousPatientSpeech() != null){
                     actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
                 }
+                if(actionDTO.getActionPrescriptionDTO() != null){
+                    actionService.saveActionPrescription(saved, actionDTO);
+                }
                 if(actionDTO.getActionOpenedQuestionDTO() != null){
                     actionService.saveActionOpenedQuestion(saved, actionDTO);
                 }

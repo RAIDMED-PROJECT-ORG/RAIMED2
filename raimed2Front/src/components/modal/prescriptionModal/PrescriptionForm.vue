@@ -22,8 +22,9 @@ const resultValue = ref<string>('');
 const submitForm = () => {
   emits('addPrescription', {
     id: props.prescriptionToUpdate ? props.prescriptionToUpdate.id : uuidv4(),
-    name: nameValue.value,
-    result: resultValue.value
+    content: nameValue.value,
+    result: resultValue.value,
+    type: props.prescriptionType
   });
 
   nameValue.value = '';
@@ -34,7 +35,7 @@ watch(
   () => props.prescriptionToUpdate,
   (prescriptionToUpdate) => {
     if (prescriptionToUpdate) {
-      nameValue.value = prescriptionToUpdate.name;
+      nameValue.value = prescriptionToUpdate.content;
       resultValue.value = prescriptionToUpdate.result ?? '';
     }
   }

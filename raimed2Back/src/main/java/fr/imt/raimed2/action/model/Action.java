@@ -31,12 +31,10 @@ public abstract class Action {
     @Column(name="type", nullable = false, updatable = false, insertable = false)
     private String type;
 
-    //@JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "virtual_patient_id", nullable = false)
     private VirtualPatient virtualPatient;
 
-    //@JsonIgnore
     @OneToMany(mappedBy = "action", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> events;
 
