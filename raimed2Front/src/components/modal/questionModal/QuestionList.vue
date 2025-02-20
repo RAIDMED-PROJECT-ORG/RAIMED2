@@ -21,7 +21,8 @@ defineEmits<{
     title="Liste des questions"
     size="medium"
     :columns="{
-      Questions: 80,
+      Questions: 40,
+      'Eléments primaires': 40,
       Actions: 20
     }"
   >
@@ -31,8 +32,9 @@ defineEmits<{
       :id="question.content"
       :question="question.content"
       :answer="question.answer ?? ''"
+      :primaryElement="question.primaryElement || ''"
     >
-      <div class="w-[20%] flex justify-end gap-2">
+      <div class="w-[20%] flex gap-2">
         <ActionButton
           :color="Color.Grey"
           :icon="faPenToSquare"
