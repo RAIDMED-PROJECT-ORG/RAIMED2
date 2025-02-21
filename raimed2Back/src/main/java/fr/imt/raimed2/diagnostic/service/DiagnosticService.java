@@ -3,10 +3,13 @@ package fr.imt.raimed2.diagnostic.service;
 import fr.imt.raimed2.action.model.Action;
 import fr.imt.raimed2.action.model.ActionClosedQuestion;
 import fr.imt.raimed2.action.model.ActionOpenedQuestion;
+import fr.imt.raimed2.action.model.ActionPrescription;
 import fr.imt.raimed2.action.service.ActionService;
 import fr.imt.raimed2.diagnostic.dto.request.CreateEventDto;
 import fr.imt.raimed2.diagnostic.model.*;
 import fr.imt.raimed2.diagnostic.repository.*;
+import fr.imt.raimed2.prescription.model.Prescription;
+import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.model.QuestionType;
 import fr.imt.raimed2.question.service.QuestionService;
@@ -37,6 +40,8 @@ public class DiagnosticService {
     private final HypothesisRepository hypothesisRepository;
 
     private final QuestionService questionService;
+
+    private final PrescriptionService prescriptionService;
 
     private final ActionService actionService;
 
@@ -198,6 +203,31 @@ public class DiagnosticService {
         }
 
         return returnedQuestions;
+    }
+
+    public List<Prescription> getDiagnosticBiopsiesPrescriptions(Long diagnosticId, String type) throws NoSuchElementException {
+        Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
+        List<Prescription> returnedPrescriptions = new ArrayList<>();
+
+        List<ActionPrescription> prescriptions = actionService.getAllPrescriptionOfVirtualPatient(
+                diagnostic.getVirtualPatient().getId(), type
+        );
+        List<ActionPrescription> askedPrescriptions = actionService.getAllPrescriptionsOfDiagnosticEvents(
+                eventRepository.findAllByDiagnosticId(diagnosticId)
+        );
+
+        // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
+        prescriptions.removeIf(
+                prescription -> (
+                        askedPrescriptions.stream().anyMatch(p -> p.getPrescription().getId().equals(prescription.getPrescription().getId()))
+                )
+        );
+
+        for(ActionPrescription prescription : prescriptions){
+            returnedPrescriptions.add(prescription.getPrescription());
+        }
+
+        return returnedPrescriptions;
     }
 
     /**
