@@ -6,7 +6,7 @@ import type { Question } from '@/models/question/question.model';
 import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
-import type { Speech } from '@/models/listen/listen.model';
+import type { Listen } from '@/models/listen/listen.model';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
@@ -18,14 +18,15 @@ export function useApiToLocalPatientMapper() {
         diagnostic: patient.result ?? ''
       },
       questions: [...mapApiActionToLocalQuestion(patient.actions ?? [])],
-      speech: [...mapApiActionToLocalSpeech(patient.actions ?? [])],
+      listen: [...mapApiActionToLocalListen(patient.actions ?? [])],
       inspection: [],
       palpation: [],
       percussion: [],
       auscultation: [],
       biology: [],
       imagery: [],
-      biopsy: []
+      biopsy: [],
+      precisions: [],
     };
   }
 
@@ -48,19 +49,19 @@ export function useApiToLocalPatientMapper() {
     return questions;
   }
 
-  function mapApiActionToLocalSpeech(actions: Action[]): Speech[] {
-    const speech: Speech[] = [];
+  function mapApiActionToLocalListen(actions: Action[]): Listen[] {
+    const listen: Listen[] = [];
 
     actions.forEach((action) => {
       if (action.type === TypeAction.CLOSED_QUESTION || action.type === TypeAction.OPENED_QUESTION) {
-        speech.push({
+        listen.push({
           id: action.question?.id ?? '',
           content: action.primaryElement,
         });
       }
     });
 
-    return speech;
+    return listen;
   }
 
   return { mapApiToLocal };

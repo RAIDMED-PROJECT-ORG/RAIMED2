@@ -4,17 +4,16 @@ import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
 import GenericList from '@/components/modal/genericModal/GenericList.vue';
 import ListenRow from '@/components/modal/listenModal/ListenRow.vue';
-import type { Speech } from '@/models/listen/listen.model';
+import type { Listen } from '@/models/listen/listen.model';
 
 defineProps<{
-  listens: Speech[];
+  listens: Listen[];
 }>();
 
 defineEmits<{
   (e: 'deleteListen', id: string): void;
   (e: 'updateListen', id: string): void;
 }>();
-
 </script>
 
 <template>
@@ -22,12 +21,17 @@ defineEmits<{
     title="Liste des phrases"
     size="medium"
     :columns="{
-    'Phrases': 40,
-    'Eléments primaires': 40,
-    'Actions': 20
-  }"
+      Phrases: 40,
+      'Eléments primaires': 40,
+      Actions: 20
+    }"
   >
-    <ListenRow v-for="(listen, index) in listens" :key="index" :content="listen.content" :primaryElement="listen.primaryElement || ''">
+    <ListenRow
+      v-for="(listen, index) in listens"
+      :key="index"
+      :content="listen.content"
+      :primaryElement="listen.primaryElement || ''"
+    >
       <div class="w-[20%] flex gap-2">
         <ActionButton
           :color="Color.Grey"

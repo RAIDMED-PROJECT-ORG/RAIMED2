@@ -49,7 +49,6 @@ export const usePatientStore = defineStore('patient', {
     },
 
     async saveNewPatient(newPatient: NewPatient): Promise<boolean> {
-      console.log(newPatient);
       const virtualPatient = {
           ...(newPatient.id !== undefined && {id: newPatient.id}),
           age: newPatient.characteristic?.age,
@@ -66,58 +65,58 @@ export const usePatientStore = defineStore('patient', {
           },
           actions: {
             action: newPatient.questions.map((question) => ({
-                type:
-                  question.type === QuestionType.CLOSED
-                    ? TypeAction.CLOSED_QUESTION
-                    : TypeAction.OPENED_QUESTION,
+              type:
+                question.type === QuestionType.CLOSED
+                  ? TypeAction.CLOSED_QUESTION
+                  : TypeAction.OPENED_QUESTION,
+              primaryElement: question.content,
+              ...(question.type === QuestionType.CLOSED
+                ? {
+                  actionClosedQuestion: {
+                    closedAnswer: question.answer,
+                    questionLinked: question
+                  }
+                }
+                : {
+                  actionOpenedQuestion: {
+                    openedAnswer: question.answer,
+                    questionLinked: question
+                  }
+                }),
+              ...newPatient.questions.map((question) => ({
+                type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
                 primaryElement: question.content,
                 ...(question.type === QuestionType.CLOSED
                   ? {
                     actionClosedQuestion: {
                       closedAnswer: question.answer,
-                      questionLinked: question
-                    }
+                      questionLinked: question,
+                    },
                   }
                   : {
                     actionOpenedQuestion: {
                       openedAnswer: question.answer,
-                      questionLinked: question
-                    }
+                      questionLinked: question,
+                    },
                   }),
-                ...newPatient.questions.map((question) => ({
-                  type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
-                  primaryElement: question.content,
-                  ...(question.type === QuestionType.CLOSED
-                    ? {
-                      actionClosedQuestion: {
-                        closedAnswer: question.answer,
-                        questionLinked: question,
-                      },
-                    }
-                    : {
-                      actionOpenedQuestion: {
-                        openedAnswer: question.answer,
-                        questionLinked: question,
-                      },
-                    }),
-                })),
-                ...newPatient.biology.map(prescription => ({
-                  type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
-                  primaryElement: prescription.content,
-                  actionPrescription: {
-                    prescription: prescription
-                  }
-                })),
-                ...newPatient.biopsy.map(prescription => ({
-                  type: TypeAction.BIOPSIES_PRESCRIPTION,
-                  primaryElement: prescription.content,
-                  actionPrescription: {
-                    prescription: prescription
-                  }
-                })),
-                ...newPatient.imagery.map(prescription => ({
-                  type: TypeAction.IMAGING_PRESCRIPTION,
-                  primaryElement: prescription.content,
+              })),
+              ...newPatient.biology.map(prescription => ({
+                type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
+                primaryElement: prescription.content,
+                actionPrescription: {
+                  prescription: prescription
+                }
+              })),
+              ...newPatient.biopsy.map(prescription => ({
+                type: TypeAction.BIOPSIES_PRESCRIPTION,
+                primaryElement: prescription.content,
+                actionPrescription: {
+                  prescription: prescription
+                }
+              })),
+              ...newPatient.imagery.map(prescription => ({
+                type: TypeAction.IMAGING_PRESCRIPTION,
+                primaryElement: prescription.content,
                   actionPrescription: {
                     prescription: prescription
                   }
