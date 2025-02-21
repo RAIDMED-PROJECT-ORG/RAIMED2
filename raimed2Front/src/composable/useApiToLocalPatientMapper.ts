@@ -7,6 +7,8 @@ import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Listen } from '@/models/listen/listen.model';
+import type { Prescription } from '@/models/prescription/prescription.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
@@ -23,10 +25,14 @@ export function useApiToLocalPatientMapper() {
       palpation: [],
       percussion: [],
       auscultation: [],
-      biology: [],
-      imagery: [],
-      biopsy: [],
-      precisions: [],
+      biology: [
+        ...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOLOGY)
+      ],
+      imagery: [
+        ...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.IMAGERY)
+      ],
+      biopsy: [...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOPSY)],
+      precisions: []
     };
   }
 
@@ -34,12 +40,16 @@ export function useApiToLocalPatientMapper() {
     const questions: Question[] = [];
 
     actions.forEach((action) => {
-      if (action.type === TypeAction.CLOSED_QUESTION || action.type === TypeAction.OPENED_QUESTION) {
+      if (
+        action.type === TypeAction.CLOSED_QUESTION ||
+        action.type === TypeAction.OPENED_QUESTION
+      ) {
         questions.push({
           id: action.question?.id ?? '',
           content: action.question?.content ?? '',
           answer: action.closedAnswer ?? action.openedAnswer ?? '',
-          type: action.type === TypeAction.CLOSED_QUESTION ? QuestionType.CLOSED : QuestionType.OPENED,
+          type:
+            action.type === TypeAction.CLOSED_QUESTION ? QuestionType.CLOSED : QuestionType.OPENED,
           filter: action.question?.filter ?? QuestionFilter.MIXED,
           isMutual: action.question?.isMutual ?? false
         });
@@ -50,18 +60,41 @@ export function useApiToLocalPatientMapper() {
   }
 
   function mapApiActionToLocalListen(actions: Action[]): Listen[] {
-    const listen: Listen[] = [];
+    const listens: Listen[] = [];
 
     actions.forEach((action) => {
-      if (action.type === TypeAction.CLOSED_QUESTION || action.type === TypeAction.OPENED_QUESTION) {
-        listen.push({
+      if (
+        action.type === TypeAction.CLOSED_QUESTION ||
+        action.type === TypeAction.OPENED_QUESTION
+      ) {
+        listens.push({
           id: action.question?.id ?? '',
-          content: action.primaryElement,
+          content: action.primaryElement
         });
       }
     });
 
-    return listen;
+    return listens;
+  }
+
+  function mapApiActionToLocalPrescription(
+    actions: Action[],
+    type: PrescriptionType
+  ): Prescription[] {
+    const prescriptions: Prescription[] = [];
+
+    actions.forEach((action) => {
+      if (action.prescription && action.prescription.type === type) {
+        prescriptions.push({
+          id: action.prescription.id,
+          content: action.prescription.content,
+          result: action.prescription.result ?? '',
+          type: action.prescription.type
+        });
+      }
+    });
+
+    return prescriptions;
   }
 
   return { mapApiToLocal };
