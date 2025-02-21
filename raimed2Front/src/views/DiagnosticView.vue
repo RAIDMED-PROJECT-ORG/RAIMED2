@@ -17,6 +17,8 @@ import axiosInstance from '@/service/httpClient/axios.config';
 import { useDiagnosticStore } from '@/stores/diagnostic.store';
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import PrescriptionPanel from '@/components/diagnosticActions/PrescriptionPanel.vue';
 
 const router = useRouter();
 
@@ -31,13 +33,13 @@ const displayClosedQuestionActionPanel = ref(false);
 // Control the display of the opened question action panel
 const displayOpenedQuestionActionPanel = ref(false);
 
-const displayBiopsiesActionPanel = ref(false);
-
-const displayBiologyActionPanel = ref(false);
-
-const displayImagingActionPanel = ref(false);
-
-
+const displayPrescriptionActionPanel = ref<{
+  visibility: boolean;
+  prescriptionType: PrescriptionType | null;
+}>({
+  visibility: false,
+  prescriptionType: null
+});
 
 const queryDiagnostic = useQuery({
   queryKey: ['diagnostic', diagnosticId],
@@ -168,16 +170,25 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
       displayOpenedQuestionActionPanel.value = true;
       break;
     }
-    case TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION: {
-      displayBiologyActionPanel.value = true;
+    case TypeAction.BIOLOGY: {
+      displayPrescriptionActionPanel.value = {
+        visibility: true,
+        prescriptionType: PrescriptionType.BIOLOGY
+      };
       break;
     }
-    case TypeAction.IMAGING_PRESCRIPTION: {
-      displayImagingActionPanel.value = true;
+    case TypeAction.IMAGERY: {
+      displayPrescriptionActionPanel.value = {
+        visibility: true,
+        prescriptionType: PrescriptionType.IMAGERY
+      };
       break;
     }
-    case TypeAction.BIOPSIES_PRESCRIPTION: {
-      displayBiopsiesActionPanel.value = true;
+    case TypeAction.BIOPSY: {
+      displayPrescriptionActionPanel.value = {
+        visibility: true,
+        prescriptionType: PrescriptionType.BIOPSY
+      };
       break;
     }
     default:
@@ -205,6 +216,13 @@ const handleOnAskOpenedQuestion = (actionId: string) => {
   if (actionId)
     mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.OPENED_QUESTION, actionId });
   displayOpenedQuestionActionPanel.value = false;
+};
+
+const handleOnAskPrescription = (actionId: string) => {
+  if (actionId) {
+    mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.PRESCRIPTION, actionId });
+  }
+  displayPrescriptionActionPanel.value = { visibility: false, prescriptionType: null };
 };
 
 const isDiagnosticAlreadyDone = () => {
@@ -267,6 +285,23 @@ const isDiagnosticAlreadyDone = () => {
           <OpenedQuestionPanel
             :handleOnClose="() => (displayOpenedQuestionActionPanel = false)"
             :handleOnAskOpenedQuestion="handleOnAskOpenedQuestion"
+          />
+        </template>
+        <template
+          v-else-if="
+            displayPrescriptionActionPanel && displayPrescriptionActionPanel.prescriptionType
+          "
+        >
+          <PrescriptionPanel
+            :handleOnClose="
+              () => (displayPrescriptionActionPanel = { visibility: false, prescriptionType: null })
+            "
+            :prescriptionType="displayPrescriptionActionPanel.prescriptionType"
+            :handleOnAskPrescription="
+              (actionId: string) => {
+                handleOnAskPrescription(actionId);
+              }
+            "
           />
         </template>
         <template v-else>
