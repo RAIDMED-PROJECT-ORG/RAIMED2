@@ -51,7 +51,8 @@ export function useApiToLocalPatientMapper() {
           type:
             action.type === TypeAction.CLOSED_QUESTION ? QuestionType.CLOSED : QuestionType.OPENED,
           filter: action.question?.filter ?? QuestionFilter.MIXED,
-          isMutual: action.question?.isMutual ?? false
+          isMutual: action.question?.isMutual ?? false,
+          primaryElement: action.primaryElement
         });
       }
     });
@@ -69,7 +70,8 @@ export function useApiToLocalPatientMapper() {
       ) {
         listens.push({
           id: action.question?.id ?? '',
-          content: action.primaryElement
+          content: action.question?.content ?? '',
+          primaryElement: action.primaryElement
         });
       }
     });

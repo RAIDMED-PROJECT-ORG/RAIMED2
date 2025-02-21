@@ -35,7 +35,7 @@ const refreshPatients = async () => {
 
 <template>
   <AuthenticatedPageLayout>
-    <div class="ml-10 w-2/4 flex flex-col h-[90%]">
+    <div class="ml-10 min-w-2/4 max-w-[800px] mr-10 flex flex-col h-[90%]">
       <div class="flex justify-between items-center h-[5%] mb-5">
         <h1 class="font-extrabold text-xl">Visualisation des patients</h1>
         <ActionButton
