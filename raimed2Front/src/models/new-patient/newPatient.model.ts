@@ -7,6 +7,7 @@ import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { Listen } from '@/models/listen/listen.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import type { Precision } from '@/models/question/precision.model';
 
 export interface NewPatient {
   characteristic: Characteristics | null;
@@ -72,7 +73,7 @@ export const initializeNewPatient = (): NewPatient => {
       },
       {
         id: uuidv4(),
-        content: 'J\'ai mal à la tête',
+        content: "J'ai mal à la tête",
         primaryElement: 'Mal de tête'
       },
       {
@@ -83,4 +84,4 @@ export const initializeNewPatient = (): NewPatient => {
     ],
     precisions: []
   };
-}
+};
