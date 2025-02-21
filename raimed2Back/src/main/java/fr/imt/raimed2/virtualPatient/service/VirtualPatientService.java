@@ -57,6 +57,9 @@ public class VirtualPatientService {
                 if(actionDTO.getActionOpenedQuestionDTO() != null){
                     actionService.saveActionOpenedQuestion(saved, actionDTO);
                 }
+                if(actionDTO.getActionExamDTO() != null){
+                    actionService.saveActionExam(saved, actionDTO);
+                }
             }
         }catch(DataIntegrityViolationException ex){
             System.out.println(ex.getMessage());

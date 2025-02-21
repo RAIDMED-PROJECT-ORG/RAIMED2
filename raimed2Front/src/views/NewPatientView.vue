@@ -180,7 +180,7 @@ function switchCharacteristicModalVisibility() {
 function onInspectionValidation(data: ExamResults[]) {
   console.log('Inspection results: ', data);
   isInspectionModalOpen.value = false;
-  newPatient.value.inspection = data;
+  newPatient.value.inspections = data;
 }
 
 function switchInspectionModalVisibility() {
@@ -194,7 +194,7 @@ function switchPercussionModalVisibility() {
 function onPercussionValidation(data: ExamResults[]) {
   console.log('Percussion results: ', data);
   isPercussionModalOpen.value = false;
-  newPatient.value.percussion = data;
+  newPatient.value.percussions = data;
 }
 
 function switchPalpationModalVisibility() {
@@ -204,7 +204,7 @@ function switchPalpationModalVisibility() {
 function onPalpationValidation(data: ExamResults[]) {
   console.log('Palpation results: ', data);
   isPalpationModalOpen.value = false;
-  newPatient.value.palpation = data;
+  newPatient.value.palpations = data;
 }
 
 function switchAuscultationModalVisibility() {
@@ -214,7 +214,7 @@ function switchAuscultationModalVisibility() {
 function onAuscultationValidation(data: ExamResults[]) {
   console.log('Auscultation results: ', data);
   isAuscultationModalOpen.value = false;
-  newPatient.value.auscultation = data;
+  newPatient.value.auscultations = data;
 }
 
 function onQuestionValidation(data: Question[]) {
@@ -288,16 +288,16 @@ function calculateProgress() {
   if (newPatient.value.precisions.length) {
     progressCount++;
   }
-  if (newPatient.value.inspection.length) {
+  if (newPatient.value.inspections.length) {
     progressCount++;
   }
-  if (newPatient.value.palpation.length) {
+  if (newPatient.value.palpations.length) {
     progressCount++;
   }
-  if (newPatient.value.percussion.length) {
+  if (newPatient.value.percussions.length) {
     progressCount++;
   }
-  if (newPatient.value.auscultation.length) {
+  if (newPatient.value.auscultations.length) {
     progressCount++;
   }
   if (newPatient.value.listen.length) {
@@ -361,7 +361,7 @@ function handleConfirmGoBack() {
       :onBack="switchInspectionModalVisibility"
       :possibleExams="InspectionSigns"
       :modalTitle="'Inspection'"
-      :currentExamResults="newPatient.inspection"
+      :currentExamResults="newPatient.inspections"
     />
     <ExamenModal
       v-if="isPalpationModalOpen"
@@ -369,7 +369,7 @@ function handleConfirmGoBack() {
       :onBack="switchPalpationModalVisibility"
       :possibleExams="PalpationSigns"
       :modalTitle="'Palpation et manoeuvre'"
-      :currentExamResults="newPatient.palpation"
+      :currentExamResults="newPatient.palpations"
     />
     <ExamenModal
       v-if="isPercussionModalOpen"
@@ -377,7 +377,7 @@ function handleConfirmGoBack() {
       :onBack="switchPercussionModalVisibility"
       :possibleExams="PercussionSigns"
       :modalTitle="'Percussion'"
-      :currentExamResults="newPatient.percussion"
+      :currentExamResults="newPatient.percussions"
     />
     <ExamenModal
       v-if="isAuscultationModalOpen"
@@ -385,7 +385,7 @@ function handleConfirmGoBack() {
       :onBack="switchAuscultationModalVisibility"
       :possibleExams="AuscultationSigns"
       :modalTitle="'Auscultation'"
-      :currentExamResults="newPatient.auscultation"
+      :currentExamResults="newPatient.auscultations"
     />
     <QuestionModal
       v-if="isQuestionModalOpen"
@@ -475,28 +475,28 @@ function handleConfirmGoBack() {
             :color="Color.Orange"
             :icon="faMagnifyingGlass"
             :onClick="switchInspectionModalVisibility"
-            :completed="newPatient.inspection.length > 0"
+            :completed="newPatient.inspections.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PALPATION)"
             :color="Color.Orange"
             :icon="faHandHoldingMedical"
             :onClick="switchPalpationModalVisibility"
-            :completed="newPatient.palpation.length > 0"
+            :completed="newPatient.palpations.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
             :color="Color.Orange"
             :icon="faGavel"
             :onClick="switchPercussionModalVisibility"
-            :completed="newPatient.percussion.length > 0"
+            :completed="newPatient.percussions.length > 0"
           />
           <CategoryButton
             :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
             :color="Color.Orange"
             :icon="faStethoscope"
             :onClick="switchAuscultationModalVisibility"
-            :completed="newPatient.auscultation.length > 0"
+            :completed="newPatient.auscultations.length > 0"
           />
         </div>
         <div class="flex flex-col w-1/3 gap-1">

@@ -2,14 +2,13 @@ package fr.imt.raimed2.action.service;
 
 import fr.imt.raimed2.action.dto.request.CreateActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.dto.xml.*;
-import fr.imt.raimed2.action.model.ActionClosedQuestion;
-import fr.imt.raimed2.action.model.ActionOpenedQuestion;
-import fr.imt.raimed2.action.model.ActionPrescription;
-import fr.imt.raimed2.action.model.ActionSpontaneousPatientSpeech;
+import fr.imt.raimed2.action.model.*;
 import fr.imt.raimed2.action.repository.ActionClosedQuestionRepository;
 import fr.imt.raimed2.action.repository.ActionOpenedQuestionRepository;
 import fr.imt.raimed2.action.repository.ActionRepository;
 import fr.imt.raimed2.diagnostic.model.Event;
+import fr.imt.raimed2.exam.model.Exam;
+import fr.imt.raimed2.exam.service.ExamService;
 import fr.imt.raimed2.prescription.model.Prescription;
 import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
@@ -44,6 +43,8 @@ public class ActionService {
 
     private final ActionOpenedQuestionMapper actionOpenedQuestionMapper;
     private final ActionPrescriptionMapper actionPrescriptionMapper;
+    private final ExamService examService;
+    private final ActionExamMapper actionExamMapper;
 
     /**
      * Add a spontaneous patient speech action to the virtual patient
@@ -144,6 +145,26 @@ public class ActionService {
         actionPrescription.setPrimaryElement(actionDTO.getPrimaryElement());
         actionPrescription.setType(actionDTO.getType());
         return actionRepository.save(actionPrescription);
+    }
+
+    public ActionExam saveActionExam(VirtualPatient virtualPatient, ActionDTO actionDTO){
+
+        Exam exam = examService.getPrescriptionByZoneAndSigns(
+                actionDTO.getActionExamDTO().getExam().getZone(),
+                actionDTO.getActionExamDTO().getExam().getSigns()
+        );
+
+        if (exam == null) {
+            exam = examService.save(actionDTO.getActionExamDTO().getExam());
+        }
+
+        ActionExam actionExam = actionExamMapper.actionExamDTOtoDao(actionDTO.getActionExamDTO());
+        actionExam.setVirtualPatient(virtualPatient);
+        actionExam.setExam(exam);
+        actionExam.setPrimaryElement(actionDTO.getPrimaryElement());
+        actionExam.setType(actionDTO.getType());
+
+        return actionRepository.save(actionExam);
     }
 
     /**

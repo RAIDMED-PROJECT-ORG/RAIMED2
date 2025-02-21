@@ -26,4 +26,7 @@ public class ActionDTO implements Serializable {
 
     @JacksonXmlProperty(localName = "actionPrescription")
     private ActionPrescriptionDTO actionPrescriptionDTO;
+
+    @JacksonXmlProperty(localName = "actionExam")
+    private ActionExamDTO actionExamDTO;
 }

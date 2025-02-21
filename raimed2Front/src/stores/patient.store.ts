@@ -101,7 +101,33 @@ export const usePatientStore = defineStore('patient', {
               actionPrescription: {
                 prescription: prescription
               }
-          }))
+          })),
+
+            //Exams
+            ...newPatient.inspections.map(inspection => ({
+              type: TypeAction.INSPECTION,
+              actionExam: {
+                inspection: inspection
+              }
+            })),
+            ...newPatient.palpations.map(palpation => ({
+              type: TypeAction.PALPATION,
+              actionExam: {
+                palpation: palpation
+              }
+            })),
+            ...newPatient.percussions.map(percussion => ({
+              type: TypeAction.PERCUSSION,
+              actionExam: {
+                percussion: percussion
+              }
+            })),
+            ...newPatient.auscultations.map(auscultation => ({
+              type: TypeAction.AUSCULTATION,
+              actionExam: {
+                auscultation: auscultation
+              }
+            })),
           ]
         }
       };

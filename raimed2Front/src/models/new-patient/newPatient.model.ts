@@ -13,10 +13,10 @@ export interface NewPatient {
   characteristic: Characteristics | null;
   questions: Question[];
   precisions: Precision[];
-  inspection: ExamResults[];
-  palpation: ExamResults[];
-  percussion: ExamResults[];
-  auscultation: ExamResults[];
+  inspections: ExamResults[];
+  palpations: ExamResults[];
+  percussions: ExamResults[];
+  auscultations: ExamResults[];
   listen: Listen[];
   biology: Prescription[];
   imagery: Prescription[];
@@ -26,10 +26,10 @@ export interface NewPatient {
 export const initializeNewPatient = (): NewPatient => {
   return {
     characteristic: null,
-    inspection: [],
-    palpation: [],
-    percussion: [],
-    auscultation: [],
+    inspections: [],
+    palpations: [],
+    percussions: [],
+    auscultations: [],
     biology: [
       {
         id: uuidv4(),
