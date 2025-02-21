@@ -205,7 +205,7 @@ public class DiagnosticService {
         return returnedQuestions;
     }
 
-    public List<Prescription> getDiagnosticBiopsiesPrescriptions(Long diagnosticId, String type) throws NoSuchElementException {
+    public List<Prescription> getDiagnosticPrescription(Long diagnosticId, String type) throws NoSuchElementException {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
         List<Prescription> returnedPrescriptions = new ArrayList<>();
 

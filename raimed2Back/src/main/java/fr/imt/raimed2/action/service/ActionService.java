@@ -9,6 +9,7 @@ import fr.imt.raimed2.action.repository.ActionPrescriptionRepository;
 import fr.imt.raimed2.action.repository.ActionRepository;
 import fr.imt.raimed2.diagnostic.model.Event;
 import fr.imt.raimed2.prescription.model.Prescription;
+import fr.imt.raimed2.prescription.model.PrescriptionType;
 import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.service.QuestionService;
@@ -86,7 +87,8 @@ public class ActionService {
     }
 
     public List<ActionPrescription> getAllPrescriptionOfVirtualPatient(Long virtualPatientId, String type) {
-        return actionPrescriptionRepository.findAllByVirtualPatientIdAndType(virtualPatientId, type).stream().filter(p -> Objects.equals(p.getType().toString(), type)).collect(Collectors.toList());
+        PrescriptionType prescriptionType = PrescriptionType.valueOf(type.toUpperCase());
+        return actionPrescriptionRepository.findAllByVirtualPatientIdAndPrescription_Type(virtualPatientId, prescriptionType);
     }
 
     /**
