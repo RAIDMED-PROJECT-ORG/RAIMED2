@@ -7,9 +7,10 @@ export enum TypeAction {
   PALPATION = 'PALPATION',
   PERCUSSION = 'PERCUSSION',
   AUSCULTATION = 'AUSCULTATION',
-  BIOLOGY_MICROBIOLOGY_PRESCRIPTION = 'BIOLOGY_MICROBIOLOGY_PRESCRIPTION',
-  IMAGING_PRESCRIPTION = 'IMAGING_PRESCRIPTION',
-  BIOPSIES_PRESCRIPTION = 'BIOPSIES_PRESCRIPTION'
+  BIOLOGY = 'BIOLOGY',
+  IMAGERY = 'IMAGERY',
+  BIOPSY = 'BIOPSY',
+  PRESCRIPTION = 'PRESCRIPTION'
 }
 
 export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
@@ -30,11 +31,11 @@ export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
       return 'Percussion';
     case TypeAction.AUSCULTATION:
       return 'Auscultation';
-    case TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION:
+    case TypeAction.BIOLOGY:
       return 'Prescription biologie et microbiologie';
-    case TypeAction.IMAGING_PRESCRIPTION:
+    case TypeAction.IMAGERY:
       return 'Prescription imagerie';
-    case TypeAction.BIOPSIES_PRESCRIPTION:
-      return 'Prescription biopsies';
+    case TypeAction.BIOPSY:
+      return 'Prescription biopsie';
   }
 };

@@ -83,21 +83,21 @@ export const usePatientStore = defineStore('patient', {
 
             //PRESCRIPTIONS
             ...newPatient.biology.map((prescription) => ({
-              type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
+              type: TypeAction.BIOLOGY,
               primaryElement: prescription.content,
               actionPrescription: {
                 prescription: prescription
               }
             })),
             ...newPatient.biopsy.map((prescription) => ({
-              type: TypeAction.BIOPSIES_PRESCRIPTION,
+              type: TypeAction.BIOPSY,
               primaryElement: prescription.content,
               actionPrescription: {
                 prescription: prescription
               }
             })),
             ...newPatient.imagery.map((prescription) => ({
-              type: TypeAction.IMAGING_PRESCRIPTION,
+              type: TypeAction.IMAGERY,
               primaryElement: prescription.content,
               actionPrescription: {
                 prescription: prescription

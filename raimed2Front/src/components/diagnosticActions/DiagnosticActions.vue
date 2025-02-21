@@ -97,24 +97,24 @@ defineProps<{
         <ActionButton
           :color="Color.Purple"
           :icon="faFileMedical"
-          :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
-          :onClick="() => handleOnClickActionButton(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.BIOLOGY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.BIOLOGY)"
         />
 
         <!-- Imaging prescription action button -->
         <ActionButton
           :color="Color.Purple"
           :icon="faPersonRays"
-          :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
-          :onClick="() => handleOnClickActionButton(TypeAction.IMAGING_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.IMAGERY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.IMAGERY)"
         />
 
         <!-- Biopsies prescription action button -->
         <ActionButton
           :color="Color.Purple"
           :icon="faSyringe"
-          :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
-          :onClick="() => handleOnClickActionButton(TypeAction.BIOPSIES_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.BIOPSY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.BIOPSY)"
         />
       </div>
     </div>
