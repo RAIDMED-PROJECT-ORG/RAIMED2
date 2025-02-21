@@ -2,21 +2,21 @@
 import { Color } from '@/models/new-patient/color.model';
 import { computed, ref } from 'vue';
 import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
-import { getFakeListens, type Speech } from '@/models/listen/listen.model';
+import { getFakeListens, type Listen } from '@/models/listen/listen.model';
 import ListenRow from '@/components/modal/listenModal/ListenRow.vue';
 import ListenListModalHeader from '@/components/modal/listenModal/ListenListModalHeader.vue';
 
 const props = defineProps<{
-  selectedListens: Speech[];
+  selectedListens: Listen[];
 }>();
 
 const emits = defineEmits<{
-  (e: 'addListens', listens: Speech[]): void;
+  (e: 'addListens', listens: Listen[]): void;
   (e: 'switchModalVisibility', visibility: Boolean): void;
 }>();
 
-const allListens = ref<Speech[]>(getFakeListens());
-const listensToAdd = ref<Speech[]>([]);
+const allListens = ref<Listen[]>(getFakeListens());
+const listensToAdd = ref<Listen[]>([]);
 const filter = ref({
   nameFilter: ''
 });
@@ -41,7 +41,7 @@ const listensToDisplay = computed(() => {
   });
 });
 
-const switchIsSelected = (listen: Speech, isSelected: boolean) => {
+const switchIsSelected = (listen: Listen, isSelected: boolean) => {
   if (isSelected) {
     listensToAdd.value.push(listen);
   } else {
@@ -74,7 +74,8 @@ const addListens = () => {
         <ListenRow
           v-for="listen in listensToDisplay"
           :key="listen.id"
-          :listen="listen.content"
+          :content="listen.content"
+          :primary-element="listen.primaryElement || ''"
         >
           <div class="w-2/12 flex justify-center">
             <input

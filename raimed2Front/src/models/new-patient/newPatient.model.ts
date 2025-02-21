@@ -3,9 +3,7 @@ import type { Characteristics } from '@/models/new-patient/characteristics.model
 import type { ExamResults } from '@/models/diagnostic/exam.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { Listen } from '@/models/listen/listen.model';
-import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import type { Precision } from '@/models/question/precision.model';
-import type { Speech } from '@/models/listen/listen.model';
 
 export interface NewPatient {
   id?: string;
@@ -32,7 +30,8 @@ export const initializeNewPatient = (): NewPatient => {
     biology: [],
     imagery: [],
     biopsy: [],
-    questions:[],
-    speech: [],
+    questions: [],
+    listen: [],
+    precisions: []
   };
 };

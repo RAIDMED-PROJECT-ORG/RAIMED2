@@ -4,11 +4,11 @@ import GenericModal from '@/components/modal/genericModal/GenericModal.vue';
 import { ref, watch } from 'vue';
 import ListenList from '@/components/modal/listenModal/ListenList.vue';
 import ListenForm from '@/components/modal/listenModal/ListenForm.vue';
-import type { Speech } from '@/models/listen/listen.model';
+import type { Listen } from '@/models/listen/listen.model';
 
 const props = defineProps<{
-  listens: Speech[];
-  onValidation: (data: Speech[]) => void;
+  listens: Listen[];
+  onValidation: (data: Listen[]) => void;
   onBack: () => void;
 }>();
 
@@ -32,7 +32,7 @@ const updateListen = (id: string) => {
   listenToUpdate.value = listens.value.find((listen) => listen.id === id) ?? null;
 };
 
-const insertOrUpdateListen = (listen: Speech) => {
+const insertOrUpdateListen = (listen: Listen) => {
   const index = listens.value.findIndex((l) => l.id === listen.id);
   if (index === -1) {
     listens.value.push(listen);
