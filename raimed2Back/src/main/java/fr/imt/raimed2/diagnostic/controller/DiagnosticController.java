@@ -94,8 +94,8 @@ public class DiagnosticController {
     }
 
     @GetMapping("/{id}/prescription/{type}")
-    private ResponseEntity<List<Prescription>> getDiagnosticBiopsiesPrescriptions(@PathVariable Long id, @PathVariable String type) {
-        List<Prescription> prescriptions = this.diagnosticService.getDiagnosticBiopsiesPrescriptions(id, type.toUpperCase());
+    private ResponseEntity<List<Prescription>> getDiagnosticPrescription(@PathVariable Long id, @PathVariable String type) {
+        List<Prescription> prescriptions = this.diagnosticService.getDiagnosticPrescription(id, type.toUpperCase());
         return ResponseEntity.ok().body(prescriptions);
     }
 
