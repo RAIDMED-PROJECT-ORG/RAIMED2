@@ -46,7 +46,6 @@ export const usePatientStore = defineStore('patient', {
       return false;
     },
     async saveNewPatient(newPatient: NewPatient): Promise<boolean> {
-
       const virtualPatient = {
         age: newPatient.characteristic?.age,
         gender: newPatient.characteristic?.gender,
@@ -55,29 +54,59 @@ export const usePatientStore = defineStore('patient', {
         createdBy: {
           id: authStore.getUserInfo.id,
           username: authStore.getUserInfo.username,
-          firstname: authStore.getUserInfo.username,
+          firstname: authStore.getUserInfo.firstname,
           lastname: authStore.getUserInfo.lastname,
           email: authStore.getUserInfo.email,
           role: authStore.getUserInfo.role,
         },
         actions: {
-          action: newPatient.questions.map((question) =>  ({
-            type: (question.type === QuestionType.CLOSED) ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
-            primaryElement: question.content,
-            ...(question.type === QuestionType.CLOSED ? {
-              actionClosedQuestion: {
-                closedAnswer: question.answer,
-                questionLinked: question,
-              },
-            } : {
-                  actionOpenedQuestion: {
-                    openedAnswer: question.answer,
-                    questionLinked: question,
-                  },
-                }),
+          action: [
+          //QUESTIONS
+          ...newPatient.questions.map((question) => ({
+              type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+              primaryElement: question.content,
+              ...(question.type === QuestionType.CLOSED
+                  ? {
+                    actionClosedQuestion: {
+                      closedAnswer: question.answer,
+                      questionLinked: question,
+                    },
+                  }
+                  : {
+                    actionOpenedQuestion: {
+                      openedAnswer: question.answer,
+                      questionLinked: question,
+                    },
+                  }),
+          })),
+
+          //PRESCRIPTIONS
+          ...newPatient.biology.map(prescription => ({
+              type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
+              primaryElement: prescription.content,
+              actionPrescription: {
+                prescription: prescription
+              }
+          })),
+          ...newPatient.biopsy.map(prescription => ({
+              type: TypeAction.BIOPSIES_PRESCRIPTION,
+              primaryElement: prescription.content,
+              actionPrescription: {
+                prescription: prescription
+              }
+          })),
+          ...newPatient.imagery.map(prescription => ({
+              type: TypeAction.IMAGING_PRESCRIPTION,
+              primaryElement: prescription.content,
+              actionPrescription: {
+                prescription: prescription
+              }
           }))
+          ]
         }
       };
+
+
       const virtualPatientXML = parse('VirtualPatient', virtualPatient);
 
       const res = await axiosInstance.post('/virtual-patient/xml', virtualPatientXML, {

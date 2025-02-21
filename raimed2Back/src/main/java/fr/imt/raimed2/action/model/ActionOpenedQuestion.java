@@ -22,7 +22,6 @@ public class ActionOpenedQuestion extends Action {
     private String openedAnswer;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "question_id")
     private Question question;
 

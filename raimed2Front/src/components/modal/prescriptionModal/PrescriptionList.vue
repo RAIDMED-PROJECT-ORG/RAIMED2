@@ -26,7 +26,7 @@ defineEmits<{
       v-for="(prescription, index) in prescriptions"
       :key="index"
       :id="prescription.id"
-      :name="prescription.name"
+      :name="prescription.content"
       :result="prescription.result ?? ''"
       @delete-prescription="() => $emit('deletePrescription', prescription.id)"
       @update-prescription="() => $emit('updatePrescription', prescription.id)"

@@ -6,6 +6,7 @@ import { QuestionType } from '@/models/question/questionType.enum';
 import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { Listen } from '@/models/listen/listen.model';
+import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import type { Precision } from '@/models/question/precision.model';
 
 export interface NewPatient {
@@ -32,13 +33,15 @@ export const initializeNewPatient = (): NewPatient => {
     biology: [
       {
         id: uuidv4(),
-        name: 'Bilan hépatique',
-        result: 'Bilan hépatique normal'
+        content: 'Bilan hépatique',
+        result: 'Bilan hépatique normal',
+        type: PrescriptionType.BIOLOGY
       },
       {
         id: uuidv4(),
-        name: 'Cytoponction foie',
-        result: 'Cellules sans signe de malginité'
+        content: 'Cytoponction foie',
+        result: 'Cellules sans signe de malginité',
+        type: PrescriptionType.BIOLOGY
       }
     ],
     imagery: [],
@@ -70,7 +73,7 @@ export const initializeNewPatient = (): NewPatient => {
       },
       {
         id: uuidv4(),
-        content: 'J\'ai mal à la tête',
+        content: "J'ai mal à la tête",
         primaryElement: 'Mal de tête'
       },
       {
@@ -81,4 +84,4 @@ export const initializeNewPatient = (): NewPatient => {
     ],
     precisions: []
   };
-}
+};
