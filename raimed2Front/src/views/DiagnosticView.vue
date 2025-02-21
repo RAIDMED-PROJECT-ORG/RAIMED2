@@ -31,6 +31,14 @@ const displayClosedQuestionActionPanel = ref(false);
 // Control the display of the opened question action panel
 const displayOpenedQuestionActionPanel = ref(false);
 
+const displayBiopsiesActionPanel = ref(false);
+
+const displayBiologyActionPanel = ref(false);
+
+const displayImagingActionPanel = ref(false);
+
+
+
 const queryDiagnostic = useQuery({
   queryKey: ['diagnostic', diagnosticId],
   queryFn: () => axiosInstance.get(`/diagnostic/${diagnosticId}`).then((res) => res.data),
@@ -160,6 +168,20 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
       displayOpenedQuestionActionPanel.value = true;
       break;
     }
+    case TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION: {
+      displayBiologyActionPanel.value = true;
+      break;
+    }
+    case TypeAction.IMAGING_PRESCRIPTION: {
+      displayImagingActionPanel.value = true;
+      break;
+    }
+    case TypeAction.BIOPSIES_PRESCRIPTION: {
+      displayBiopsiesActionPanel.value = true;
+      break;
+    }
+    default:
+      break;
   }
 };
 
