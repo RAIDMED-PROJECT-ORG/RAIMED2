@@ -65,7 +65,7 @@ export const usePatientStore = defineStore('patient', {
                 question.type === QuestionType.CLOSED
                   ? TypeAction.CLOSED_QUESTION
                   : TypeAction.OPENED_QUESTION,
-              primaryElement: question.content,
+              primaryElement: question.primaryElement,
               ...(question.type === QuestionType.CLOSED
                 ? {
                     actionClosedQuestion: {
