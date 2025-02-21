@@ -83,7 +83,8 @@ export const useDiagnosticStore = defineStore('diagnostic', {
         (event) =>
           event.action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH ||
           event.action.type === TypeAction.CLOSED_QUESTION ||
-          event.action.type === TypeAction.OPENED_QUESTION
+          event.action.type === TypeAction.OPENED_QUESTION ||
+          event.action.type === TypeAction.PRESCRIPTION
       );
       eventsWithChatMessages.forEach((event: Event) => {
         if (event.action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH) {
@@ -114,6 +115,17 @@ export const useDiagnosticStore = defineStore('diagnostic', {
             author: AuthorChat.VIRTUAL_PATIENT,
             content: event.action.openedAnswer ?? ''
           });
+        } else if (event.action.type === TypeAction.PRESCRIPTION) {
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.STUDENT,
+            content: event.action.prescription?.content ?? ''
+          });
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.VIRTUAL_PATIENT,
+            content: event.action.prescription?.result ?? ''
+          });
         }
       });
       return chatMessages;
@@ -127,7 +139,7 @@ export const useDiagnosticStore = defineStore('diagnostic', {
     getPrimaryElements: (state: DiagnosticState): PrimaryElement[] => {
       const primaryElements: PrimaryElement[] = [];
       state.diagnosticEvents.map((event: Event) => {
-        if (event.action.primaryElement) {
+        if (event.action.primaryElement && event.action.type !== TypeAction.PRESCRIPTION) {
           primaryElements.push({ actionId: event.action.id, value: event.action.primaryElement });
         }
       });

@@ -506,21 +506,21 @@ function handleConfirmGoBack() {
         </div>
         <div class="flex flex-col w-1/3 gap-1">
           <CategoryButton
-            :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
+            :label="getTypeActionDisplayName(TypeAction.BIOLOGY)"
             :color="Color.Purple"
             :icon="faFileMedical"
             :on-click="switchBiologyModalVisibility"
             :completed="newPatient.biology.length > 0"
           />
           <CategoryButton
-            :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
+            :label="getTypeActionDisplayName(TypeAction.IMAGERY)"
             :color="Color.Purple"
             :icon="faPersonRays"
             :on-click="switchImageryModalVisibility"
             :completed="newPatient.imagery.length > 0"
           />
           <CategoryButton
-            :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
+            :label="getTypeActionDisplayName(TypeAction.BIOPSY)"
             :color="Color.Purple"
             :icon="faSyringe"
             :on-click="switchBiopsyModalVisibility"

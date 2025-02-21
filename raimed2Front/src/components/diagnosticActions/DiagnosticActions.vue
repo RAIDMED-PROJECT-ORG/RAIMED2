@@ -21,32 +21,6 @@ defineProps<{
   handleOnClickActionButton: (typeAction: TypeAction) => void;
 }>();
 
-const diagnosticStore = useDiagnosticStore();
-
-const isActionDisabled = (typeAction: TypeAction): boolean => {
-  switch (typeAction) {
-    case TypeAction.SPONTANEOUS_PATIENT_SPEECH:
-      return !diagnosticStore.isAvailableSpontaneousPatientSpeechAction;
-    case TypeAction.SPECIFY_SYMPTOM:
-      return true;
-    case TypeAction.INSPECTION:
-      return true;
-    case TypeAction.PALPATION:
-      return true;
-    case TypeAction.PERCUSSION:
-      return true;
-    case TypeAction.AUSCULTATION:
-      return true;
-    case TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION:
-      return true;
-    case TypeAction.IMAGING_PRESCRIPTION:
-      return true;
-    case TypeAction.BIOPSIES_PRESCRIPTION:
-      return true;
-    default:
-      return false;
-  }
-};
 </script>
 
 <template>
@@ -59,7 +33,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :icon="faEarListen"
           label="Écouter"
           :onClick="() => handleOnClickActionButton(TypeAction.SPONTANEOUS_PATIENT_SPEECH)"
-          :disabled="isActionDisabled(TypeAction.SPONTANEOUS_PATIENT_SPEECH)"
         />
 
         <!-- Closed question action button -->
@@ -68,7 +41,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :icon="faQuestion"
           :label="getTypeActionDisplayName(TypeAction.CLOSED_QUESTION)"
           :onClick="() => handleOnClickActionButton(TypeAction.CLOSED_QUESTION)"
-          :disabled="isActionDisabled(TypeAction.CLOSED_QUESTION)"
         />
 
         <!-- Opened question action button -->
@@ -77,7 +49,6 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :icon="faPersonCircleQuestion"
           :label="getTypeActionDisplayName(TypeAction.OPENED_QUESTION)"
           :onClick="() => handleOnClickActionButton(TypeAction.OPENED_QUESTION)"
-          :disabled="isActionDisabled(TypeAction.OPENED_QUESTION)"
         />
 
         <!-- Specify symptom action button -->
@@ -85,7 +56,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Blue"
           :icon="faSquarePlus"
           :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
-          :disabled="isActionDisabled(TypeAction.SPECIFY_SYMPTOM)"
+          :onClick="() => handleOnClickActionButton(TypeAction.SPECIFY_SYMPTOM)"
         />
       </div>
       <div class="w-1/3 flex flex-col">
@@ -94,7 +65,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faMagnifyingGlass"
           :label="getTypeActionDisplayName(TypeAction.INSPECTION)"
-          :disabled="isActionDisabled(TypeAction.INSPECTION)"
+          :onClick="() => handleOnClickActionButton(TypeAction.INSPECTION)"
         />
 
         <!-- Palpation action button -->
@@ -102,7 +73,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faHandHoldingMedical"
           :label="getTypeActionDisplayName(TypeAction.PALPATION)"
-          :disabled="isActionDisabled(TypeAction.PALPATION)"
+          :onClick="() => handleOnClickActionButton(TypeAction.PALPATION)"
         />
 
         <!-- Percussion action button -->
@@ -110,7 +81,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faGavel"
           :label="getTypeActionDisplayName(TypeAction.PERCUSSION)"
-          :disabled="isActionDisabled(TypeAction.PERCUSSION)"
+          :onClick="() => handleOnClickActionButton(TypeAction.PERCUSSION)"
         />
 
         <!-- Auscultation action button -->
@@ -118,7 +89,7 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
           :color="Color.Orange"
           :icon="faStethoscope"
           :label="getTypeActionDisplayName(TypeAction.AUSCULTATION)"
-          :disabled="isActionDisabled(TypeAction.AUSCULTATION)"
+          :onClick="() => handleOnClickActionButton(TypeAction.AUSCULTATION)"
         />
       </div>
       <div class="w-1/3 flex flex-col">
@@ -126,24 +97,24 @@ const isActionDisabled = (typeAction: TypeAction): boolean => {
         <ActionButton
           :color="Color.Purple"
           :icon="faFileMedical"
-          :label="getTypeActionDisplayName(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
-          :disabled="isActionDisabled(TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.BIOLOGY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.BIOLOGY)"
         />
 
         <!-- Imaging prescription action button -->
         <ActionButton
           :color="Color.Purple"
           :icon="faPersonRays"
-          :label="getTypeActionDisplayName(TypeAction.IMAGING_PRESCRIPTION)"
-          :disabled="isActionDisabled(TypeAction.IMAGING_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.IMAGERY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.IMAGERY)"
         />
 
         <!-- Biopsies prescription action button -->
         <ActionButton
           :color="Color.Purple"
           :icon="faSyringe"
-          :label="getTypeActionDisplayName(TypeAction.BIOPSIES_PRESCRIPTION)"
-          :disabled="isActionDisabled(TypeAction.BIOPSIES_PRESCRIPTION)"
+          :label="getTypeActionDisplayName(TypeAction.BIOPSY)"
+          :onClick="() => handleOnClickActionButton(TypeAction.BIOPSY)"
         />
       </div>
     </div>
