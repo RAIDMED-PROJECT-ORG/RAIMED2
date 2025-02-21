@@ -2,13 +2,10 @@ package fr.imt.raimed2.action.service;
 
 import fr.imt.raimed2.action.dto.request.CreateActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.dto.xml.*;
-import fr.imt.raimed2.action.model.ActionClosedQuestion;
-import fr.imt.raimed2.action.model.ActionExamen;
-import fr.imt.raimed2.action.model.ActionOpenedQuestion;
-import fr.imt.raimed2.action.model.ActionPrescription;
-import fr.imt.raimed2.action.model.ActionSpontaneousPatientSpeech;
+import fr.imt.raimed2.action.model.*;
 import fr.imt.raimed2.action.repository.ActionClosedQuestionRepository;
 import fr.imt.raimed2.action.repository.ActionOpenedQuestionRepository;
+import fr.imt.raimed2.action.repository.ActionPrescriptionRepository;
 import fr.imt.raimed2.action.repository.ActionRepository;
 import fr.imt.raimed2.diagnostic.model.Event;
 import fr.imt.raimed2.prescription.model.Prescription;
@@ -22,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +31,8 @@ public class ActionService {
     private final ActionClosedQuestionRepository actionClosedQuestionRepository;
 
     private final ActionOpenedQuestionRepository actionOpenedQuestionRepository;
+
+    private final ActionPrescriptionRepository actionPrescriptionRepository;
 
     private final VirtualPatientRepository virtualPatientRepository;
 
@@ -84,6 +85,10 @@ public class ActionService {
         return actionOpenedQuestionRepository.findAllByVirtualPatientId(virtualPatientId);
     }
 
+    public List<ActionPrescription> getAllPrescriptionOfVirtualPatient(Long virtualPatientId, String type) {
+        return actionPrescriptionRepository.findAllByVirtualPatientIdAndType(virtualPatientId, type).stream().filter(p -> Objects.equals(p.getType().toString(), type)).collect(Collectors.toList());
+    }
+
     /**
      * Get all the closed questions that have already been answered by the virtual patient in the given list of events
      * @param events The list of events
@@ -103,6 +108,12 @@ public class ActionService {
     public List<ActionOpenedQuestion> getAllOpenedQuestionOfDiagnosticEvents(List<Event> events) {
         return actionOpenedQuestionRepository.findAllByIdIn(
             events.stream().map(event -> event.getAction().getId()).toList()
+        );
+    }
+
+    public List<ActionPrescription> getAllPrescriptionsOfDiagnosticEvents(List<Event> events) {
+        return actionPrescriptionRepository.findAllByIdIn(
+                events.stream().map(event -> event.getAction().getId()).toList()
         );
     }
 
