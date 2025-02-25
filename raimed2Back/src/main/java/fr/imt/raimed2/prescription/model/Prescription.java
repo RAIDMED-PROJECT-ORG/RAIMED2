@@ -1,5 +1,6 @@
 package fr.imt.raimed2.prescription.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity(name = "prescription")
 @Table(name = "raimed_prescription")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
