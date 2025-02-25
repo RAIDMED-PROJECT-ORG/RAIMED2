@@ -1,9 +1,14 @@
 package fr.imt.raimed2.virtualPatient.service;
 
 import fr.imt.raimed2.action.dto.xml.ActionDTO;
+import fr.imt.raimed2.action.model.Action;
+import fr.imt.raimed2.action.repository.ActionRepository;
 import fr.imt.raimed2.action.service.ActionService;
+import fr.imt.raimed2.diagnostic.model.Diagnostic;
+import fr.imt.raimed2.diagnostic.repository.DiagnosticRepository;
 import fr.imt.raimed2.virtualPatient.dto.xml.VirtualPatientDTO;
 import fr.imt.raimed2.virtualPatient.dto.xml.VirtualPatientXMLMapper;
+import fr.imt.raimed2.virtualPatient.model.Gender;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import fr.imt.raimed2.virtualPatient.repository.VirtualPatientRepository;
 import jakarta.transaction.Transactional;
@@ -13,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +27,7 @@ public class VirtualPatientService {
     private final VirtualPatientRepository virtualPatientRepository;
     private final VirtualPatientXMLMapper virtualPatientXMLMapper;
     private final ActionService actionService;
+    private final ActionRepository actionRepository;
 
     public List<VirtualPatient> getAllVirtualPatient() {
         return virtualPatientRepository.findAll();
@@ -39,34 +46,63 @@ public class VirtualPatientService {
     @Transactional
     public void addVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
         VirtualPatient virtualPatient = virtualPatientXMLMapper.virtualPatientXMLToDao(virtualPatientDTOXML);
-        virtualPatient.setId(virtualPatientDTOXML.getId());
         if (virtualPatient.getActions() != null) {
             virtualPatient.getActions().forEach(action -> action.setVirtualPatient(virtualPatient));
         }
-        try{
+        try {
             VirtualPatient saved = virtualPatientRepository.save(virtualPatient);
             if (virtualPatientDTOXML.getActions().getAction() == null) {
                 return;
             }
-            for(ActionDTO actionDTO: virtualPatientDTOXML.getActions().getAction()){
-                if(actionDTO.getActionClosedQuestionDTO() != null) {
+            for (ActionDTO actionDTO : virtualPatientDTOXML.getActions().getAction()) {
+                if (actionDTO.getActionClosedQuestionDTO() != null) {
                     actionService.saveActionClosedQuestion(saved, actionDTO);
                 }
-                if(actionDTO.getActionSpontaneousPatientSpeech() != null){
+                if (actionDTO.getActionSpontaneousPatientSpeech() != null) {
                     actionService.saveActionSpontaneousPatientSpeech(saved, actionDTO);
                 }
-                if(actionDTO.getActionPrescriptionDTO() != null){
+                if (actionDTO.getActionPrescriptionDTO() != null) {
                     actionService.saveActionPrescription(saved, actionDTO);
                 }
-                if(actionDTO.getActionOpenedQuestionDTO() != null){
+                if (actionDTO.getActionOpenedQuestionDTO() != null) {
                     actionService.saveActionOpenedQuestion(saved, actionDTO);
                 }
                 if (actionDTO.getActionExamenDTO() != null) {
                     actionService.saveActionExamen(saved, actionDTO);
                 }
             }
-        } catch(DataIntegrityViolationException ex){
+        } catch (DataIntegrityViolationException ex) {
             System.out.println(ex.getMessage());
         }
     }
+
+    @Transactional
+    public void editVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
+        VirtualPatient virtualPatient = this.virtualPatientRepository.findById(virtualPatientDTOXML.getId()).orElseThrow();
+        virtualPatient.setAge(virtualPatientDTOXML.getAge());
+        virtualPatient.setGender(Gender.valueOf(virtualPatientDTOXML.getGender()));
+        virtualPatient.setResult(virtualPatientDTOXML.getResult());
+
+        VirtualPatient saved = this.virtualPatientRepository.save(virtualPatient);
+
+        // this.saveActions(virtualPatientDTOXML.getActions().getAction(), saved);
+    }
+
+    public void saveActions(List<ActionDTO> actions, VirtualPatient saved) {
+        for (ActionDTO action : actions) {
+            if (action.getActionClosedQuestionDTO() != null) {
+                actionService.saveActionClosedQuestion(saved, action);
+            }
+            if (action.getActionSpontaneousPatientSpeech() != null) {
+                actionService.saveActionSpontaneousPatientSpeech(saved, action);
+            }
+            if (action.getActionPrescriptionDTO() != null) {
+                actionService.saveActionPrescription(saved, action);
+            }
+            if (action.getActionOpenedQuestionDTO() != null) {
+                actionService.saveActionOpenedQuestion(saved, action);
+            }
+        }
+    }
+
 }

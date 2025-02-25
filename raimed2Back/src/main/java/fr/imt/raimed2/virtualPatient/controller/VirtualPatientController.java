@@ -54,6 +54,11 @@ public class VirtualPatientController {
         virtualPatientService.addVirtualPatientXML(virtualPatientDTO);
     }
 
+    @PutMapping("/xml")
+    public void editVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO){
+        virtualPatientService.editVirtualPatientXML(virtualPatientDTO);
+    }
+
     @DeleteMapping("/{id}")
     public boolean deleteVirtualPatientById(@PathVariable Long id) {
         try{

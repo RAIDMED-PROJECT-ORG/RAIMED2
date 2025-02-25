@@ -11,4 +11,6 @@ public interface ActionClosedQuestionRepository extends JpaRepository<ActionClos
     List<ActionClosedQuestion> findAllByIdIn(List<UUID> ids);
 
     List<ActionClosedQuestion> findAllByVirtualPatientId(Long virtualPatientId);
+
+    void deleteAllByVirtualPatientId(Long virtualPatientId);
 }

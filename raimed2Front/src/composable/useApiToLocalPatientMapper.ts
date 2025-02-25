@@ -45,14 +45,14 @@ export function useApiToLocalPatientMapper() {
         action.type === TypeAction.OPENED_QUESTION
       ) {
         questions.push({
-          id: action.question?.id ?? '',
+          id: action.id ?? '',
           content: action.question?.content ?? '',
           answer: action.closedAnswer ?? action.openedAnswer ?? '',
           type:
             action.type === TypeAction.CLOSED_QUESTION ? QuestionType.CLOSED : QuestionType.OPENED,
           filter: action.question?.filter ?? QuestionFilter.MIXED,
           isMutual: action.question?.isMutual ?? false,
-          primaryElement: action.primaryElement
+          primaryElement: action.primaryElement !== 'undefined' ? action.primaryElement : ''
         });
       }
     });
@@ -64,13 +64,10 @@ export function useApiToLocalPatientMapper() {
     const listens: Listen[] = [];
 
     actions.forEach((action) => {
-      if (
-        action.type === TypeAction.CLOSED_QUESTION ||
-        action.type === TypeAction.OPENED_QUESTION
-      ) {
+      if (action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH) {
         listens.push({
-          id: action.question?.id ?? '',
-          content: action.question?.content ?? '',
+          id: action.id ?? '',
+          content: action.speech ?? '',
           primaryElement: action.primaryElement
         });
       }
@@ -88,7 +85,7 @@ export function useApiToLocalPatientMapper() {
     actions.forEach((action) => {
       if (action.prescription && action.prescription.type === type) {
         prescriptions.push({
-          id: action.prescription.id,
+          id: action.id ?? '',
           content: action.prescription.content,
           result: action.prescription.result ?? '',
           type: action.prescription.type

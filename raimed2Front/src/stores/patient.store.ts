@@ -7,17 +7,17 @@ import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import { QuestionType } from '@/models/question/questionType.enum';
 
 import { parse } from 'js2xmlparser';
-import {useAuthStore} from '@/stores/auth.store';
-import type {Listen} from "@/models/listen/listen.model";
-import type {Question} from "@/models/question/question.model";
-import type {Prescription} from "@/models/prescription/prescription.model";
-import type {ExamResults} from "@/models/diagnostic/exam.model";
+import { useAuthStore } from '@/stores/auth.store';
+import type { Listen } from '@/models/listen/listen.model';
+import type { Question } from '@/models/question/question.model';
+import type { Prescription } from '@/models/prescription/prescription.model';
+import type { ExamResults } from '@/models/diagnostic/exam.model';
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
 }
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 export const usePatientStore = defineStore('patient', {
   state: (): PatientState => ({
@@ -31,7 +31,7 @@ export const usePatientStore = defineStore('patient', {
   actions: {
     async init() {
       this.virtualPatients = [];
-      this.virtualPatients = await this.fetchVirtualPatients()
+      this.virtualPatients = await this.fetchVirtualPatients();
     },
     async fetchVirtualPatients() {
       let patients: VirtualPatient[] = [];
@@ -43,25 +43,36 @@ export const usePatientStore = defineStore('patient', {
       return patients;
     },
     async fetchVirtualPatient(id: string): Promise<VirtualPatient | null> {
-        const res = await axiosInstance.get(`/virtual-patient/${id}`);
-        if (res && res.status === 200) {
-            return this.parseVirtualPatient(res.data);
-        }
-        return null;
+      const res = await axiosInstance.get(`/virtual-patient/${id}`);
+      if (res && res.status === 200) {
+        return this.parseVirtualPatient(res.data);
+      }
+      return null;
     },
     async deleteVirtualPatient(id: string): Promise<boolean> {
       const res = await axiosInstance.delete(`/virtual-patient/${id}`);
       return res && res.status === 200;
-
     },
     async saveNewPatient(newPatient: NewPatient): Promise<boolean> {
       const virtualPatient = createVirtualPatient(newPatient);
       const virtualPatientXML = parse('VirtualPatient', virtualPatient);
+
+      if (newPatient.id) {
+        const res = await axiosInstance.put('/virtual-patient/xml', virtualPatientXML, {
+          headers: {
+            'Content-Type': 'application/xml'
+          }
+        });
+
+        return res && res.status === 200;
+      }
+
       const res = await axiosInstance.post('/virtual-patient/xml', virtualPatientXML, {
         headers: {
           'Content-Type': 'application/xml'
         }
       });
+
       return res && res.status === 200;
     },
     parseVirtualPatient(data: any): VirtualPatient {
@@ -79,66 +90,73 @@ export const usePatientStore = defineStore('patient', {
 });
 
 function createVirtualPatient(newPatient: NewPatient) {
-    return {
-        age: newPatient.characteristic?.age,
-        gender: newPatient.characteristic?.gender,
-        result: newPatient.characteristic?.diagnostic,
-        createdAt: new Date().toISOString(),
-        createdBy: createCreatedBy(),
-        actions: {
-            action: [
-                ...createQuestionActions(newPatient.questions),
-                ...newPatient.listen.map(createSpontaneousPatientSpeechAction),
-                ...newPatient.biology.map(createBiologyPrescriptionAction),
-                ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
-                ...newPatient.imagery.map(createImageryPrescriptionAction),
-                ...newPatient.inspection.map(result => createExamenAction(result, TypeAction.INSPECTION)),
-                ...newPatient.palpation.map(result => createExamenAction(result, TypeAction.PALPATION)),
-                ...newPatient.percussion.map(result => createExamenAction(result, TypeAction.PERCUSSION)),
-                ...newPatient.auscultation.map(result => createExamenAction(result, TypeAction.AUSCULTATION))
-            ]
-        }
-    };
+  return {
+    ...newPatient.id && { id: newPatient.id },
+    age: newPatient.characteristic?.age,
+    gender: newPatient.characteristic?.gender,
+    result: newPatient.characteristic?.diagnostic,
+    createdAt: new Date().toISOString(),
+    createdBy: createCreatedBy(),
+    actions: {
+      action: [
+        ...createQuestionActions(newPatient.questions),
+        ...newPatient.listen.map(createSpontaneousPatientSpeechAction),
+        ...newPatient.biology.map(createBiologyPrescriptionAction),
+        ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
+        ...newPatient.imagery.map(createImageryPrescriptionAction),
+        ...newPatient.inspection.map((result) => createExamenAction(result, TypeAction.INSPECTION)),
+        ...newPatient.palpation.map((result) => createExamenAction(result, TypeAction.PALPATION)),
+        ...newPatient.percussion.map((result) => createExamenAction(result, TypeAction.PERCUSSION)),
+        ...newPatient.auscultation.map((result) =>
+          createExamenAction(result, TypeAction.AUSCULTATION)
+        )
+      ]
+    }
+  };
 }
 
 function createSpontaneousPatientSpeechAction(listen: Listen) {
-    return {
-        type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
-        primaryElement: listen.content,
-        actionSpontaneousPatientSpeech: {
-            speech: listen.content,
-        }
-    };
+  return {
+    ... listen.id && { id: listen.id },
+    type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
+    primaryElement: listen.content,
+    actionSpontaneousPatientSpeech: {
+      speech: listen.content
+    }
+  };
 }
 
 function createBiologyPrescriptionAction(prescription: Prescription) {
-    return {
-        type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
-        primaryElement: prescription.content,
-        actionPrescription: {
-            prescription: prescription
-        }
-    };
+  return {
+    ... prescription.id && { id: prescription.id },
+    type: TypeAction.BIOLOGY,
+    primaryElement: prescription.content,
+    actionPrescription: {
+      prescription: prescription
+    }
+  };
 }
 
 function createBiopsyPrescriptionAction(prescription: Prescription) {
-    return {
-        type: TypeAction.BIOPSIES_PRESCRIPTION,
-        primaryElement: prescription.content,
-        actionPrescription: {
-            prescription: prescription
-        }
-    };
+  return {
+    ... prescription.id && { id: prescription.id },
+    type: TypeAction.BIOPSY,
+    primaryElement: prescription.content,
+    actionPrescription: {
+      prescription: prescription
+    }
+  };
 }
 
 function createImageryPrescriptionAction(prescription: Prescription) {
-    return {
-        type: TypeAction.IMAGING_PRESCRIPTION,
-        primaryElement: prescription.content,
-        actionPrescription: {
-            prescription: prescription
-        }
-    };
+  return {
+    ... prescription.id && { id: prescription.id },
+    type: TypeAction.IMAGERY,
+    primaryElement: prescription.content,
+    actionPrescription: {
+      prescription: prescription
+    }
+  };
 }
 
 function createCreatedBy() {
@@ -147,25 +165,31 @@ function createCreatedBy() {
     firstname: authStore.getUserInfo.username,
     lastname: authStore.getUserInfo.lastname,
     email: authStore.getUserInfo.email,
-    role: authStore.getUserInfo.role,
+    role: authStore.getUserInfo.role
   };
 }
 
 function createQuestionActions(questions: Question[]) {
   return questions.map((question) => ({
-    type: (question.type === QuestionType.CLOSED) ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
+    ... question.id && { id: question.id },
+    type:
+      question.type === QuestionType.CLOSED
+        ? TypeAction.CLOSED_QUESTION
+        : TypeAction.OPENED_QUESTION,
     primaryElement: question.content,
-    ...(question.type === QuestionType.CLOSED ? {
-      actionClosedQuestion: {
-        closedAnswer: question.answer,
-        questionLinked: question,
-      },
-    } : {
-      actionOpenedQuestion: {
-        openedAnswer: question.answer,
-        questionLinked: question,
-      },
-    }),
+    ...(question.type === QuestionType.CLOSED
+      ? {
+          actionClosedQuestion: {
+            closedAnswer: question.answer,
+            questionLinked: question
+          }
+        }
+      : {
+          actionOpenedQuestion: {
+            openedAnswer: question.answer,
+            questionLinked: question
+          }
+        })
   }));
 }
 
@@ -175,7 +199,7 @@ function createExamenAction(examResult: ExamResults, type: TypeAction) {
     primaryElement: examResult.zone,
     actionExamen: {
       zone: examResult.zone,
-      signs: examResult.signs,
+      signs: examResult.signs
     }
   };
 }
