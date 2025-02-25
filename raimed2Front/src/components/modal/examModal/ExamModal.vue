@@ -25,7 +25,7 @@ const selectedZone = ref<Zones>(Zones.FACE);
 const selectedSigns = ref<string[]>([]);
 const confirmGoBack = ref<boolean>(false);
 
-const zoneOptions = Object.values(Zones).map((value) => ({
+const zoneOptions = Object.keys(props.possibleExams).map((value) => ({
   value,
   label: ZoneDisplayNames[value as Zones]
 }));
@@ -111,17 +111,19 @@ function handleOnValidation() {
           />
           <div
             id="face"
+            v-if="possibleExams[`${Zones.FACE}`]"
             @click="updateSelectedZone(Zones.FACE)"
             class="z-[1] zone top-[10px] left-[58px] w-8 h-10"
             :class="{ selected: selectedZone == Zones.FACE }"
           ></div>
           <div
             id="mouse"
+            v-if="possibleExams[`${Zones.MOUSE}`]"
             @click="updateSelectedZone(Zones.MOUSE)"
             class="z-[2] zone top-[35px] left-[66px] w-4 h-2"
             :class="{ selected: selectedZone == Zones.MOUSE }"
           ></div>
-          <div @click="updateSelectedZone(Zones.EARS)">
+          <div v-if="possibleExams[`${Zones.EARS}`]" @click="updateSelectedZone(Zones.EARS)">
             <div
               id="ears1"
               class="zone top-[20px] left-[192px] w-3 h-4"
@@ -133,7 +135,7 @@ function handleOnValidation() {
               :class="{ selected: selectedZone == Zones.EARS }"
             ></div>
           </div>
-          <div @click="updateSelectedZone(Zones.EYES)">
+          <div v-if="possibleExams[`${Zones.EYES}`]" @click="updateSelectedZone(Zones.EYES)">
             <div
               id="eyes1"
               class="zone z-[2] top-[20px] left-[75px] w-3 h-3"
@@ -147,72 +149,84 @@ function handleOnValidation() {
           </div>
           <div
             id="shoulders"
+            v-if="possibleExams[`${Zones.SHOULDERS}`]"
             @click="updateSelectedZone(Zones.SHOULDERS)"
             class="zone top-[52px] left-[40px] w-7 h-6"
             :class="{ selected: selectedZone == Zones.SHOULDERS }"
           ></div>
           <div
             id="arms"
+            v-if="possibleExams[`${Zones.ARMS}`]"
             @click="updateSelectedZone(Zones.ARMS)"
             class="zone top-[76px] left-[33px] w-4 h-14 rotate-12"
             :class="{ selected: selectedZone == Zones.ARMS || selectedZone == Zones.MEMBERS }"
           ></div>
           <div
             id="hands"
+            v-if="possibleExams[`${Zones.HANDS}`]"
             @click="updateSelectedZone(Zones.HANDS)"
             class="zone top-[133px] left-[21px] w-6 h-6"
             :class="{ selected: selectedZone == Zones.HANDS }"
           ></div>
           <div
             id="chest"
+            v-if="possibleExams[`${Zones.CHEST}`]"
             @click="updateSelectedZone(Zones.CHEST)"
             class="zone top-[72px] left-[54px] w-10 h-7"
             :class="{ selected: selectedZone == Zones.CHEST }"
           ></div>
           <div
             id="abdomen"
+            v-if="possibleExams[`${Zones.ABDOMEN}`]"
             @click="updateSelectedZone(Zones.ABDOMEN)"
             class="zone top-[100px] left-[56px] w-9 h-6"
             :class="{ selected: selectedZone == Zones.ABDOMEN }"
           ></div>
           <div
             id="genitals"
+            v-if="possibleExams[`${Zones.GENITALS}`]"
             @click="updateSelectedZone(Zones.GENITALS)"
             class="zone top-[125px] left-[58px] w-8 h-5"
             :class="{ selected: selectedZone == Zones.GENITALS }"
           ></div>
           <div
             id="legs"
+            v-if="possibleExams[`${Zones.LEGS}`]"
             @click="updateSelectedZone(Zones.LEGS)"
             class="zone top-[150px] left-[55px] w-5 h-[75px] rotate-[175deg]"
             :class="{ selected: selectedZone == Zones.LEGS || selectedZone == Zones.MEMBERS }"
           ></div>
           <div
             id="feets"
+            v-if="possibleExams[`${Zones.FEET}`]"
             @click="updateSelectedZone(Zones.FEET)"
             class="zone top-[228px] left-[163px] w-10 h-5"
             :class="{ selected: selectedZone == Zones.FEET }"
           ></div>
           <div
             id="neck"
+            v-if="possibleExams[`${Zones.NECK}`]"
             @click="updateSelectedZone(Zones.NECK)"
             class="zone top-[38px] left-[167px] w-8 h-5"
             :class="{ selected: selectedZone == Zones.NECK }"
           ></div>
           <div
             id="back"
+            v-if="possibleExams[`${Zones.BACK}`]"
             @click="updateSelectedZone(Zones.BACK)"
             class="zone top-[58px] left-[163px] w-10 h-16"
             :class="{ selected: selectedZone == Zones.BACK }"
           ></div>
           <div
             id="hairs"
+            v-if="possibleExams[`${Zones.HAIRS}`]"
             @click="updateSelectedZone(Zones.HAIRS)"
             class="zone top-[10px] left-[169px] w-7 h-4"
             :class="{ selected: selectedZone == Zones.HAIRS }"
           ></div>
           <div
             id="elbow"
+            v-if="possibleExams[`${Zones.ELBOWS}`]"
             @click="updateSelectedZone(Zones.ELBOWS)"
             class="zone top-[90px] left-[142px] w-5 h-6"
             :class="{ selected: selectedZone == Zones.ELBOWS }"
@@ -227,7 +241,10 @@ function handleOnValidation() {
 
           <div>
             <label class="block font-semibold text-sm mb-1">{{ modalTitle }} :</label>
-            <MultipleSelector v-model="selectedSigns" :options="possibleExams[`${selectedZone}`]" />
+            <MultipleSelector
+              v-model="selectedSigns"
+              :options="possibleExams[`${selectedZone}`] || []"
+            />
           </div>
 
           <div class="mt-4">
