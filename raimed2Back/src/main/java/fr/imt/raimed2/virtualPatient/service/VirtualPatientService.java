@@ -64,7 +64,10 @@ public class VirtualPatientService {
                 if (actionDTO.getActionPrescriptionDTO() != null) {
                     actionService.saveActionPrescription(saved, actionDTO);
                 }
-                if (actionDTO.getActionOpenedQuestionDTO() != null) {
+                if(actionDTO.getActionSymptomeDTO() != null){
+                    actionService.saveActionSymptome(saved, actionDTO);
+                }
+                if(actionDTO.getActionOpenedQuestionDTO() != null){
                     actionService.saveActionOpenedQuestion(saved, actionDTO);
                 }
                 if (actionDTO.getActionExamenDTO() != null) {
