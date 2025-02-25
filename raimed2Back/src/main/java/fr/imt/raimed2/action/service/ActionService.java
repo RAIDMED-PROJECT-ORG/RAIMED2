@@ -98,6 +98,10 @@ public class ActionService {
         return actionPrescriptionRepository.findAllByVirtualPatientIdAndPrescription_Type(virtualPatientId, prescriptionType);
     }
 
+    public List<Action> getAllExamOfVirtualPatient(Long virtualPatientId) {
+        return actionRepository.findAllByVirtualPatientIdAndType(virtualPatientId, "EXAMEN");
+    }
+
     /**
      * Get all the closed questions that have already been answered by the virtual patient in the given list of events
      * @param events The list of events
@@ -122,6 +126,12 @@ public class ActionService {
 
     public List<ActionPrescription> getAllPrescriptionsOfDiagnosticEvents(List<Event> events) {
         return actionPrescriptionRepository.findAllByIdIn(
+                events.stream().map(event -> event.getAction().getId()).toList()
+        );
+    }
+
+    public List<Action> getAllExamsOfDiagnosticEvents(List<Event> events) {
+        return actionRepository.findAllByIdIn(
                 events.stream().map(event -> event.getAction().getId()).toList()
         );
     }

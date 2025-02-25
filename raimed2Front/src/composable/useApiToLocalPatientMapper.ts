@@ -9,6 +9,8 @@ import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Listen } from '@/models/listen/listen.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import { ExamType } from '@/models/exam/examType.enum';
+import type { Exam } from '@/models/exam/exam.model';
 import type { Precision } from '@/models/question/precision.model';
 
 export function useApiToLocalPatientMapper() {
@@ -114,5 +116,23 @@ export function useApiToLocalPatientMapper() {
     return prescriptions;
   }
 
-  return { mapApiToLocal };
+  function mapApiActionToLocalExam(actions: Action[], examType: ExamType) {
+    const exams: Exam[] = [];
+
+    actions.forEach((action) => {
+      // TODO rajouter l'exam type dans le back
+      if (action.type === TypeAction.EXAMEN) {
+        exams.push({
+          id: action.id ?? '',
+          signs: action.signs,
+          zone: action.zone,
+          type: ExamType.INSPECTION
+        });
+      }
+    });
+
+    return exams;
+  }
+
+  return { mapApiToLocal, mapApiActionToLocalExam };
 }

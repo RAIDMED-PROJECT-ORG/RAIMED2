@@ -210,7 +210,7 @@ function createExamenAction(examResult: ExamResults, type: TypeAction) {
         primaryElement: type,
         [getActionKey(type)]: {  // Utilisation d'un nom dynamique pour le bon mapping
             zone: examResult.zone,
-            signs: examResult.signs
+            signs: examResult.signs.join('-')
         }
     };
 }

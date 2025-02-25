@@ -9,7 +9,6 @@ import RaisoningSection from '@/components/raisoningSection/RaisoningSection.vue
 import type { AddEventDto } from '@/models/diagnostic/addEventDto';
 import type { Interpretation } from '@/models/diagnostic/interpretation.model';
 import type { Syndrom } from '@/models/diagnostic/syndrom.model';
-import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -19,6 +18,9 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import PrescriptionPanel from '@/components/diagnosticActions/PrescriptionPanel.vue';
+import ExamPanel from '@/components/diagnosticActions/ExamPanel.vue';
+import { ExamType } from '@/models/exam/examType.enum';
+import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 
 const router = useRouter();
 
@@ -39,6 +41,14 @@ const displayPrescriptionActionPanel = ref<{
 }>({
   visibility: false,
   prescriptionType: null
+});
+
+const displayExamActionPanel = ref<{
+  visibility: boolean;
+  examType: ExamType | null;
+}>({
+  visibility: false,
+  examType: null
 });
 
 const queryDiagnostic = useQuery({
@@ -147,7 +157,10 @@ watch(queryDiagnosticHypothesis.data, (hypothesis) => {
 const mutationAddEventToDiagnostic = useMutation({
   mutationFn: (addEventDto: AddEventDto) =>
     axiosInstance.post(`/diagnostic/${diagnosticId}/event`, addEventDto).then((res) => res.data),
-  onSuccess: (data) => diagnosticStore.setDiagnosticEvents(data)
+  onSuccess: (data) => {
+    console.log("data", data)
+    diagnosticStore.setDiagnosticEvents(data)
+  }
 });
 
 /**
@@ -191,6 +204,34 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
       };
       break;
     }
+    case TypeAction.INSPECTION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.INSPECTION
+      };
+      break;
+    }
+    case TypeAction.PALPATION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.PALPATION
+      };
+      break;
+    }
+    case TypeAction.PERCUSSION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.PERCUSSION
+      };
+      break;
+    }
+    case TypeAction.AUSCULTATION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.AUSCULTATION
+      };
+      break;
+    }
     default:
       break;
   }
@@ -223,6 +264,13 @@ const handleOnAskPrescription = (actionId: string) => {
     mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.PRESCRIPTION, actionId });
   }
   displayPrescriptionActionPanel.value = { visibility: false, prescriptionType: null };
+};
+
+const handleOnAskExam = (actionId: string, examType: ExamType) => {
+  if (actionId) {
+    mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.EXAMEN, actionId });
+  }
+  displayExamActionPanel.value = { visibility: false, examType: null };
 };
 
 const isDiagnosticAlreadyDone = () => {
@@ -300,6 +348,19 @@ const isDiagnosticAlreadyDone = () => {
             :handleOnAskPrescription="
               (actionId: string) => {
                 handleOnAskPrescription(actionId);
+              }
+            "
+          />
+        </template>
+        <template v-else-if="displayExamActionPanel && displayExamActionPanel.examType">
+          <ExamPanel
+            :handleOnClose="
+              () => (displayExamActionPanel = { visibility: false, examType: null })
+            "
+            :exam-type="displayExamActionPanel.examType"
+            :handle-on-ask-exam="
+              (actionId: string) => {
+                handleOnAskExam(actionId, ExamType.INSPECTION);
               }
             "
           />

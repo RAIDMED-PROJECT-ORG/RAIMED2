@@ -230,6 +230,25 @@ public class DiagnosticService {
         return returnedPrescriptions;
     }
 
+    public List<Action> getDiagnosticExam(Long diagnosticId) {
+        Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
+
+        List<Action> exams = actionService.getAllExamOfVirtualPatient(
+                diagnostic.getVirtualPatient().getId()
+        );
+        List<Action> askedExam = actionService.getAllExamsOfDiagnosticEvents(
+                eventRepository.findAllByDiagnosticId(diagnosticId)
+        );
+
+        exams.removeIf(
+                action -> (
+                        askedExam.stream().anyMatch(a -> action.getId().equals(a.getId()))
+                )
+        );
+
+        return exams;
+    }
+
     /**
      * Start a diagnostic of a virtual patient for the given user
      * @param user The user that is going to start the diagnostic
@@ -276,5 +295,4 @@ public class DiagnosticService {
         );
         return eventRepository.findAllByDiagnosticId(diagnosticId);
     }
-
 }

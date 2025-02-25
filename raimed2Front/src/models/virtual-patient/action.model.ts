@@ -21,5 +21,9 @@ export interface Action {
 
   prescription?: Prescription;
 
+  zone: string;
+
+  signs: string;
+
   precision?: Precision;
 }

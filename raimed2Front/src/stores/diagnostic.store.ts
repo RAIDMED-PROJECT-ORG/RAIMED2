@@ -9,6 +9,7 @@ import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 import { AuthorChat } from '@/models/chat/authorChat.enum';
 import { Gender } from '@/models/virtual-patient/gender.enum';
 import type { Hypothesis } from '@/models/diagnostic/hypothesis.model';
+import { ZoneDisplayNames, Zones } from '@/models/diagnostic/exam.model';
 
 interface DiagnosticState {
   virtualPatient: VirtualPatient | null;
@@ -46,7 +47,7 @@ export const useDiagnosticStore = defineStore('diagnostic', {
     },
 
     getSpontaneousPatientSpeechActionId: (state): string | undefined => {
-      const spontaneousPatientSpeechActions = state.virtualPatient?.actions.filter(
+      const spontaneousPatientSpeechActions = state.virtualPatient?.actions?.filter(
         (action) => action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH
       );
       const spontaneousPatientSpeechEvents = state.diagnosticEvents.filter(
@@ -63,7 +64,7 @@ export const useDiagnosticStore = defineStore('diagnostic', {
     },
 
     isAvailableSpontaneousPatientSpeechAction: (state): boolean => {
-      const spontaneousPatientSpeechActions = state.virtualPatient?.actions.filter(
+      const spontaneousPatientSpeechActions = state.virtualPatient?.actions?.filter(
         (action) => action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH
       );
       const spontaneousPatientSpeechEvents = state.diagnosticEvents.filter(
@@ -84,7 +85,8 @@ export const useDiagnosticStore = defineStore('diagnostic', {
           event.action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH ||
           event.action.type === TypeAction.CLOSED_QUESTION ||
           event.action.type === TypeAction.OPENED_QUESTION ||
-          event.action.type === TypeAction.PRESCRIPTION
+          event.action.type === TypeAction.PRESCRIPTION ||
+          event.action.type === TypeAction.EXAMEN
       );
       eventsWithChatMessages.forEach((event: Event) => {
         if (event.action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH) {
@@ -125,6 +127,17 @@ export const useDiagnosticStore = defineStore('diagnostic', {
             eventId: event.id,
             author: AuthorChat.VIRTUAL_PATIENT,
             content: event.action.prescription?.result ?? ''
+          });
+        } else if (event.action.type === TypeAction.EXAMEN) {
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.STUDENT,
+            content: ZoneDisplayNames[event.action.zone as Zones] ?? ''
+          });
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.VIRTUAL_PATIENT,
+            content: event.action.signs ?? ''
           });
         }
       });
