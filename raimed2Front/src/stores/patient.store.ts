@@ -12,6 +12,7 @@ import type { Listen } from '@/models/listen/listen.model';
 import type { Question } from '@/models/question/question.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { ExamResults } from '@/models/diagnostic/exam.model';
+import type { Precision } from '@/models/question/precision.model';
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
@@ -91,7 +92,7 @@ export const usePatientStore = defineStore('patient', {
 
 function createVirtualPatient(newPatient: NewPatient) {
   return {
-    ...newPatient.id && { id: newPatient.id },
+    ...(newPatient.id && { id: newPatient.id }),
     age: newPatient.characteristic?.age,
     gender: newPatient.characteristic?.gender,
     result: newPatient.characteristic?.diagnostic,
@@ -105,6 +106,7 @@ function createVirtualPatient(newPatient: NewPatient) {
         ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
         ...newPatient.imagery.map(createImageryPrescriptionAction),
         ...newPatient.inspection.map((result) => createExamenAction(result, TypeAction.INSPECTION)),
+        ...newPatient.precisions.map((result) => createPrecisionAction(result)),
         ...newPatient.palpation.map((result) => createExamenAction(result, TypeAction.PALPATION)),
         ...newPatient.percussion.map((result) => createExamenAction(result, TypeAction.PERCUSSION)),
         ...newPatient.auscultation.map((result) =>
@@ -162,6 +164,20 @@ function createCreatedBy() {
     lastname: authStore.getUserInfo.lastname,
     email: authStore.getUserInfo.email,
     role: authStore.getUserInfo.role
+  };
+}
+
+function createPrecisionAction(precision: Precision) {
+  return {
+    type: TypeAction.PRECISION,
+    primaryElement: precision.primaryElement,
+    actionPrecision: {
+      precision: {
+        id: precision.id,
+        question: precision.question,
+        answer: precision.answer
+      }
+    }
   };
 }
 

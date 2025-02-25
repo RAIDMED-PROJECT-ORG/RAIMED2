@@ -13,6 +13,8 @@ import fr.imt.raimed2.prescription.model.PrescriptionType;
 import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.service.QuestionService;
+import fr.imt.raimed2.precision.model.Precision;
+import fr.imt.raimed2.precision.service.PrecisionService;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import fr.imt.raimed2.virtualPatient.repository.VirtualPatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ public class ActionService {
 
     private final QuestionService questionService;
 
+    private final PrecisionService precisionService;
+
     private final PrescriptionService prescriptionService;
 
     private final ActionClosedQuestionsMapper actionClosedQuestionsMapper;
@@ -46,7 +50,10 @@ public class ActionService {
     private final ActionSpontaneousPatientSpeechMapper actionSpontaneousPatientSpeechMapper;
 
     private final ActionOpenedQuestionMapper actionOpenedQuestionMapper;
+
     private final ActionPrescriptionMapper actionPrescriptionMapper;
+
+    private final ActionPrecisionMapper actionPrecisionMapper;
 
     /**
      * Add a spontaneous patient speech action to the virtual patient
@@ -149,7 +156,7 @@ public class ActionService {
         return actionRepository.save(actionSpontaneousPatientSpeech);
     }
 
-    public ActionPrescription saveActionPrescription (VirtualPatient virtualPatient, ActionDTO actionDTO){
+    public ActionPrescription saveActionPrescription(VirtualPatient virtualPatient, ActionDTO actionDTO){
         Prescription prescription = prescriptionService.getPrescriptionByContentAndResult(actionDTO.getActionPrescriptionDTO().getPrescription().getContent(), actionDTO.getActionPrescriptionDTO().getPrescription().getResult());
         if (prescription == null) prescription = prescriptionService.save(actionDTO.getActionPrescriptionDTO().getPrescription());
         ActionPrescription actionPrescription = actionPrescriptionMapper.actionPrescriptionDTOtoDao(actionDTO.getActionPrescriptionDTO());
@@ -158,6 +165,17 @@ public class ActionService {
         actionPrescription.setPrimaryElement(actionDTO.getPrimaryElement());
         actionPrescription.setType(actionDTO.getType());
         return actionRepository.save(actionPrescription);
+    }
+
+    public ActionPrecision saveActionPrecision(VirtualPatient virtualPatient, ActionDTO actionDTO){
+        Precision precision = precisionService.getPrecisionByQuestionAndAnswer(actionDTO.getActionPrecisionDTO().getPrecision().getQuestion(), actionDTO.getActionPrecisionDTO().getPrecision().getAnswer());
+        if (precision == null) precision = precisionService.save(actionDTO.getActionPrecisionDTO().getPrecision());
+        ActionPrecision actionPrecision = actionPrecisionMapper.actionPrecisionDTOtoDao(actionDTO.getActionPrecisionDTO());
+        actionPrecision.setVirtualPatient(virtualPatient);
+        actionPrecision.setPrecision(precision);
+        actionPrecision.setPrimaryElement(actionDTO.getPrimaryElement());
+        actionPrecision.setType(actionDTO.getType());
+        return actionRepository.save(actionPrecision);
     }
 
     /**

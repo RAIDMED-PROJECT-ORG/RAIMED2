@@ -464,7 +464,7 @@ function handleConfirmGoBack() {
             :completed="newPatient.questions.length > 0"
           />
           <CategoryButton
-            :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
+            :label="getTypeActionDisplayName(TypeAction.PRECISION)"
             :color="Color.Blue"
             :icon="faSquarePlus"
             :onClick="switchPrecisionModalVisibility"

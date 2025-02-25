@@ -51,12 +51,12 @@ defineProps<{
           :onClick="() => handleOnClickActionButton(TypeAction.OPENED_QUESTION)"
         />
 
-        <!-- Specify symptom action button -->
+        <!-- Precision action button -->
         <ActionButton
           :color="Color.Blue"
           :icon="faSquarePlus"
-          :label="getTypeActionDisplayName(TypeAction.SPECIFY_SYMPTOM)"
-          :onClick="() => handleOnClickActionButton(TypeAction.SPECIFY_SYMPTOM)"
+          :label="getTypeActionDisplayName(TypeAction.PRECISION)"
+          :onClick="() => handleOnClickActionButton(TypeAction.PRECISION)"
         />
       </div>
       <div class="w-1/3 flex flex-col">

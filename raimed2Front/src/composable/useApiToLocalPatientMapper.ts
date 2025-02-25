@@ -9,6 +9,7 @@ import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Listen } from '@/models/listen/listen.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import type { Precision } from '@/models/question/precision.model';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
@@ -21,6 +22,7 @@ export function useApiToLocalPatientMapper() {
       },
       questions: [...mapApiActionToLocalQuestion(patient.actions ?? [])],
       listen: [...mapApiActionToLocalListen(patient.actions ?? [])],
+      precisions: [...mapApiActionToLocalPrecision(patient.actions ?? [])],
       inspection: [],
       palpation: [],
       percussion: [],
@@ -32,7 +34,6 @@ export function useApiToLocalPatientMapper() {
         ...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.IMAGERY)
       ],
       biopsy: [...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOPSY)],
-      precisions: []
     };
   }
 
@@ -74,6 +75,23 @@ export function useApiToLocalPatientMapper() {
     });
 
     return listens;
+  }
+
+  function mapApiActionToLocalPrecision(actions: Action[]): Precision[] {
+    const precisions: Precision[] = [];
+
+    actions.forEach((action) => {
+      if (action.type === TypeAction.PRECISION) {
+        precisions.push({
+          id: action.id ?? '',
+          question: action.precision?.question ?? '',
+          answer: action.precision?.answer ?? '',
+          primaryElement: action.primaryElement !== 'undefined' ? action.primaryElement : ''
+        });
+      }
+    });
+
+    return precisions;
   }
 
   function mapApiActionToLocalPrescription(
