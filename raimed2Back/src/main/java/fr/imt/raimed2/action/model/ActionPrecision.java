@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @AllArgsConstructor

@@ -4,6 +4,7 @@ import fr.imt.raimed2.precision.dto.xml.PrecisionDTO;
 import fr.imt.raimed2.precision.dto.xml.PrecisionMapper;
 import fr.imt.raimed2.precision.model.Precision;
 import fr.imt.raimed2.precision.repository.PrecisionRepository;
+import fr.imt.raimed2.prescription.model.Prescription;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class PrecisionService {
     }
 
     public Precision save(PrecisionDTO precisionDTO) {
+        Precision precisionToSave = null;
+        precisionToSave = precisionRepository.save(precisionMapper.precisionDTOtoPrecision(precisionDTO));
         return precisionRepository.save(precisionMapper.precisionDTOtoPrecision(precisionDTO));
     }
 }

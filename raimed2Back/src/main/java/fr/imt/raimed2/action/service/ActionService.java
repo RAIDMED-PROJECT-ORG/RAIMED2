@@ -156,7 +156,7 @@ public class ActionService {
         return actionRepository.save(actionSpontaneousPatientSpeech);
     }
 
-    public ActionPrescription saveActionPrescription (VirtualPatient virtualPatient, ActionDTO actionDTO){
+    public ActionPrescription saveActionPrescription(VirtualPatient virtualPatient, ActionDTO actionDTO){
         Prescription prescription = prescriptionService.getPrescriptionByContentAndResult(actionDTO.getActionPrescriptionDTO().getPrescription().getContent(), actionDTO.getActionPrescriptionDTO().getPrescription().getResult());
         if (prescription == null) prescription = prescriptionService.save(actionDTO.getActionPrescriptionDTO().getPrescription());
         ActionPrescription actionPrescription = actionPrescriptionMapper.actionPrescriptionDTOtoDao(actionDTO.getActionPrescriptionDTO());
