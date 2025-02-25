@@ -117,7 +117,6 @@ function createVirtualPatient(newPatient: NewPatient) {
 
 function createSpontaneousPatientSpeechAction(listen: Listen) {
   return {
-    ... listen.id && { id: listen.id },
     type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
     primaryElement: listen.content,
     actionSpontaneousPatientSpeech: {
@@ -128,7 +127,6 @@ function createSpontaneousPatientSpeechAction(listen: Listen) {
 
 function createBiologyPrescriptionAction(prescription: Prescription) {
   return {
-    ... prescription.id && { id: prescription.id },
     type: TypeAction.BIOLOGY,
     primaryElement: prescription.content,
     actionPrescription: {
@@ -139,7 +137,6 @@ function createBiologyPrescriptionAction(prescription: Prescription) {
 
 function createBiopsyPrescriptionAction(prescription: Prescription) {
   return {
-    ... prescription.id && { id: prescription.id },
     type: TypeAction.BIOPSY,
     primaryElement: prescription.content,
     actionPrescription: {
@@ -150,7 +147,6 @@ function createBiopsyPrescriptionAction(prescription: Prescription) {
 
 function createImageryPrescriptionAction(prescription: Prescription) {
   return {
-    ... prescription.id && { id: prescription.id },
     type: TypeAction.IMAGERY,
     primaryElement: prescription.content,
     actionPrescription: {
@@ -171,7 +167,6 @@ function createCreatedBy() {
 
 function createQuestionActions(questions: Question[]) {
   return questions.map((question) => ({
-    ... question.id && { id: question.id },
     type:
       question.type === QuestionType.CLOSED
         ? TypeAction.CLOSED_QUESTION

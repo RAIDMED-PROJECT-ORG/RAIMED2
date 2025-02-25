@@ -48,7 +48,6 @@ import type { Precision } from '@/models/question/precision.model';
 const STORAGE_KEY = 'newPatientData';
 const SESSION_KEY = 'pageActive';
 
-
 const props = defineProps<{
   patient?: NewPatient;
 }>();
@@ -89,27 +88,22 @@ watch(
   { deep: true }
 );
 
-watch(
-  allPrimaryElements,
-  (newPrimary, oldPrimary) => {
-    if (newPrimary.length === 0) {
-      newPatient.value.precisions = [];
-      return;
-    }
-
-    const deleted = oldPrimary.filter(
-      oldElem => !newPrimary.includes(oldElem)
-    );
-
-    const filtered = newPatient.value.precisions.filter(
-      p => p.primaryElement && !deleted.includes(p.primaryElement)
-    );
-
-    if (filtered.length !== newPatient.value.precisions.length) {
-      newPatient.value.precisions = filtered;
-    }
+watch(allPrimaryElements, (newPrimary, oldPrimary) => {
+  if (newPrimary.length === 0) {
+    newPatient.value.precisions = [];
+    return;
   }
-);
+
+  const deleted = oldPrimary.filter((oldElem) => !newPrimary.includes(oldElem));
+
+  const filtered = newPatient.value.precisions.filter(
+    (p) => p.primaryElement && !deleted.includes(p.primaryElement)
+  );
+
+  if (filtered.length !== newPatient.value.precisions.length) {
+    newPatient.value.precisions = filtered;
+  }
+});
 
 onMounted(() => {
   const savedPatient = localStorage.getItem(STORAGE_KEY);
@@ -148,9 +142,11 @@ function handleSubmit() {
     return;
   }
 
-  patientStore.saveNewPatient(newPatient.value);
-  localStorage.removeItem(STORAGE_KEY);
-  router.back();
+  patientStore.saveNewPatient(newPatient.value).then(() => {
+    localStorage.removeItem(STORAGE_KEY);
+
+    router.back();
+  });
 }
 
 function getPrimaryElements(value: NewPatient) {
@@ -434,7 +430,9 @@ function handleConfirmGoBack() {
       :onBack="switchBiopsyModalVisibility"
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
-      <h1 class="text-3xl text-primary font-bold">{{ patient ? 'Mise à jour d\'un patient' : 'Nouveau patient' }}</h1>
+      <h1 class="text-3xl text-primary font-bold">
+        {{ patient ? "Mise à jour d'un patient" : 'Nouveau patient' }}
+      </h1>
       <p class="text-center pt-3 w-1/2">
         Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
         champs demandés. Ensuite, valider la création du patient en cliquant sur le bouton "Créer le

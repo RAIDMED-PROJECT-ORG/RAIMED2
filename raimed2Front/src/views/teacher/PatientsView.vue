@@ -48,7 +48,6 @@ const refreshPatients = async () => {
         <table class="w-full border-collapse">
           <thead class="border-b-[1px] border-dark-grey-border">
             <tr>
-              <th class="font-bold py-3">Id</th>
               <th class="font-bold py-3">Sexe</th>
               <th class="font-bold py-3">Âge</th>
               <th class="font-bold py-3">Diagnostic final</th>
@@ -62,7 +61,6 @@ const refreshPatients = async () => {
               :class="{ 'border-b-[1px] border-light-grey-border': index !== patients.length - 1 }"
               class="text-center"
             >
-              <td class="py-2">{{ patient.id }}</td>
               <td class="py-2">{{ patient.gender ? getSexLabel(patient.gender) : '' }}</td>
               <td class="py-2">{{ patient.age }}</td>
               <td class="py-2">{{ patient.result }}</td>
