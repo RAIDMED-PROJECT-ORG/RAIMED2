@@ -1,0 +1,2 @@
+ALTER TABLE raimed_action ADD COLUMN zone VARCHAR(255);
+ALTER TABLE raimed_action ADD COLUMN signs VARCHAR(255);

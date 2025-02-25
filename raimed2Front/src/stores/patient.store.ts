@@ -11,6 +11,7 @@ import {useAuthStore} from '@/stores/auth.store';
 import type {Listen} from "@/models/listen/listen.model";
 import type {Question} from "@/models/question/question.model";
 import type {Prescription} from "@/models/prescription/prescription.model";
+import type {ExamResults} from "@/models/diagnostic/exam.model";
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
@@ -90,7 +91,11 @@ function createVirtualPatient(newPatient: NewPatient) {
                 ...newPatient.listen.map(createSpontaneousPatientSpeechAction),
                 ...newPatient.biology.map(createBiologyPrescriptionAction),
                 ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
-                ...newPatient.imagery.map(createImageryPrescriptionAction)
+                ...newPatient.imagery.map(createImageryPrescriptionAction),
+                ...newPatient.inspection.map(result => createExamenAction(result, TypeAction.INSPECTION)),
+                ...newPatient.palpation.map(result => createExamenAction(result, TypeAction.PALPATION)),
+                ...newPatient.percussion.map(result => createExamenAction(result, TypeAction.PERCUSSION)),
+                ...newPatient.auscultation.map(result => createExamenAction(result, TypeAction.AUSCULTATION))
             ]
         }
     };
@@ -162,4 +167,15 @@ function createQuestionActions(questions: Question[]) {
       },
     }),
   }));
+}
+
+function createExamenAction(examResult: ExamResults, type: TypeAction) {
+  return {
+    type: type,
+    primaryElement: examResult.zone,
+    actionExamen: {
+      zone: examResult.zone,
+      signs: examResult.signs,
+    }
+  };
 }
