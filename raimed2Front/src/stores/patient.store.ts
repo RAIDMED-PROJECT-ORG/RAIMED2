@@ -105,6 +105,7 @@ function createVirtualPatient(newPatient: NewPatient) {
         ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
         ...newPatient.imagery.map(createImageryPrescriptionAction),
         ...newPatient.inspection.map((result) => createExamenAction(result, TypeAction.INSPECTION)),
+                ...newPatient.precisions.map(result => createPrecisionActions(result)),
         ...newPatient.palpation.map((result) => createExamenAction(result, TypeAction.PALPATION)),
         ...newPatient.percussion.map((result) => createExamenAction(result, TypeAction.PERCUSSION)),
         ...newPatient.auscultation.map((result) =>
@@ -163,6 +164,20 @@ function createCreatedBy() {
     email: authStore.getUserInfo.email,
     role: authStore.getUserInfo.role
   };
+}
+
+function createPrecisionActions(precisions: Precisions[]){
+    return precisions.map((precision) => ({
+        type: TypeAction.SPECIFY_SYMPTOM,
+            primaryElement: precision.primaryElement,
+            actionSymptome: {
+            symptome: {
+                id: precision.id,
+                    question: precision.question,
+                    answer: precision.answer
+            }
+        }
+    }));
 }
 
 function createQuestionActions(questions: Question[]) {
