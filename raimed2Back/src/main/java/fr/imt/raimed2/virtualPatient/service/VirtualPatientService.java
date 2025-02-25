@@ -78,31 +78,8 @@ public class VirtualPatientService {
 
     @Transactional
     public void editVirtualPatientXML(VirtualPatientDTO virtualPatientDTOXML) {
-        VirtualPatient virtualPatient = this.virtualPatientRepository.findById(virtualPatientDTOXML.getId()).orElseThrow();
-        virtualPatient.setAge(virtualPatientDTOXML.getAge());
-        virtualPatient.setGender(Gender.valueOf(virtualPatientDTOXML.getGender()));
-        virtualPatient.setResult(virtualPatientDTOXML.getResult());
-
-        VirtualPatient saved = this.virtualPatientRepository.save(virtualPatient);
-
-        // this.saveActions(virtualPatientDTOXML.getActions().getAction(), saved);
+        this.deleteVirtualPatientById(virtualPatientDTOXML.getId());
+        virtualPatientDTOXML.setId(null);
+        this.addVirtualPatientXML(virtualPatientDTOXML);
     }
-
-    public void saveActions(List<ActionDTO> actions, VirtualPatient saved) {
-        for (ActionDTO action : actions) {
-            if (action.getActionClosedQuestionDTO() != null) {
-                actionService.saveActionClosedQuestion(saved, action);
-            }
-            if (action.getActionSpontaneousPatientSpeech() != null) {
-                actionService.saveActionSpontaneousPatientSpeech(saved, action);
-            }
-            if (action.getActionPrescriptionDTO() != null) {
-                actionService.saveActionPrescription(saved, action);
-            }
-            if (action.getActionOpenedQuestionDTO() != null) {
-                actionService.saveActionOpenedQuestion(saved, action);
-            }
-        }
-    }
-
 }
