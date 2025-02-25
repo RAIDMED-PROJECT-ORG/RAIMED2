@@ -12,6 +12,7 @@ import type { Listen } from '@/models/listen/listen.model';
 import type { Question } from '@/models/question/question.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import type { ExamResults } from '@/models/diagnostic/exam.model';
+import type {Precision} from '@/models/question/precision.model';
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
@@ -108,6 +109,7 @@ function createVirtualPatient(newPatient: NewPatient) {
                 ...newPatient.precisions.map(result => createPrecisionActions(result)),
         ...newPatient.palpation.map((result) => createExamenAction(result, TypeAction.PALPATION)),
         ...newPatient.percussion.map((result) => createExamenAction(result, TypeAction.PERCUSSION)),
+                ...createPrecisionActions(newPatient.precisions),
         ...newPatient.auscultation.map((result) =>
           createExamenAction(result, TypeAction.AUSCULTATION)
         )
@@ -166,7 +168,7 @@ function createCreatedBy() {
   };
 }
 
-function createPrecisionActions(precisions: Precisions[]){
+function createPrecisionActions(precisions: Precision[]){
     return precisions.map((precision) => ({
         type: TypeAction.SPECIFY_SYMPTOM,
             primaryElement: precision.primaryElement,
