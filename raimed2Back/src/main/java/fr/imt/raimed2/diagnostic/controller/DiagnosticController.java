@@ -5,6 +5,7 @@ import fr.imt.raimed2.diagnostic.dto.response.*;
 import fr.imt.raimed2.diagnostic.model.*;
 import fr.imt.raimed2.diagnostic.service.DiagnosticService;
 import fr.imt.raimed2.diagnostic.service.ReasoningService;
+import fr.imt.raimed2.prescription.model.Prescription;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.user.model.User;
 import jakarta.validation.Valid;
@@ -91,6 +92,13 @@ public class DiagnosticController {
         List<Question> questions = this.diagnosticService.getDiagnosticClosedQuestion(id);
         return ResponseEntity.ok().body(questions);
     }
+
+    @GetMapping("/{id}/prescription/{type}")
+    private ResponseEntity<List<Prescription>> getDiagnosticPrescription(@PathVariable Long id, @PathVariable String type) {
+        List<Prescription> prescriptions = this.diagnosticService.getDiagnosticPrescription(id, type.toUpperCase());
+        return ResponseEntity.ok().body(prescriptions);
+    }
+
 
     @GetMapping("/{id}/openedQuestion")
     private ResponseEntity<List<Question>> getDiagnosticOpenedQuestion(@PathVariable Long id) {

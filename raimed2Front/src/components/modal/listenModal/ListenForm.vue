@@ -2,11 +2,11 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import GenericForm from '@/components/modal/genericModal/GenericForm.vue';
 import { faBookmark, faMessage } from '@fortawesome/free-regular-svg-icons';
-import type { Listen } from '@/models/listen/listen.model';
 import { v4 as uuidv4 } from 'uuid';
 import ListenListModal from '@/components/modal/listenModal/ListenListModal.vue';
 import IconLabel from '@/components/iconLabel/IconLabel.vue';
 import SingleValueSelector from '@/components/singleValueSelector/SingleValueSelector.vue';
+import type { Listen } from '@/models/listen/listen.model';
 
 const listenValue = ref<string>('');
 const isModalOpen = ref<boolean>(false);

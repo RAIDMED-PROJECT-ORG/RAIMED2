@@ -74,7 +74,8 @@ const addListens = () => {
         <ListenRow
           v-for="listen in listensToDisplay"
           :key="listen.id"
-          :listen="listen.content"
+          :content="listen.content"
+          :primary-element="listen.primaryElement || ''"
         >
           <div class="w-2/12 flex justify-center">
             <input

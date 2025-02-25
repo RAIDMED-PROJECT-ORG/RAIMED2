@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import type { Question } from '@/models/question/question.model';
 import type { QuestionType } from '@/models/question/questionType.enum';
 import {
-  QuestionFilter
+  QuestionFilter, QuestionFilterDisplayNames
 } from '@/models/question/questionFilter.enum';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCheck, faInfoCircle, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';

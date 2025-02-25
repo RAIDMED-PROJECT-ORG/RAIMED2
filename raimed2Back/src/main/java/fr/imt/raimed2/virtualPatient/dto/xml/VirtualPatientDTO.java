@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import fr.imt.raimed2.action.dto.xml.ActionsDTO;
 import fr.imt.raimed2.user.dto.response.UserDetailsDto;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class VirtualPatientDTO implements Serializable {
+
+    @JacksonXmlProperty
+    private Long id;
 
     @JacksonXmlProperty
     private Integer age;
@@ -34,5 +38,7 @@ public class VirtualPatientDTO implements Serializable {
 
     @JacksonXmlProperty(localName = "result")
     private String result;
+
+
 
 }
