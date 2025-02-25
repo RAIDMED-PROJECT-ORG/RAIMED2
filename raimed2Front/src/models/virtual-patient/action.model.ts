@@ -1,6 +1,7 @@
 import type { Question } from '../question/question.model';
 import type { TypeAction } from './typeAction.enum';
 import type { Prescription } from '@/models/prescription/prescription.model';
+import type { Precision } from '@/models/question/precision.model';
 
 export interface Action {
   id?: string;
@@ -19,4 +20,6 @@ export interface Action {
   question?: Question;
 
   prescription?: Prescription;
+
+  precision?: Precision;
 }

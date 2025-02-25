@@ -1,4 +1,4 @@
-package fr.imt.raimed2.symptome.model;
+package fr.imt.raimed2.precision.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,9 +8,9 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "symptome")
-@Table(name = "raimed_symptome")
-public class Symptome {
+@Entity(name = "precision")
+@Table(name = "raimed_precision")
+public class Precision {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

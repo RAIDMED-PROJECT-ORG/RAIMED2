@@ -13,8 +13,8 @@ import fr.imt.raimed2.prescription.model.PrescriptionType;
 import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.question.service.QuestionService;
-import fr.imt.raimed2.symptome.model.Symptome;
-import fr.imt.raimed2.symptome.service.SymptomeService;
+import fr.imt.raimed2.precision.model.Precision;
+import fr.imt.raimed2.precision.service.PrecisionService;
 import fr.imt.raimed2.virtualPatient.model.VirtualPatient;
 import fr.imt.raimed2.virtualPatient.repository.VirtualPatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class ActionService {
 
     private final QuestionService questionService;
 
-    private final SymptomeService symptomeService;
+    private final PrecisionService precisionService;
 
     private final PrescriptionService prescriptionService;
 
@@ -53,7 +53,7 @@ public class ActionService {
 
     private final ActionPrescriptionMapper actionPrescriptionMapper;
 
-    private final ActionSymptomeMapper actionSymptomeMapper;
+    private final ActionPrecisionMapper actionPrecisionMapper;
 
     /**
      * Add a spontaneous patient speech action to the virtual patient
@@ -167,15 +167,15 @@ public class ActionService {
         return actionRepository.save(actionPrescription);
     }
 
-    public ActionSymptome saveActionSymptome(VirtualPatient virtualPatient, ActionDTO actionDTO){
-        Symptome symptome = symptomeService.getSymptomeByQuestionAndAnswer(actionDTO.getActionSymptomeDTO().getSymptome().getQuestion(), actionDTO.getActionSymptomeDTO().getSymptome().getAnswer());
-        if (symptome == null) symptome = symptomeService.save(actionDTO.getActionSymptomeDTO().getSymptome());
-        ActionSymptome actionSymptome = actionSymptomeMapper.actionSymptomeDTOtoDao(actionDTO.getActionSymptomeDTO());
-        actionSymptome.setVirtualPatient(virtualPatient);
-        actionSymptome.setSymptome(symptome);
-        actionSymptome.setPrimaryElement(actionDTO.getPrimaryElement());
-        actionSymptome.setType(actionDTO.getType());
-        return actionRepository.save(actionSymptome);
+    public ActionPrecision saveActionPrecision(VirtualPatient virtualPatient, ActionDTO actionDTO){
+        Precision precision = precisionService.getPrecisionByQuestionAndAnswer(actionDTO.getActionPrecisionDTO().getPrecision().getQuestion(), actionDTO.getActionPrecisionDTO().getPrecision().getAnswer());
+        if (precision == null) precision = precisionService.save(actionDTO.getActionPrecisionDTO().getPrecision());
+        ActionPrecision actionPrecision = actionPrecisionMapper.actionPrecisionDTOtoDao(actionDTO.getActionPrecisionDTO());
+        actionPrecision.setVirtualPatient(virtualPatient);
+        actionPrecision.setPrecision(precision);
+        actionPrecision.setPrimaryElement(actionDTO.getPrimaryElement());
+        actionPrecision.setType(actionDTO.getType());
+        return actionRepository.save(actionPrecision);
     }
 
     /**

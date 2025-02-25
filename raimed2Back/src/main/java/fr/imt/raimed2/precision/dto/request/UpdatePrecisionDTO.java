@@ -1,4 +1,4 @@
-package fr.imt.raimed2.symptome.dto.request;
+package fr.imt.raimed2.precision.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateSymptomeDTO {
+public class UpdatePrecisionDTO {
     @NotNull(message = "Question is required")
     String question;
 

@@ -1,4 +1,4 @@
-package fr.imt.raimed2.symptome.dto.xml;
+package fr.imt.raimed2.precision.dto.xml;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class SymptomeDTO implements Serializable {
+public class PrecisionDTO implements Serializable {
     @JacksonXmlProperty
     private String question;
 
