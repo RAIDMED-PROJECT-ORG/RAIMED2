@@ -3,6 +3,7 @@ package fr.imt.raimed2.action.service;
 import fr.imt.raimed2.action.dto.request.CreateActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.dto.xml.*;
 import fr.imt.raimed2.action.model.ActionClosedQuestion;
+import fr.imt.raimed2.action.model.ActionExamen;
 import fr.imt.raimed2.action.model.ActionOpenedQuestion;
 import fr.imt.raimed2.action.model.ActionPrescription;
 import fr.imt.raimed2.action.model.ActionSpontaneousPatientSpeech;
@@ -160,5 +161,16 @@ public class ActionService {
         actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
         actionOpenedQuestion.setVirtualPatient(virtualPatient);
         return actionOpenedQuestionRepository.save(actionOpenedQuestion);
+    }
+
+    public void saveActionExamen(VirtualPatient virtualPatient, ActionDTO actionDTO) {
+        ActionExamen actionExamen = new ActionExamen();
+        actionExamen.setVirtualPatient(virtualPatient);
+        actionExamen.setPrimaryElement(actionDTO.getPrimaryElement());
+        actionExamen.setType(actionDTO.getType());
+        actionExamen.setZone(actionDTO.getActionExamenDTO().getZone());
+        actionExamen.setSigns(actionDTO.getActionExamenDTO().getSigns());
+
+        actionRepository.save(actionExamen);
     }
 }
