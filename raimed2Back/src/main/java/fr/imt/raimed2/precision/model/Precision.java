@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @Builder
@@ -12,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity(name = "precision")
 @Table(name = "raimed_precision")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Precision {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
