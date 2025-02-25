@@ -13,7 +13,6 @@ import type { Precision } from '@/models/question/precision.model';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
-    console.log(patient);
     return {
       ...(patient.id !== undefined && { id: patient.id }),
       characteristic: {
