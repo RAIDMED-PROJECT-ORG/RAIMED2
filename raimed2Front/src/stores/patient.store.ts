@@ -10,22 +10,13 @@ import { parse } from 'js2xmlparser';
 import {useAuthStore} from '@/stores/auth.store';
 import type {Listen} from "@/models/listen/listen.model";
 import type {Question} from "@/models/question/question.model";
+import type {Prescription} from "@/models/prescription/prescription.model";
 
 interface PatientState {
   virtualPatients: VirtualPatient[];
 }
 
 const authStore = useAuthStore()
-
-function createSpontaneousPatientSpeechAction(listen: Listen) {
-  return {
-    type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
-    primaryElement: listen.content,
-    actionSpontaneousPatientSpeech: {
-      speech: listen.content,
-    }
-  };
-}
 
 export const usePatientStore = defineStore('patient', {
   state: (): PatientState => ({
@@ -63,67 +54,6 @@ export const usePatientStore = defineStore('patient', {
 
     },
     async saveNewPatient(newPatient: NewPatient): Promise<boolean> {
-      const virtualPatient = {
-        age: newPatient.characteristic?.age,
-        gender: newPatient.characteristic?.gender,
-        result: newPatient.characteristic?.diagnostic,
-        createdAt: new Date().toISOString(), // Format ISO 8601,
-        createdBy: {
-          id: authStore.getUserInfo.id,
-          username: authStore.getUserInfo.username,
-          firstname: authStore.getUserInfo.firstname,
-          lastname: authStore.getUserInfo.lastname,
-          email: authStore.getUserInfo.email,
-          role: authStore.getUserInfo.role,
-        },
-        actions: {
-          action: [
-          //QUESTIONS
-          ...newPatient.questions.map((question) => ({
-              type: question.type === QuestionType.CLOSED ? TypeAction.CLOSED_QUESTION : TypeAction.OPENED_QUESTION,
-              primaryElement: question.content,
-              ...(question.type === QuestionType.CLOSED
-                  ? {
-                    actionClosedQuestion: {
-                      closedAnswer: question.answer,
-                      questionLinked: question,
-                    },
-                  }
-                  : {
-                    actionOpenedQuestion: {
-                      openedAnswer: question.answer,
-                      questionLinked: question,
-                    },
-                  }),
-          })),
-
-          //PRESCRIPTIONS
-          ...newPatient.biology.map(prescription => ({
-              type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
-              primaryElement: prescription.content,
-              actionPrescription: {
-                prescription: prescription
-              }
-          })),
-          ...newPatient.biopsy.map(prescription => ({
-              type: TypeAction.BIOPSIES_PRESCRIPTION,
-              primaryElement: prescription.content,
-              actionPrescription: {
-                prescription: prescription
-              }
-          })),
-          ...newPatient.imagery.map(prescription => ({
-              type: TypeAction.IMAGING_PRESCRIPTION,
-              primaryElement: prescription.content,
-              actionPrescription: {
-                prescription: prescription
-              }
-          }))
-          ]
-        }
-      };
-
-
       const virtualPatient = createVirtualPatient(newPatient);
       const virtualPatientXML = parse('VirtualPatient', virtualPatient);
       const res = await axiosInstance.post('/virtual-patient/xml', virtualPatientXML, {
@@ -148,19 +78,62 @@ export const usePatientStore = defineStore('patient', {
 });
 
 function createVirtualPatient(newPatient: NewPatient) {
-  return {
-    age: newPatient.characteristic?.age,
-    gender: newPatient.characteristic?.gender,
-    result: newPatient.characteristic?.diagnostic,
-    createdAt: new Date().toISOString(),
-    createdBy: createCreatedBy(),
-    actions: {
-      action: [
-        ...createQuestionActions(newPatient.questions),
-        ...newPatient.listen.map(createSpontaneousPatientSpeechAction)
-      ]
-    }
-  };
+    return {
+        age: newPatient.characteristic?.age,
+        gender: newPatient.characteristic?.gender,
+        result: newPatient.characteristic?.diagnostic,
+        createdAt: new Date().toISOString(),
+        createdBy: createCreatedBy(),
+        actions: {
+            action: [
+                ...createQuestionActions(newPatient.questions),
+                ...newPatient.listen.map(createSpontaneousPatientSpeechAction),
+                ...newPatient.biology.map(createBiologyPrescriptionAction),
+                ...newPatient.biopsy.map(createBiopsyPrescriptionAction),
+                ...newPatient.imagery.map(createImageryPrescriptionAction)
+            ]
+        }
+    };
+}
+
+function createSpontaneousPatientSpeechAction(listen: Listen) {
+    return {
+        type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
+        primaryElement: listen.content,
+        actionSpontaneousPatientSpeech: {
+            speech: listen.content,
+        }
+    };
+}
+
+function createBiologyPrescriptionAction(prescription: Prescription) {
+    return {
+        type: TypeAction.BIOLOGY_MICROBIOLOGY_PRESCRIPTION,
+        primaryElement: prescription.content,
+        actionPrescription: {
+            prescription: prescription
+        }
+    };
+}
+
+function createBiopsyPrescriptionAction(prescription: Prescription) {
+    return {
+        type: TypeAction.BIOPSIES_PRESCRIPTION,
+        primaryElement: prescription.content,
+        actionPrescription: {
+            prescription: prescription
+        }
+    };
+}
+
+function createImageryPrescriptionAction(prescription: Prescription) {
+    return {
+        type: TypeAction.IMAGING_PRESCRIPTION,
+        primaryElement: prescription.content,
+        actionPrescription: {
+            prescription: prescription
+        }
+    };
 }
 
 function createCreatedBy() {
