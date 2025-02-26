@@ -1,13 +1,11 @@
 package fr.imt.raimed2.action.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@DiscriminatorValue("EXAMEN")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)  // Une seule table pour toutes les sous-classes
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public class ActionExamen extends Action {
 
     @Column(name = "zone")
