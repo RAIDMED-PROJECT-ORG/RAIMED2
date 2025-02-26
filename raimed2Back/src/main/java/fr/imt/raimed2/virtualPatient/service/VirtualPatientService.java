@@ -70,7 +70,7 @@ public class VirtualPatientService {
                 if(actionDTO.getActionOpenedQuestionDTO() != null){
                     actionService.saveActionOpenedQuestion(saved, actionDTO);
                 }
-                if (actionDTO.getActionExamenDTO() != null) {
+                if (actionDTO.getActionAuscultationDTO() != null || actionDTO.getActionInspectionDTO() != null || actionDTO.getActionPalpationDTO() != null || actionDTO.getActionPercussionDTO() != null) {
                     actionService.saveActionExamen(saved, actionDTO);
                 }
             }

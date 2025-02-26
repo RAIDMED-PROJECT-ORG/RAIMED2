@@ -199,8 +199,26 @@ public class ActionService {
         actionExamen.setVirtualPatient(virtualPatient);
         actionExamen.setPrimaryElement(actionDTO.getPrimaryElement());
         actionExamen.setType(actionDTO.getType());
-        actionExamen.setZone(actionDTO.getActionExamenDTO().getZone());
-        actionExamen.setSigns(actionDTO.getActionExamenDTO().getSigns());
+        switch (actionDTO.getType()) {
+            case "INSPECTION":
+                actionExamen.setZone(actionDTO.getActionInspectionDTO().getZone());
+                actionExamen.setSigns(actionDTO.getActionInspectionDTO().getSigns());
+                break;
+            case "PERCUSSION":
+                actionExamen.setZone(actionDTO.getActionPercussionDTO().getZone());
+                actionExamen.setSigns(actionDTO.getActionPercussionDTO().getSigns());
+                break;
+            case "PALPATION":
+                actionExamen.setZone(actionDTO.getActionPalpationDTO().getZone());
+                actionExamen.setSigns(actionDTO.getActionPalpationDTO().getSigns());
+                break;
+            case "AUSCULTATION":
+                actionExamen.setZone(actionDTO.getActionAuscultationDTO().getZone());
+                actionExamen.setSigns(actionDTO.getActionAuscultationDTO().getSigns());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown action type: " + actionDTO.getType());
+        }
 
         actionRepository.save(actionExamen);
     }
