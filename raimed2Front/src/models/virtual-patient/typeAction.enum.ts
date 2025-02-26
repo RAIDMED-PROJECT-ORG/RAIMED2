@@ -11,7 +11,7 @@ export enum TypeAction {
   IMAGERY = 'IMAGERY',
   BIOPSY = 'BIOPSY',
   PRESCRIPTION = 'PRESCRIPTION',
-  EXAMEN = 'EXAMEN',
+  EXAMEN = 'ActionExamen'
 }
 
 export const getTypeActionDisplayName = (typeAction: TypeAction): string => {

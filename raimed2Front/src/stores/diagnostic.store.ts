@@ -152,10 +152,16 @@ export const useDiagnosticStore = defineStore('diagnostic', {
     getPrimaryElements: (state: DiagnosticState): PrimaryElement[] => {
       const primaryElements: PrimaryElement[] = [];
       state.diagnosticEvents.map((event: Event) => {
+        const isExam = event.action.type === TypeAction.EXAMEN;
+        if (event.action.primaryElement && isExam) {
+          primaryElements.push({ actionId: event.action.id ?? '', value: event.action.signs });
+          return;
+        }
         if (event.action.primaryElement && event.action.type !== TypeAction.PRESCRIPTION) {
-          primaryElements.push({ actionId: event.action.id, value: event.action.primaryElement });
+          primaryElements.push({ actionId: event.action.id ?? '', value: event.action.primaryElement });
         }
       });
+
       return primaryElements;
     },
 

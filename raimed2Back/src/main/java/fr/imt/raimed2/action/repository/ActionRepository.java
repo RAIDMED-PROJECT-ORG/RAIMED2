@@ -11,5 +11,7 @@ public interface ActionRepository extends JpaRepository<Action, UUID> {
 
     List<Action> findAllByVirtualPatientIdAndType(Long virtualPatientId, String type);
 
+    List<Action> findAllByVirtualPatientIdAndTypeAndPrimaryElement(Long virtualPatientId, String type, String primaryElement);
+
     List<Action> findAllByIdIn(List<UUID> ids);
 }

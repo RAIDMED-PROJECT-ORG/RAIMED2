@@ -1,3 +1,5 @@
+import type { ExamType } from '@/models/exam/examType.enum';
+
 export enum Zones {
   SKIN = 'SKIN',
   FACE = 'FACE',
@@ -1264,6 +1266,8 @@ export const PercussionSigns = {
 };
 
 export interface ExamResults {
+  id?: string;
   zone: Zones;
   signs: string[];
+  type?: ExamType;
 }

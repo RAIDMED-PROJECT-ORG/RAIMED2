@@ -102,7 +102,7 @@ public class DiagnosticController {
 
     @GetMapping("/{id}/exam/{type}")
     private ResponseEntity<List<Action>> getDiagnosticExam(@PathVariable Long id, @PathVariable String type) {
-        List<Action> exams = this.diagnosticService.getDiagnosticExam(id);
+        List<Action> exams = this.diagnosticService.getDiagnosticExam(id, type);
         return ResponseEntity.ok().body(exams);
     }
 

@@ -11,8 +11,7 @@ import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import { ExamType } from '@/models/exam/examType.enum';
 import type { Precision } from '@/models/question/precision.model';
-import type { ExamResults } from '@/models/diagnostic/exam.model';
-import { Zones } from '@/models/diagnostic/exam.model';
+import { type ExamResults, Zones } from '@/models/diagnostic/exam.model';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
@@ -121,11 +120,12 @@ export function useApiToLocalPatientMapper() {
     const exams: ExamResults[] = [];
 
     actions.forEach((action) => {
-      // TODO rajouter l'exam type dans le back
-      if (action.type === TypeAction.EXAMEN) {
+      if (action.primaryElement === examType) {
         exams.push({
+          id: action.id ?? '',
           signs: [action.signs],
-          zone: action.zone as Zones
+          zone: action.zone as Zones,
+          type: examType
         });
       }
     });

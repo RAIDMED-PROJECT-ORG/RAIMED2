@@ -8,7 +8,6 @@ import { useRouter } from 'vue-router';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
 import { type ExamType, ExamTypeDisplayNames } from '@/models/exam/examType.enum';
 import type { Action } from '@/models/virtual-patient/action.model';
-import type { Exam } from '@/models/exam/exam.model';
 import { useApiToLocalPatientMapper } from '@/composable/useApiToLocalPatientMapper';
 import { ZoneDisplayNames, Zones } from '@/models/diagnostic/exam.model';
 
@@ -20,28 +19,22 @@ const props = defineProps<{
 
 const { virtualPatient } = storeToRefs(useDiagnosticStore());
 const router = useRouter();
-const { mapApiActionToLocalExam } = useApiToLocalPatientMapper()
-const diagnosticId: String = router.currentRoute.value.params.diagnosticId as string;
+const { mapApiActionToLocalExam } = useApiToLocalPatientMapper();
+const diagnosticId = router.currentRoute.value.params.diagnosticId as string;
 
 const selectedExamId = ref<string>('');
 
-const queryAllExam = useQuery<Exam[]>({
+const queryAllExam = useQuery({
   queryKey: ['getAllExam'],
   queryFn: () =>
-    axiosInstance
-      .get<Action[]>(`/diagnostic/${diagnosticId}/exam/${props.examType}`)
-      .then((res) => {
-        const validActions = res.data.filter((action): action is Action =>
-          action.id !== undefined
-        );
+    axiosInstance.get<Action[]>(`/diagnostic/${diagnosticId}/exam/${props.examType}`).then((res) => {
+      const validActions = res.data.filter((action): action is Action => action.id !== undefined);
 
-        return mapApiActionToLocalExam(validActions, props.examType);
-      }),
+      return mapApiActionToLocalExam(validActions, props.examType);
+    }),
   refetchOnWindowFocus: false,
   retry: false
 });
-
-
 
 const handleOnClickAskExam = () => {
   if (selectedExamId.value) {
@@ -95,11 +88,10 @@ const handleOnClickAskExam = () => {
               <tbody>
                 <tr
                   v-for="exam in queryAllExam.data.value"
-                  :key="exam.id"
-                  :class="`${
-                    selectedExamId === exam.id ? 'bg-base-200' : 'hover'
-                  } cursor-pointer`"
-                  @click="() => (selectedExamId = exam.id ?? '')"
+                  :key="exam.signs.join('')"
+                  :class="{ 'bg-base-200': selectedExamId === exam.id, hover: true }"
+                  @click="selectedExamId = exam.id ?? ''"
+                  class="cursor-pointer"
                 >
                   <td>{{ ZoneDisplayNames[exam.zone as Zones] }}</td>
                 </tr>

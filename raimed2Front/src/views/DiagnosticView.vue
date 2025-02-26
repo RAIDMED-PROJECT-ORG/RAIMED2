@@ -158,7 +158,6 @@ const mutationAddEventToDiagnostic = useMutation({
   mutationFn: (addEventDto: AddEventDto) =>
     axiosInstance.post(`/diagnostic/${diagnosticId}/event`, addEventDto).then((res) => res.data),
   onSuccess: (data) => {
-    console.log("data", data)
     diagnosticStore.setDiagnosticEvents(data)
   }
 });
