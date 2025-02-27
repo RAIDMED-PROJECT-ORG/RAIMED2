@@ -30,13 +30,28 @@ public class VirtualPatientController {
     @GetMapping
     public List<VirtualPatientListDto> getAllVirtualPatient() {
         List<fr.imt.raimed2.virtualPatient.model.VirtualPatient> virtualPatients = virtualPatientService.getAllVirtualPatient();
-        return virtualPatientEntityDtoMapper.virtualPatientEntityToVirtualPatientListDto(virtualPatients);
+
+        List<VirtualPatientListDto> virtualPatientListDtos = virtualPatientEntityDtoMapper.virtualPatientEntityToVirtualPatientListDto(virtualPatients);
+
+        for (VirtualPatientListDto virtualPatientListDto : virtualPatientListDtos) {
+            VirtualPatient virtualPatient = virtualPatients.stream().filter(virtualPatient1 -> virtualPatient1.getId().equals(virtualPatientListDto.getId())).findFirst().orElse(null);
+            if (virtualPatient != null) {
+                virtualPatientListDto.setHasDiagnostic(!virtualPatient.getDiagnostics().isEmpty());
+            }
+        }
+
+        return virtualPatientListDtos;
     }
 
     @GetMapping("/{id}")
     public VirtualPatientDto getVirtualPatientById(@PathVariable Long id) {
         VirtualPatient virtualPatient = virtualPatientService.getVirtualPatientById(id);
-        return virtualPatientEntityDtoMapper.virtualPatientEntityToVirtualPatientDto(virtualPatient);
+
+        VirtualPatientDto virtualPatientDto = virtualPatientEntityDtoMapper.virtualPatientEntityToVirtualPatientDto(virtualPatient);
+
+        virtualPatientDto.setHasDiagnostic(!virtualPatient.getDiagnostics().isEmpty());
+
+        return virtualPatientDto;
     }
 
     //@PreAuthorize("hasRole('ROLE_TEACHER')")
@@ -49,21 +64,21 @@ public class VirtualPatientController {
     }
 
     @PostMapping("/xml")
-    public void addVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO){
+    public void addVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO) {
         System.out.println(virtualPatientDTO);
         virtualPatientService.addVirtualPatientXML(virtualPatientDTO);
     }
 
     @PutMapping("/xml")
-    public void editVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO){
+    public void editVirtualPatientXML(@RequestBody VirtualPatientDTO virtualPatientDTO) {
         virtualPatientService.editVirtualPatientXML(virtualPatientDTO);
     }
 
     @DeleteMapping("/{id}")
     public boolean deleteVirtualPatientById(@PathVariable Long id) {
-        try{
+        try {
             return virtualPatientService.deleteVirtualPatientById(id);
-        }catch (NoSuchElementException ex){
+        } catch (NoSuchElementException ex) {
             return false;
         }
     }

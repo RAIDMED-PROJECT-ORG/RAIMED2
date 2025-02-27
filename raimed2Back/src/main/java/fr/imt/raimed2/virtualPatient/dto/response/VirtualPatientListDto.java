@@ -22,4 +22,5 @@ public class VirtualPatientListDto {
 
     private String result;
 
+    private boolean hasDiagnostic;
 }

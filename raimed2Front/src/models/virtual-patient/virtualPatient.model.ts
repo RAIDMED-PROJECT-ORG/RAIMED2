@@ -10,4 +10,5 @@ export interface VirtualPatient {
   createdAt?: string;
   actions?: Action[];
   result?: string;
+  hasDiagnostic?: boolean;
 }

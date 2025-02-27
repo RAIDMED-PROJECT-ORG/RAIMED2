@@ -328,6 +328,18 @@ function handleConfirmGoBack() {
   localStorage.removeItem(STORAGE_KEY);
   router.back();
 }
+
+const getPageName = computed(() => {
+  if (props.patient) {
+    if (props.patient.hasDiagnostic) {
+      return 'Visualisation d\'un patient';
+    }
+
+    return 'Mise à jour d\'un patient';
+  }
+  return 'Nouveau patient';
+});
+
 </script>
 
 <template>
@@ -431,7 +443,7 @@ function handleConfirmGoBack() {
     />
     <div class="w-full h-full flex flex-col justify-center items-center">
       <h1 class="text-3xl text-primary font-bold">
-        {{ patient ? "Mise à jour d'un patient" : 'Nouveau patient' }}
+        {{ getPageName }}
       </h1>
       <p class="text-center pt-3 w-1/2">
         Pour créer un nouveau cas de patient, cliquer sur chacune des catégories et remplir les
@@ -530,6 +542,7 @@ function handleConfirmGoBack() {
       <div>
         <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
         <ActionButton
+          v-if="patient && !patient.hasDiagnostic"
           :disabled="newPatient.characteristic === null"
           class="mt-8"
           :onClick="handleSubmit"
