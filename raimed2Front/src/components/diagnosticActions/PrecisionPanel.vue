@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Question } from '@/models/question/question.model';
 import axiosInstance from '@/service/httpClient/axios.config';
 import { useDiagnosticStore } from '@/stores/diagnostic.store';
 import { useQuery } from '@tanstack/vue-query';
@@ -7,7 +6,6 @@ import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
-import type { Precision } from '@/models/question/precision.model';
 import type { Action } from '@/models/virtual-patient/action.model';
 import { useApiToLocalPatientMapper } from '@/composable/useApiToLocalPatientMapper';
 
