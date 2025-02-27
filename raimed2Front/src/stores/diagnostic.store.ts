@@ -177,14 +177,15 @@ export const useDiagnosticStore = defineStore('diagnostic', {
         if (isPrescription) {
           newElement = event.action.prescription?.result ?? '';
         }
-
-        if (!uniquePrimaryElements.has(newElement)) {
-          primaryElements.push({ actionId: event.action.id ?? '', value: newElement });
-          uniquePrimaryElements.add(newElement);
+        if (newElement !== '' && newElement !== undefined && newElement !== 'undefined' && newElement !== null) {
+          if (!uniquePrimaryElements.has(newElement)) {
+            primaryElements.push({ actionId: event.action.id ?? '', value: newElement });
+            uniquePrimaryElements.add(newElement);
+          }
         }
       });
 
-      return primaryElements
+      return primaryElements;
     },
 
     /**

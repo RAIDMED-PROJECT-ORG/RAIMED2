@@ -1,0 +1,1 @@
+ALTER TABLE raimed_action ALTER COLUMN primary_element DROP NOT NULL;

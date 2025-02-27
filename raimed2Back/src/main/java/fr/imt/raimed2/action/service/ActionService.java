@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +68,7 @@ public class ActionService {
         actionRepository.save(
                 ActionSpontaneousPatientSpeech.builder()
                         .speech(createActionSpontaneousPatientSpeech.getSpeech())
-                        .primaryElement(createActionSpontaneousPatientSpeech.getPrimaryElement())
+                        .primaryElement(!"undefined".equals(createActionSpontaneousPatientSpeech.getPrimaryElement()) ? createActionSpontaneousPatientSpeech.getPrimaryElement() : null)
                         .virtualPatient(virtualPatient)
                         .build()
         );
@@ -165,7 +166,9 @@ public class ActionService {
             question = questionService.save(actionDTO.getActionClosedQuestionDTO().getQuestionLinked());
         ActionClosedQuestion actionClosedQuestion = actionClosedQuestionsMapper.actionClosedQuestionsDtoToDao(actionDTO.getActionClosedQuestionDTO());
         actionClosedQuestion.setQuestion(question);
-        actionClosedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+        if (!Objects.equals(actionDTO.getPrimaryElement(), "undefined")) {
+            actionClosedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+        }
         actionClosedQuestion.setVirtualPatient(virtualPatient);
         return actionClosedQuestionRepository.save(actionClosedQuestion);
     }
@@ -221,7 +224,9 @@ public class ActionService {
             question = questionService.save(actionDTO.getActionOpenedQuestionDTO().getQuestionLinked());
         ActionOpenedQuestion actionOpenedQuestion = actionOpenedQuestionMapper.actionOpenedQuestionDtoToDao(actionDTO.getActionOpenedQuestionDTO());
         actionOpenedQuestion.setQuestion(question);
-        actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+        if (!Objects.equals(actionDTO.getPrimaryElement(), "undefined")) {
+            actionOpenedQuestion.setPrimaryElement(actionDTO.getPrimaryElement());
+        }
         actionOpenedQuestion.setVirtualPatient(virtualPatient);
         return actionOpenedQuestionRepository.save(actionOpenedQuestion);
     }
