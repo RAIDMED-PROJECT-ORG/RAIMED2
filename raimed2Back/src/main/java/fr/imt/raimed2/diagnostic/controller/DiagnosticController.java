@@ -6,6 +6,7 @@ import fr.imt.raimed2.diagnostic.dto.response.*;
 import fr.imt.raimed2.diagnostic.model.*;
 import fr.imt.raimed2.diagnostic.service.DiagnosticService;
 import fr.imt.raimed2.diagnostic.service.ReasoningService;
+import fr.imt.raimed2.precision.model.Precision;
 import fr.imt.raimed2.prescription.model.Prescription;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.user.model.User;
@@ -98,6 +99,12 @@ public class DiagnosticController {
     private ResponseEntity<List<Prescription>> getDiagnosticPrescription(@PathVariable Long id, @PathVariable String type) {
         List<Prescription> prescriptions = this.diagnosticService.getDiagnosticPrescription(id, type.toUpperCase());
         return ResponseEntity.ok().body(prescriptions);
+    }
+
+    @GetMapping("/{id}/precision")
+    private ResponseEntity<List<Action>> getDiagnosticPrecision(@PathVariable Long id) {
+        List<Action> precisions = this.diagnosticService.getDiagnosticPrecision(id);
+        return ResponseEntity.ok().body(precisions);
     }
 
     @GetMapping("/{id}/exam/{type}")

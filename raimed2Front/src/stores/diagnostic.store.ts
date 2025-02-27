@@ -86,7 +86,8 @@ export const useDiagnosticStore = defineStore('diagnostic', {
           event.action.type === TypeAction.CLOSED_QUESTION ||
           event.action.type === TypeAction.OPENED_QUESTION ||
           event.action.type === TypeAction.PRESCRIPTION ||
-          event.action.type === TypeAction.EXAMEN
+          event.action.type === TypeAction.EXAMEN ||
+          event.action.type === TypeAction.PRECISION
       );
       eventsWithChatMessages.forEach((event: Event) => {
         if (event.action.type === TypeAction.SPONTANEOUS_PATIENT_SPEECH) {
@@ -138,6 +139,17 @@ export const useDiagnosticStore = defineStore('diagnostic', {
             eventId: event.id,
             author: AuthorChat.VIRTUAL_PATIENT,
             content: event.action.signs ?? ''
+          });
+        } else if (event.action.type === TypeAction.PRECISION) {
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.STUDENT,
+            content: event.action.precision?.question ?? ''
+          });
+          chatMessages.push({
+            eventId: event.id,
+            author: AuthorChat.VIRTUAL_PATIENT,
+            content: event.action.precision?.answer ?? ''
           });
         }
       });

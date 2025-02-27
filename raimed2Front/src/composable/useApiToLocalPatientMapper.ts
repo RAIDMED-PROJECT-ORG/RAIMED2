@@ -133,5 +133,5 @@ export function useApiToLocalPatientMapper() {
     return exams;
   }
 
-  return { mapApiToLocal, mapApiActionToLocalExam };
+  return { mapApiToLocal, mapApiActionToLocalExam, mapApiActionToLocalPrecision };
 }
