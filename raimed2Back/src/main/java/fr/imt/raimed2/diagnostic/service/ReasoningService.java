@@ -220,7 +220,7 @@ public class ReasoningService {
                 .hypothesis(hypothesis)
                 .build();
         diagnosticValidationRepository.save(diagnosticValidation);
-        if (diagnostic.getVirtualPatient().getResult().equals(hypothesis.getValue())) {
+        if (diagnostic.getVirtualPatient().getResult().equalsIgnoreCase(hypothesis.getValue())) {
             diagnostic.setStatus(DiagnosticStatus.SUCCESS);
         } else {
             diagnostic.setStatus(DiagnosticStatus.FAILURE);
