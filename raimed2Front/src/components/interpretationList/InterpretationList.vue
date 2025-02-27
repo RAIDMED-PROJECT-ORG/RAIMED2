@@ -84,15 +84,15 @@ const handleSelectInterpretation = (interpretation: Interpretation) => {
           <div class="flex-grow flex flex-row justify-center">
             <div class="flex-grow flex items-center p-2">
               <div class="w-1/2 flex flex-col justify-center items-center">
-                <span class="text-lg truncate mb-2">Élement primaire selectionné : </span>
+                <span class="text-md mb-2">Élement primaire selectionné : </span>
                 <span
                   v-if="selectedInterpretationPrimaryElement"
-                  class="badge badge-neutral ml-2 cursor-pointer"
+                  class="badge badge-neutral ml-2 cursor-pointer overflow-hidden items-start"
                   @click="unselectInterpretationPrimaryElement"
                 >
                   {{ selectedInterpretationPrimaryElement.value }}
                 </span>
-                <span v-else class="badge">Aucun élément sélectionné</span>
+                <span v-else class="badge overflow-hidden items-start">Aucun élément sélectionné</span>
               </div>
               <div class="divider divider-horizontal" />
               <div class="w-1/2 card">
@@ -137,7 +137,7 @@ const handleSelectInterpretation = (interpretation: Interpretation) => {
         <span
           v-for="interpretation in diagnosticStore.getInterpretations"
           v-bind:key="interpretation.id"
-          :class="`badge badge-lg badge-warning m-1 interpretation-selectable ${
+          :class="`badge badge-lg badge-warning m-1 interpretation-selectable overflow-hidden items-start ${
             isSelectedInterpretation(interpretation) && 'interpretation-selected'
           }`"
           @click="handleSelectInterpretation(interpretation)"
@@ -157,7 +157,7 @@ const handleSelectInterpretation = (interpretation: Interpretation) => {
         <span
           v-for="interpretation in diagnosticStore.getInterpretations"
           v-bind:key="interpretation.id"
-          class="badge badge-lg badge-warning m-1"
+          class="badge badge-lg badge-warning m-1 min-h-fit"
         >
           {{ interpretation.value }}
         </span>
