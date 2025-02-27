@@ -542,7 +542,7 @@ const getPageName = computed(() => {
       <div>
         <ActionButton class="mt-8" :onClick="handleOnBack" label="Annuler" :color="Color.Grey" />
         <ActionButton
-          v-if="patient && !patient.hasDiagnostic"
+          v-if="!patient || !patient.hasDiagnostic"
           :disabled="newPatient.characteristic === null"
           class="mt-8"
           :onClick="handleSubmit"

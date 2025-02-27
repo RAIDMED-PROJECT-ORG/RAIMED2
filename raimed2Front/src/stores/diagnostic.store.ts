@@ -165,10 +165,17 @@ export const useDiagnosticStore = defineStore('diagnostic', {
       const primaryElements: PrimaryElement[] = [];
       state.diagnosticEvents.map((event: Event) => {
         const isExam = event.action.type === TypeAction.EXAMEN;
-        if (event.action.primaryElement && isExam) {
+        if (isExam) {
           primaryElements.push({ actionId: event.action.id ?? '', value: event.action.signs });
           return;
         }
+
+        const isPrescription = event.action.type === TypeAction.PRESCRIPTION;
+        if (isPrescription) {
+          primaryElements.push({ actionId: event.action.id ?? '', value: event.action.prescription?.result ?? '' });
+          return;
+        }
+
         if (event.action.primaryElement && event.action.type !== TypeAction.PRESCRIPTION) {
           primaryElements.push({ actionId: event.action.id ?? '', value: event.action.primaryElement });
         }
