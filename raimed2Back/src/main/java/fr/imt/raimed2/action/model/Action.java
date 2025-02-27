@@ -25,7 +25,7 @@ public abstract class Action {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(name = "primary_element", nullable = false)
+    @Column(name = "primary_element", nullable = true)
     private String primaryElement;
 
     @Column(name="type", nullable = false, updatable = false, insertable = false)
