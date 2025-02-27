@@ -2,7 +2,8 @@
 import { ref } from 'vue';
 import { QuestionType } from '@/models/question/questionType.enum';
 import {
-  QuestionFilter
+  QuestionFilter,
+  QuestionFilterDisplayNames
 } from '@/models/question/questionFilter.enum';
 import type { CreateQuestionDto } from '@/models/question/createQuestion.dto';
 
@@ -26,6 +27,7 @@ const createQuestionDto = ref<CreateQuestionDto>({
  */
 const handleOnCreateQuestion = (event: Event) => {
   event.preventDefault();
+  createQuestionDto.value.type = props.type;
   props.createQuestion(createQuestionDto.value);
   createQuestionDto.value = {
     content: '',
@@ -61,7 +63,7 @@ const handleOnCreateQuestion = (event: Event) => {
         v-bind:key="`${filter}`"
         :value="filter"
       >
-        {{ QuestionFilterDisplayName[filter] }}
+        {{ QuestionFilterDisplayNames[filter] }}
       </option>
     </select>
     <button type="submit" class="btn btn-success" :disabled="props.isLoading">

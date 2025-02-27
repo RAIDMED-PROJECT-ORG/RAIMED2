@@ -13,7 +13,7 @@ import { Role } from '@/models/auth/role.enum';
 import { useAuthStore } from '@/stores/auth.store';
 import { useQuestionStore } from '@/stores/questions.store';
 import type { Gender } from '@/models/virtual-patient/gender.enum';
-import { QuestionType } from '@/models/question/questionType.enum';
+import { QuestionType, QuestionTypeDisplayNames } from '@/models/question/questionType.enum';
 
 const props = defineProps<{
   selectedQuestions: Question[];
@@ -121,19 +121,23 @@ watch(
       <div class="my-5 border-t border-light-grey"></div>
       <div class="pr-5 overflow-scroll">
         <div class="flex justify-between border-b border-1 border-[#9CA3AF] text-black font-bold">
-          <h4 class="w-8/12">Questions</h4>
+          <h4 class="w-6/12">Questions</h4>
+          <h4 class="w-2/12 flex justify-center">Genre</h4>
           <h4 class="w-2/12 flex justify-center">Type</h4>
           <h4 class="w-2/12 flex justify-center">Sélectionner</h4>
         </div>
         <QuestionRow
+          v-bind:key="question.id"
           v-for="question in questionsToDisplay"
-          :key="question.id"
           :question="question.content"
           :answer="question.answer ?? ''"
-          :is-already-selected="selectedQuestions.includes(question)"
+          :primaryElement="question.primaryElement ?? ''"
         >
           <div class="w-2/12 flex justify-center">
             {{ getQuestionFilterByFirstLetter(question.filter) }}
+          </div>
+          <div class="w-2/12 flex justify-center">
+            {{ QuestionTypeDisplayNames[question.type] }}
           </div>
           <div class="w-2/12 flex justify-center">
             <input

@@ -15,8 +15,8 @@ const model = defineModel<{
 }>({
   default: {
     nameFilter: '',
-    genderFilter: null,
-    typeFilter: null,
+    genderFilter: QuestionFilter.MIXED,
+    typeFilter: null
   }
 });
 
@@ -46,7 +46,9 @@ onMounted(() => {
         aria-label="type de question"
         v-model="model.typeFilter"
       >
-        <option :value="null"></option>
+        <option :value="null">
+          Toutes
+        </option>
         <option :value="QuestionType.CLOSED">
           {{ QuestionTypeDisplayNames[QuestionType.CLOSED] }}
         </option>
@@ -63,7 +65,6 @@ onMounted(() => {
         aria-label="Genre concerné"
         v-model="model.genderFilter"
       >
-        <option :value="null"></option>
         <option :value="QuestionFilter.MIXED">
           {{ QuestionFilterDisplayNames[QuestionFilter.MIXED] }}
         </option>
