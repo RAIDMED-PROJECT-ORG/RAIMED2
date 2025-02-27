@@ -84,7 +84,8 @@ export const usePatientStore = defineStore('patient', {
                 createdBy: data.createdBy,
                 createdAt: data.createdAt,
                 actions: data.actions,
-                result: data.result
+                result: data.result,
+                hasDiagnostic: data.hasDiagnostic,
             };
         }
     }

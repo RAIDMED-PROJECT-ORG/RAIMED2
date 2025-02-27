@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedPageLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import ActionButton from '@/components/actionButton/ActionButton.vue';
-import { faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { usePatientStore } from '@/stores/patient.store';
 import type { VirtualPatient } from '@/models/virtual-patient/virtualPatient.model';
 import { onMounted, ref } from 'vue';
@@ -66,6 +66,7 @@ const refreshPatients = async () => {
               <td class="py-2">{{ patient.result }}</td>
               <td class="py-2 flex justify-center gap-2">
                 <ActionButton
+                  v-if="!patient.hasDiagnostic"
                   :color="Color.Grey"
                   :icon="faPen"
                   :onClick="() => router.push({ name: 'editPatient', params: { id: patient.id } })"
@@ -73,9 +74,18 @@ const refreshPatients = async () => {
                   :size="'small'"
                 />
                 <ActionButton
+                  v-if="!patient.hasDiagnostic"
                   :color="Color.Grey"
                   :icon="faTrashCan"
                   :onClick="() => deletePatient(patient.id)"
+                  :size="'small'"
+                />
+                <ActionButton
+                  v-if="patient.hasDiagnostic"
+                  :color="Color.Grey"
+                  :icon="faEye"
+                  :onClick="() => router.push({ name: 'editPatient', params: { id: patient.id } })"
+                  :iconOnly="true"
                   :size="'small'"
                 />
               </td>

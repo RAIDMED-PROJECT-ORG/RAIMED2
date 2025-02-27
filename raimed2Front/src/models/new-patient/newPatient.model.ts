@@ -7,6 +7,7 @@ import type { Precision } from '@/models/question/precision.model';
 
 export interface NewPatient {
   id?: string;
+  hasDiagnostic?: boolean;
   characteristic: Characteristics | null;
   questions: Question[];
   precisions: Precision[];

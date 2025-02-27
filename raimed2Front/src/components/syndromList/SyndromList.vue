@@ -69,7 +69,7 @@ const handleSelectSyndrom = (syndrom: Syndrom) => {
           <div class="flex-grow flex flex-row justify-center">
             <div class="flex-grow flex items-center p-2">
               <div class="w-1/2 flex-grow flex flex-col justify-center items-center">
-                <span class="text-md truncate mb-2">Élements selectionnés (au moins 2) : </span>
+                <span class="text-md mb-2">Élements selectionnés (au moins 2) : </span>
                 <div
                   v-if="
                     selectedElementsForSyndrom.primaryElements.length ||
@@ -80,7 +80,7 @@ const handleSelectSyndrom = (syndrom: Syndrom) => {
                   <span
                     v-for="primaryElement in selectedElementsForSyndrom.primaryElements"
                     v-bind:key="primaryElement.actionId"
-                    class="badge badge-neutral m-1 cursor-pointer"
+                    class="badge badge-neutral m-1 cursor-pointer overflow-hidden items-start"
                     @click="unselectSyndromPrimaryElement(primaryElement)"
                   >
                     {{ primaryElement.value }}
@@ -89,14 +89,14 @@ const handleSelectSyndrom = (syndrom: Syndrom) => {
                   <span
                     v-for="interpretation in selectedElementsForSyndrom.interpretations"
                     v-bind:key="interpretation.id"
-                    class="badge badge-warning m-1 cursor-pointer"
+                    class="badge badge-warning m-1 cursor-pointer overflow-hidden items-start"
                     @click="unselectSyndromInterpretation(interpretation)"
                   >
                     {{ interpretation.value }}
                   </span>
                 </div>
 
-                <span v-else class="badge"> Aucuns éléments sélectionnés </span>
+                <span v-else class="badge text-xs overflow-hidden items-start">Aucuns éléments sélectionnés</span>
               </div>
               <div class="divider divider-horizontal" />
               <div class="w-1/2 card">
@@ -145,7 +145,7 @@ const handleSelectSyndrom = (syndrom: Syndrom) => {
         <span
           v-for="syndrom in diagnosticStore.getSyndroms"
           v-bind:key="syndrom.id"
-          :class="`badge badge-lg bg-orange-300 m-1 syndrom-selectable ${
+          :class="`badge badge-lg bg-orange-300 m-1 syndrom-selectable overflow-hidden items-start ${
             isSelectedSyndrom(syndrom) && 'syndrom-selected'
           }`"
           @click="handleSelectSyndrom(syndrom)"
@@ -162,7 +162,7 @@ const handleSelectSyndrom = (syndrom: Syndrom) => {
         <span
           v-for="syndrom in diagnosticStore.getSyndroms"
           v-bind:key="syndrom.id"
-          class="badge badge-lg bg-orange-300 m-1"
+          class="badge badge-lg bg-orange-300 m-1 min-h-fit"
         >
           {{ syndrom.value }}
         </span>

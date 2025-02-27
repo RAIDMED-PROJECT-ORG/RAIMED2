@@ -77,7 +77,7 @@ const queryDiagnosticResult = useQuery({
           </div>
         </div>
         <RouterLink class="btn btn-lg btn-primary text-white" :to="{ name: 'waitingRoom' }"
-          >Retour à la liste des d'attente</RouterLink
+          >Retour à la liste des patients</RouterLink
         >
       </template>
     </div>

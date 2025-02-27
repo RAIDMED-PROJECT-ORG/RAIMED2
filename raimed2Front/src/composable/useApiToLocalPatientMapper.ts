@@ -17,6 +17,7 @@ export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
     return {
       ...(patient.id !== undefined && { id: patient.id }),
+      hasDiagnostic: patient.hasDiagnostic ?? false,
       characteristic: {
         age: patient.age ?? 0,
         gender: patient.gender ?? Gender.MALE,

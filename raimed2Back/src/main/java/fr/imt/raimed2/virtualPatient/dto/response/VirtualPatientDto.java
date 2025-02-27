@@ -30,4 +30,5 @@ public class VirtualPatientDto {
 
     private List<Action> actions;
 
+    private boolean hasDiagnostic;
 }

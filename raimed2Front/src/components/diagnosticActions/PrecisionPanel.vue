@@ -3,7 +3,7 @@ import axiosInstance from '@/service/httpClient/axios.config';
 import { useDiagnosticStore } from '@/stores/diagnostic.store';
 import { useQuery } from '@tanstack/vue-query';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
 import type { Action } from '@/models/virtual-patient/action.model';
@@ -17,6 +17,8 @@ const { mapApiActionToLocalPrecision } = useApiToLocalPatientMapper();
 const { virtualPatient } = storeToRefs(useDiagnosticStore());
 const router = useRouter();
 const diagnosticId: String = router.currentRoute.value.params.diagnosticId as string;
+
+const diagnosticStore = useDiagnosticStore();
 
 const selectedPrecisionId = ref<string>('');
 
@@ -44,6 +46,17 @@ const handleOnClickAskPrecision = () => {
     }
   }
 };
+
+const getPrecisionAlreadyDiscovered = computed(() => {
+  const primaryElementsDiscovered = diagnosticStore.getPrimaryElements;
+  return queryAllPrecision.data.value?.filter((precision) =>
+    primaryElementsDiscovered.some(
+      (primaryElement) => primaryElement.value === precision.primaryElement
+    )
+  );
+});
+
+
 </script>
 
 <template>
@@ -69,9 +82,9 @@ const handleOnClickAskPrecision = () => {
 
       <template v-else>
         <div class="w-full max-h-full h-full overflow-y-auto">
-          <template v-if="!queryAllPrecision.data.value?.length">
+          <template v-if="!getPrecisionAlreadyDiscovered?.length">
             <div class="w-full h-full flex justify-center items-center">
-              <p class="text-center text-2xl">Aucune précision de symptôme disponible</p>
+              <p class="text-center text-2xl">Aucune précision de symptôme disponible (peut être plus tard)</p>
             </div>
           </template>
           <template v-else>
@@ -84,7 +97,7 @@ const handleOnClickAskPrecision = () => {
               </thead>
               <tbody>
                 <tr
-                  v-for="precision in queryAllPrecision.data.value"
+                  v-for="precision in getPrecisionAlreadyDiscovered"
                   :key="precision.id"
                   :class="`${
                     selectedPrecisionId === precision.id ? 'bg-base-200' : 'hover'

@@ -163,18 +163,28 @@ export const useDiagnosticStore = defineStore('diagnostic', {
      */
     getPrimaryElements: (state: DiagnosticState): PrimaryElement[] => {
       const primaryElements: PrimaryElement[] = [];
+      const uniquePrimaryElements = new Set<string>();
+
       state.diagnosticEvents.map((event: Event) => {
+        let newElement: string = event.action.primaryElement;
+
         const isExam = event.action.type === TypeAction.EXAMEN;
-        if (event.action.primaryElement && isExam) {
-          primaryElements.push({ actionId: event.action.id ?? '', value: event.action.signs });
-          return;
+        if (isExam) {
+          newElement = event.action.signs;
         }
-        if (event.action.primaryElement && event.action.type !== TypeAction.PRESCRIPTION) {
-          primaryElements.push({ actionId: event.action.id ?? '', value: event.action.primaryElement });
+
+        const isPrescription = event.action.type === TypeAction.PRESCRIPTION;
+        if (isPrescription) {
+          newElement = event.action.prescription?.result ?? '';
+        }
+
+        if (!uniquePrimaryElements.has(newElement)) {
+          primaryElements.push({ actionId: event.action.id ?? '', value: newElement });
+          uniquePrimaryElements.add(newElement);
         }
       });
 
-      return primaryElements;
+      return primaryElements
     },
 
     /**
