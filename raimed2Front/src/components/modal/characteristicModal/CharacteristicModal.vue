@@ -15,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const gender = ref<Gender>(props.currentCharacteristics?.gender || Gender.MALE);
-const age = ref<number>(props.currentCharacteristics?.age || 0);
+const age = ref<number | null>(props.currentCharacteristics?.age || null);
 const diagnostic = ref<string>(props.currentCharacteristics?.diagnostic || '');
 
 const ageErrorMessage = ref<string | null>(null);
@@ -56,11 +56,15 @@ function handleValidation() {
     if (age.value <= 0) {
       ageErrorMessage.value = 'L\'âge doit être supérieur à zéro.';
     }
+
+    if (age.value > 120) {
+      ageErrorMessage.value = 'L\'âge doit être inférieur à 120.';
+    }
   } else {
     ageErrorMessage.value = 'Champs requis.';
   }
 
-  if (diagnostic.value !== '' && age.value !== null && age.value > 0) {
+  if (diagnostic.value !== '' && age.value && ageErrorMessage.value === null) {
     props.onValidation({ gender: gender.value, age: age.value, diagnostic: diagnostic.value });
   }
 }
@@ -89,6 +93,8 @@ function handleValidation() {
             v-model="age"
             placeholder="Insérer l'âge"
             class="input w-[150px]"
+            min=0
+            max=120
           />
         </div>
         <span class="text-red-500" v-if="ageErrorMessage">{{ ageErrorMessage }}</span>
