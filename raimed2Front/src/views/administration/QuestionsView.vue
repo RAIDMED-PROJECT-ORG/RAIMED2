@@ -9,7 +9,7 @@ import type { CreateQuestionDto } from '@/models/question/createQuestion.dto';
 import type { UpdateQuestionDto } from '@/models/question/updateQuestion.dto';
 import AuthenticatedViewLayout from '@/layouts/AuthenticatedViewLayout.vue';
 import QuestionManagement from '@/components/questionManagement/QuestionManagement.vue';
-import CreateQuestionForm from '@/components/questionManagement/createQuestionForm.vue';
+import CreateQuestionForm from '@/components/questionManagement/CreateQuestionForm.vue';
 
 // Manage tabs which display questions by type
 const activeTab = ref<QuestionType>(QuestionType.OPENED);

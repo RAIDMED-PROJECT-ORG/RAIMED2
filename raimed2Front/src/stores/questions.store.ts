@@ -8,7 +8,11 @@ export const useQuestionStore = defineStore('question', {
     actions: {
         // Fetch all questions without QuestionType (Open / Closed) filter
         async fetchExistingQuestions(teacherId: string | null | undefined, questionType: string | null | undefined, gender: QuestionFilter | null): Promise<Question[]> {
-            const res = (await axiosInstance.get(`/question?teacherId=${teacherId}&questionType=${questionType}&gender=${gender}`)).data;
+            let baseUrl = `/question?teacherId=${teacherId}&gender=${gender}`;
+            if (questionType) {
+                baseUrl += `&type=${questionType}`;
+            }
+            const res = (await axiosInstance.get(baseUrl)).data;
             return res;
         }
     }

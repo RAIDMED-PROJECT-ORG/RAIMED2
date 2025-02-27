@@ -26,9 +26,22 @@ public class QuestionController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER')")
     @GetMapping
-    public ResponseEntity<List<Question>> getAllQuestion(@RequestParam(required = false) UUID teacherId, @RequestParam(required = false) String type, @RequestParam(required = false) String gender) {
+    public ResponseEntity<List<Question>> getAllQuestion(
+            @RequestParam(required = false) UUID teacherId,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String gender) {
+
         boolean admin = teacherId == null;
-        QuestionType questionType = (type == null) ? null : QuestionType.valueOf(type.toUpperCase());
+
+        QuestionType questionType = null;
+        if (type != null && !type.isEmpty()) {
+            try {
+                questionType = QuestionType.valueOf(type.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(null);
+            }
+        }
+
         return ResponseEntity.ok().body(questionService.getAllQuestion(questionType, teacherId, admin, gender));
     }
 
