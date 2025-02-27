@@ -3,10 +3,7 @@ package fr.imt.raimed2.action.service;
 import fr.imt.raimed2.action.dto.request.CreateActionSpontaneousPatientSpeech;
 import fr.imt.raimed2.action.dto.xml.*;
 import fr.imt.raimed2.action.model.*;
-import fr.imt.raimed2.action.repository.ActionClosedQuestionRepository;
-import fr.imt.raimed2.action.repository.ActionOpenedQuestionRepository;
-import fr.imt.raimed2.action.repository.ActionPrescriptionRepository;
-import fr.imt.raimed2.action.repository.ActionRepository;
+import fr.imt.raimed2.action.repository.*;
 import fr.imt.raimed2.diagnostic.model.Event;
 import fr.imt.raimed2.precision.model.Precision;
 import fr.imt.raimed2.precision.service.PrecisionService;
@@ -34,6 +31,8 @@ public class ActionService {
     private final ActionOpenedQuestionRepository actionOpenedQuestionRepository;
 
     private final ActionPrescriptionRepository actionPrescriptionRepository;
+
+    private final ActionPrecisionRepository actionPrecisionRepository;
 
     private final VirtualPatientRepository virtualPatientRepository;
 
@@ -99,12 +98,16 @@ public class ActionService {
         return actionPrescriptionRepository.findAllByVirtualPatientIdAndPrescription_Type(virtualPatientId, prescriptionType);
     }
 
+    public List<Action> getAllPrecisionOfVirtualPatient(Long virtualPatientId) {
+        return actionRepository.findAllByVirtualPatientIdAndType(virtualPatientId, "PRECISION");
+    }
+
     /**
      * @param type le type de l'exam (Inspection, Palpation, Percussion, Auscultation). Il est ensuite passé comme
      *             paramètre en tant que "primaryElement" car ce type est stocké ici.
      */
     public List<Action> getAllExamOfVirtualPatient(Long virtualPatientId, String type) {
-        return actionRepository.findAllByVirtualPatientIdAndTypeAndPrimaryElement(virtualPatientId, "ActionExamen", type);
+        return actionRepository.findAllByVirtualPatientIdAndTypeAndPrimaryElement(virtualPatientId, "EXAMEN", type);
     }
 
     /**
@@ -133,6 +136,12 @@ public class ActionService {
 
     public List<ActionPrescription> getAllPrescriptionsOfDiagnosticEvents(List<Event> events) {
         return actionPrescriptionRepository.findAllByIdIn(
+                events.stream().map(event -> event.getAction().getId()).toList()
+        );
+    }
+
+    public List<Action> getAllPrecisionsOfDiagnosticEvents(List<Event> events) {
+        return actionRepository.findAllByIdIn(
                 events.stream().map(event -> event.getAction().getId()).toList()
         );
     }

@@ -1,13 +1,11 @@
 package fr.imt.raimed2.diagnostic.service;
 
-import fr.imt.raimed2.action.model.Action;
-import fr.imt.raimed2.action.model.ActionClosedQuestion;
-import fr.imt.raimed2.action.model.ActionOpenedQuestion;
-import fr.imt.raimed2.action.model.ActionPrescription;
+import fr.imt.raimed2.action.model.*;
 import fr.imt.raimed2.action.service.ActionService;
 import fr.imt.raimed2.diagnostic.dto.request.CreateEventDto;
 import fr.imt.raimed2.diagnostic.model.*;
 import fr.imt.raimed2.diagnostic.repository.*;
+import fr.imt.raimed2.precision.model.Precision;
 import fr.imt.raimed2.prescription.model.Prescription;
 import fr.imt.raimed2.prescription.service.PrescriptionService;
 import fr.imt.raimed2.question.model.Question;
@@ -155,21 +153,13 @@ public class DiagnosticService {
         List<Question> returnedQuestions = new ArrayList<>();
 
         // Retrieve all closed questions of the virtual patient
-        List<ActionClosedQuestion> closedQuestions = actionService.getAllClosedQuestionOfVirtualPatient(
-                diagnostic.getVirtualPatient().getId()
-        );
+        List<ActionClosedQuestion> closedQuestions = actionService.getAllClosedQuestionOfVirtualPatient(diagnostic.getVirtualPatient().getId());
 
         // Retrieve all asked closed questions of the diagnostic
-        List<ActionClosedQuestion> askedCloseQuestions = actionService.getAllClosedQuestionOfDiagnosticEvents(
-                eventRepository.findAllByDiagnosticId(diagnosticId)
-        );
+        List<ActionClosedQuestion> askedCloseQuestions = actionService.getAllClosedQuestionOfDiagnosticEvents(eventRepository.findAllByDiagnosticId(diagnosticId));
 
         // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
-        closedQuestions.removeIf(
-                question -> (
-                        askedCloseQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))
-                )
-        );
+        closedQuestions.removeIf(question -> (askedCloseQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))));
 
         for (ActionClosedQuestion question : closedQuestions) {
             returnedQuestions.add(question.getQuestion());
@@ -190,19 +180,11 @@ public class DiagnosticService {
         List<Question> returnedQuestions = new ArrayList<>();
 
         // Retrieve all opened questions of the virtual patient
-        List<ActionOpenedQuestion> openedQuestions = actionService.getAllOpenedQuestionOfVirtualPatient(
-                diagnostic.getVirtualPatient().getId()
-        );
+        List<ActionOpenedQuestion> openedQuestions = actionService.getAllOpenedQuestionOfVirtualPatient(diagnostic.getVirtualPatient().getId());
         // Retrieve all asked opened questions of the diagnostic
-        List<ActionOpenedQuestion> askedOpenedQuestions = actionService.getAllOpenedQuestionOfDiagnosticEvents(
-                eventRepository.findAllByDiagnosticId(diagnosticId)
-        );
+        List<ActionOpenedQuestion> askedOpenedQuestions = actionService.getAllOpenedQuestionOfDiagnosticEvents(eventRepository.findAllByDiagnosticId(diagnosticId));
         // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
-        openedQuestions.removeIf(
-                question -> (
-                        askedOpenedQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))
-                )
-        );
+        openedQuestions.removeIf(question -> (askedOpenedQuestions.stream().anyMatch(q -> q.getQuestion().getId().equals(question.getQuestion().getId()))));
 
         for (ActionOpenedQuestion question : openedQuestions) {
             returnedQuestions.add(question.getQuestion());
@@ -215,19 +197,11 @@ public class DiagnosticService {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
         List<Prescription> returnedPrescriptions = new ArrayList<>();
 
-        List<ActionPrescription> prescriptions = actionService.getAllPrescriptionOfVirtualPatient(
-                diagnostic.getVirtualPatient().getId(), type
-        );
-        List<ActionPrescription> askedPrescriptions = actionService.getAllPrescriptionsOfDiagnosticEvents(
-                eventRepository.findAllByDiagnosticId(diagnosticId)
-        );
+        List<ActionPrescription> prescriptions = actionService.getAllPrescriptionOfVirtualPatient(diagnostic.getVirtualPatient().getId(), type);
+        List<ActionPrescription> askedPrescriptions = actionService.getAllPrescriptionsOfDiagnosticEvents(eventRepository.findAllByDiagnosticId(diagnosticId));
 
         // Keep only the questions that are already defined in the virtual patient and not already asked in the diagnostic
-        prescriptions.removeIf(
-                prescription -> (
-                        askedPrescriptions.stream().anyMatch(p -> p.getPrescription().getId().equals(prescription.getPrescription().getId()))
-                )
-        );
+        prescriptions.removeIf(prescription -> (askedPrescriptions.stream().anyMatch(p -> p.getPrescription().getId().equals(prescription.getPrescription().getId()))));
 
         for (ActionPrescription prescription : prescriptions) {
             returnedPrescriptions.add(prescription.getPrescription());
@@ -236,22 +210,24 @@ public class DiagnosticService {
         return returnedPrescriptions;
     }
 
+    public List<Action> getDiagnosticPrecision(Long diagnosticId) throws NoSuchElementException {
+        Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
+
+        List<Action> precisions = actionService.getAllPrecisionOfVirtualPatient(diagnostic.getVirtualPatient().getId());
+        List<Action> askedPrecisions = actionService.getAllPrecisionsOfDiagnosticEvents(eventRepository.findAllByDiagnosticId(diagnosticId));
+
+        precisions.removeIf(action -> (askedPrecisions.stream().anyMatch(a -> action.getId().equals(a.getId()))));
+
+        return precisions;
+    }
+
     public List<Action> getDiagnosticExam(Long diagnosticId, String type) {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
 
-        List<Action> exams = actionService.getAllExamOfVirtualPatient(
-                diagnostic.getVirtualPatient().getId(),
-                type
-        );
-        List<Action> askedExam = actionService.getAllExamsOfDiagnosticEvents(
-                eventRepository.findAllByDiagnosticId(diagnosticId)
-        );
+        List<Action> exams = actionService.getAllExamOfVirtualPatient(diagnostic.getVirtualPatient().getId(), type);
+        List<Action> askedExam = actionService.getAllExamsOfDiagnosticEvents(eventRepository.findAllByDiagnosticId(diagnosticId));
 
-        exams.removeIf(
-                action -> (
-                        askedExam.stream().anyMatch(a -> action.getId().equals(a.getId()))
-                )
-        );
+        exams.removeIf(action -> (askedExam.stream().anyMatch(a -> action.getId().equals(a.getId()))));
 
         return exams;
     }
@@ -266,12 +242,7 @@ public class DiagnosticService {
      */
     public Diagnostic startDiagnosticOfVirtualPatient(User user, Long virtualPatientId) throws NoSuchElementException {
         VirtualPatient virtualPatient = virtualPatientRepository.findById(virtualPatientId).orElseThrow();
-        Diagnostic newDiagnostic = Diagnostic.builder()
-                .startDate(new Date())
-                .status(DiagnosticStatus.IN_PROGRESS)
-                .user(user)
-                .virtualPatient(virtualPatient)
-                .build();
+        Diagnostic newDiagnostic = Diagnostic.builder().startDate(new Date()).status(DiagnosticStatus.IN_PROGRESS).user(user).virtualPatient(virtualPatient).build();
         return diagnosticRepository.save(newDiagnostic);
     }
 
@@ -283,25 +254,14 @@ public class DiagnosticService {
      * @return The list of events of the diagnostic
      * @throws NoSuchElementException If the diagnostic does not exist, or the action does not exist
      */
-    public List<Event> addEventToDiagnostic(
-            Long diagnosticId,
-            CreateEventDto createEventDto
-    ) throws NoSuchElementException {
+    public List<Event> addEventToDiagnostic(Long diagnosticId, CreateEventDto createEventDto) throws NoSuchElementException {
         Diagnostic diagnostic = diagnosticRepository.findById(diagnosticId).orElseThrow();
         VirtualPatient virtualPatient = diagnostic.getVirtualPatient();
         Set<Action> actions = virtualPatient.getActions();
 
-        Action action = actions.stream()
-                .filter(a -> a.getId().equals(createEventDto.getActionId()))
-                .findFirst()
-                .orElseThrow();
+        Action action = actions.stream().filter(a -> a.getId().equals(createEventDto.getActionId())).findFirst().orElseThrow();
 
-        eventRepository.save(Event.builder()
-                .date(new Date())
-                .action(action)
-                .diagnostic(diagnostic)
-                .build()
-        );
+        eventRepository.save(Event.builder().date(new Date()).action(action).diagnostic(diagnostic).build());
         return eventRepository.findAllByDiagnosticId(diagnosticId);
     }
 }

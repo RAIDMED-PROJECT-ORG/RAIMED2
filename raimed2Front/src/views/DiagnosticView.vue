@@ -21,6 +21,7 @@ import PrescriptionPanel from '@/components/diagnosticActions/PrescriptionPanel.
 import ExamPanel from '@/components/diagnosticActions/ExamPanel.vue';
 import { ExamType } from '@/models/exam/examType.enum';
 import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
+import PrecisionPanel from '@/components/diagnosticActions/PrecisionPanel.vue';
 
 const router = useRouter();
 
@@ -34,6 +35,8 @@ const displayClosedQuestionActionPanel = ref(false);
 
 // Control the display of the opened question action panel
 const displayOpenedQuestionActionPanel = ref(false);
+
+const displayPrecisionActionPanel = ref(false);
 
 const displayPrescriptionActionPanel = ref<{
   visibility: boolean;
@@ -158,7 +161,7 @@ const mutationAddEventToDiagnostic = useMutation({
   mutationFn: (addEventDto: AddEventDto) =>
     axiosInstance.post(`/diagnostic/${diagnosticId}/event`, addEventDto).then((res) => res.data),
   onSuccess: (data) => {
-    diagnosticStore.setDiagnosticEvents(data)
+    diagnosticStore.setDiagnosticEvents(data);
   }
 });
 
@@ -180,6 +183,10 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
     }
     case TypeAction.OPENED_QUESTION: {
       displayOpenedQuestionActionPanel.value = true;
+      break;
+    }
+    case TypeAction.PRECISION: {
+      displayPrecisionActionPanel.value = true;
       break;
     }
     case TypeAction.BIOLOGY: {
@@ -265,6 +272,13 @@ const handleOnAskPrescription = (actionId: string) => {
   displayPrescriptionActionPanel.value = { visibility: false, prescriptionType: null };
 };
 
+const handleOnAskPrecision = (actionId: string) => {
+  if (actionId) {
+    mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.PRECISION, actionId });
+  }
+  displayPrecisionActionPanel.value = false;
+};
+
 const handleOnAskExam = (actionId: string, examType: ExamType) => {
   if (actionId) {
     mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.EXAMEN, actionId });
@@ -334,6 +348,13 @@ const isDiagnosticAlreadyDone = () => {
             :handleOnAskOpenedQuestion="handleOnAskOpenedQuestion"
           />
         </template>
+        <template v-else-if="displayPrecisionActionPanel">
+          <PrecisionPanel
+            :handleOnClose="() => (displayPrecisionActionPanel = false)"
+            :handleOnAskPrecision="handleOnAskPrecision"
+          />
+        </template>
+
         <template
           v-else-if="
             displayPrescriptionActionPanel && displayPrescriptionActionPanel.prescriptionType
@@ -353,9 +374,7 @@ const isDiagnosticAlreadyDone = () => {
         </template>
         <template v-else-if="displayExamActionPanel && displayExamActionPanel.examType">
           <ExamPanel
-            :handleOnClose="
-              () => (displayExamActionPanel = { visibility: false, examType: null })
-            "
+            :handleOnClose="() => (displayExamActionPanel = { visibility: false, examType: null })"
             :exam-type="displayExamActionPanel.examType"
             :handle-on-ask-exam="
               (actionId: string) => {
