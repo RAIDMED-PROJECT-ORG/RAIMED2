@@ -21,6 +21,8 @@ defineProps<{
   handleOnClickActionButton: (typeAction: TypeAction) => void;
 }>();
 
+const diagnosticStore = useDiagnosticStore();
+
 </script>
 
 <template>
@@ -29,6 +31,7 @@ defineProps<{
       <div class="w-1/3 flex flex-col">
         <!-- Spontaneous patient speech action button -->
         <ActionButton
+          :disabled='diagnosticStore.getSpontaneousPatientSpeechActionId === undefined'
           :color="Color.Blue"
           :icon="faEarListen"
           label="Écouter"
