@@ -9,7 +9,6 @@ import RaisoningSection from '@/components/raisoningSection/RaisoningSection.vue
 import type { AddEventDto } from '@/models/diagnostic/addEventDto';
 import type { Interpretation } from '@/models/diagnostic/interpretation.model';
 import type { Syndrom } from '@/models/diagnostic/syndrom.model';
-import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
 
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -19,6 +18,10 @@ import { useMutation, useQuery } from '@tanstack/vue-query';
 import ErrorAlert from '@/components/alert/ErrorAlert.vue';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
 import PrescriptionPanel from '@/components/diagnosticActions/PrescriptionPanel.vue';
+import ExamPanel from '@/components/diagnosticActions/ExamPanel.vue';
+import { ExamType } from '@/models/exam/examType.enum';
+import { TypeAction } from '@/models/virtual-patient/typeAction.enum';
+import PrecisionPanel from '@/components/diagnosticActions/PrecisionPanel.vue';
 
 const router = useRouter();
 
@@ -33,12 +36,22 @@ const displayClosedQuestionActionPanel = ref(false);
 // Control the display of the opened question action panel
 const displayOpenedQuestionActionPanel = ref(false);
 
+const displayPrecisionActionPanel = ref(false);
+
 const displayPrescriptionActionPanel = ref<{
   visibility: boolean;
   prescriptionType: PrescriptionType | null;
 }>({
   visibility: false,
   prescriptionType: null
+});
+
+const displayExamActionPanel = ref<{
+  visibility: boolean;
+  examType: ExamType | null;
+}>({
+  visibility: false,
+  examType: null
 });
 
 const queryDiagnostic = useQuery({
@@ -147,7 +160,9 @@ watch(queryDiagnosticHypothesis.data, (hypothesis) => {
 const mutationAddEventToDiagnostic = useMutation({
   mutationFn: (addEventDto: AddEventDto) =>
     axiosInstance.post(`/diagnostic/${diagnosticId}/event`, addEventDto).then((res) => res.data),
-  onSuccess: (data) => diagnosticStore.setDiagnosticEvents(data)
+  onSuccess: (data) => {
+    diagnosticStore.setDiagnosticEvents(data);
+  }
 });
 
 /**
@@ -170,6 +185,10 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
       displayOpenedQuestionActionPanel.value = true;
       break;
     }
+    case TypeAction.PRECISION: {
+      displayPrecisionActionPanel.value = true;
+      break;
+    }
     case TypeAction.BIOLOGY: {
       displayPrescriptionActionPanel.value = {
         visibility: true,
@@ -188,6 +207,34 @@ const handleOnClickActionButton = (typeAction: TypeAction) => {
       displayPrescriptionActionPanel.value = {
         visibility: true,
         prescriptionType: PrescriptionType.BIOPSY
+      };
+      break;
+    }
+    case TypeAction.INSPECTION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.INSPECTION
+      };
+      break;
+    }
+    case TypeAction.PALPATION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.PALPATION
+      };
+      break;
+    }
+    case TypeAction.PERCUSSION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.PERCUSSION
+      };
+      break;
+    }
+    case TypeAction.AUSCULTATION: {
+      displayExamActionPanel.value = {
+        visibility: true,
+        examType: ExamType.AUSCULTATION
       };
       break;
     }
@@ -223,6 +270,20 @@ const handleOnAskPrescription = (actionId: string) => {
     mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.PRESCRIPTION, actionId });
   }
   displayPrescriptionActionPanel.value = { visibility: false, prescriptionType: null };
+};
+
+const handleOnAskPrecision = (actionId: string) => {
+  if (actionId) {
+    mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.PRECISION, actionId });
+  }
+  displayPrecisionActionPanel.value = false;
+};
+
+const handleOnAskExam = (actionId: string, examType: ExamType) => {
+  if (actionId) {
+    mutationAddEventToDiagnostic.mutate({ typeAction: TypeAction.EXAMEN, actionId });
+  }
+  displayExamActionPanel.value = { visibility: false, examType: null };
 };
 
 const isDiagnosticAlreadyDone = () => {
@@ -287,6 +348,13 @@ const isDiagnosticAlreadyDone = () => {
             :handleOnAskOpenedQuestion="handleOnAskOpenedQuestion"
           />
         </template>
+        <template v-else-if="displayPrecisionActionPanel">
+          <PrecisionPanel
+            :handleOnClose="() => (displayPrecisionActionPanel = false)"
+            :handleOnAskPrecision="handleOnAskPrecision"
+          />
+        </template>
+
         <template
           v-else-if="
             displayPrescriptionActionPanel && displayPrescriptionActionPanel.prescriptionType
@@ -300,6 +368,17 @@ const isDiagnosticAlreadyDone = () => {
             :handleOnAskPrescription="
               (actionId: string) => {
                 handleOnAskPrescription(actionId);
+              }
+            "
+          />
+        </template>
+        <template v-else-if="displayExamActionPanel && displayExamActionPanel.examType">
+          <ExamPanel
+            :handleOnClose="() => (displayExamActionPanel = { visibility: false, examType: null })"
+            :exam-type="displayExamActionPanel.examType"
+            :handle-on-ask-exam="
+              (actionId: string) => {
+                handleOnAskExam(actionId, ExamType.INSPECTION);
               }
             "
           />

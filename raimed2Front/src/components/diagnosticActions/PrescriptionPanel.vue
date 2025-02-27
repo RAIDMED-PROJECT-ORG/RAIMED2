@@ -18,7 +18,7 @@ const props = defineProps<{
   handleOnAskPrescription: (actionId: string) => void;
 }>();
 
-const { getVirtualPatientDetails, virtualPatient } = storeToRefs(useDiagnosticStore());
+const { virtualPatient } = storeToRefs(useDiagnosticStore());
 const router = useRouter();
 const diagnosticId: String = router.currentRoute.value.params.diagnosticId as string;
 

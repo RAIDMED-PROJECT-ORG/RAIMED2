@@ -9,7 +9,9 @@ import { QuestionFilter } from '@/models/question/questionFilter.enum';
 import type { Listen } from '@/models/listen/listen.model';
 import type { Prescription } from '@/models/prescription/prescription.model';
 import { PrescriptionType } from '@/models/prescription/prescriptionType.enum';
+import { ExamType } from '@/models/exam/examType.enum';
 import type { Precision } from '@/models/question/precision.model';
+import { type ExamResults, Zones } from '@/models/diagnostic/exam.model';
 
 export function useApiToLocalPatientMapper() {
   function mapApiToLocal(patient: VirtualPatient): NewPatient {
@@ -23,17 +25,17 @@ export function useApiToLocalPatientMapper() {
       questions: [...mapApiActionToLocalQuestion(patient.actions ?? [])],
       listen: [...mapApiActionToLocalListen(patient.actions ?? [])],
       precisions: [...mapApiActionToLocalPrecision(patient.actions ?? [])],
-      inspection: [],
-      palpation: [],
-      percussion: [],
-      auscultation: [],
+      inspection: [...mapApiActionToLocalExam(patient.actions ?? [], ExamType.INSPECTION)],
+      palpation: [...mapApiActionToLocalExam(patient.actions ?? [], ExamType.PALPATION)],
+      percussion: [...mapApiActionToLocalExam(patient.actions ?? [], ExamType.PERCUSSION)],
+      auscultation: [...mapApiActionToLocalExam(patient.actions ?? [], ExamType.AUSCULTATION)],
       biology: [
         ...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOLOGY)
       ],
       imagery: [
         ...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.IMAGERY)
       ],
-      biopsy: [...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOPSY)],
+      biopsy: [...mapApiActionToLocalPrescription(patient.actions ?? [], PrescriptionType.BIOPSY)]
     };
   }
 
@@ -114,5 +116,22 @@ export function useApiToLocalPatientMapper() {
     return prescriptions;
   }
 
-  return { mapApiToLocal };
+  function mapApiActionToLocalExam(actions: Action[], examType: ExamType): ExamResults[] {
+    const exams: ExamResults[] = [];
+
+    actions.forEach((action) => {
+      if (action.primaryElement === examType) {
+        exams.push({
+          id: action.id ?? '',
+          signs: [action.signs],
+          zone: action.zone as Zones,
+          type: examType
+        });
+      }
+    });
+
+    return exams;
+  }
+
+  return { mapApiToLocal, mapApiActionToLocalExam, mapApiActionToLocalPrecision };
 }

@@ -10,7 +10,8 @@ export enum TypeAction {
   BIOLOGY = 'BIOLOGY',
   IMAGERY = 'IMAGERY',
   BIOPSY = 'BIOPSY',
-  PRESCRIPTION = 'PRESCRIPTION'
+  PRESCRIPTION = 'PRESCRIPTION',
+  EXAMEN = 'EXAMEN'
 }
 
 export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
@@ -37,5 +38,7 @@ export const getTypeActionDisplayName = (typeAction: TypeAction): string => {
       return 'Prescription imagerie';
     case TypeAction.BIOPSY:
       return 'Prescription biopsie';
+    default:
+      return '';
   }
 };

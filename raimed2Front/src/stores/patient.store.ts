@@ -118,13 +118,13 @@ function createVirtualPatient(newPatient: NewPatient) {
 }
 
 function createSpontaneousPatientSpeechAction(listen: Listen) {
-    return {
-        type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
-        primaryElement: listen.content,
-        actionSpontaneousPatientSpeech: {
-            speech: listen.content
-        }
-    };
+  return {
+    type: TypeAction.SPONTANEOUS_PATIENT_SPEECH,
+    primaryElement: listen.primaryElement ?? listen.content,
+    actionSpontaneousPatientSpeech: {
+      speech: listen.content
+    }
+  };
 }
 
 function createBiologyPrescriptionAction(prescription: Prescription) {
@@ -187,7 +187,7 @@ function createQuestionActions(questions: Question[]) {
             question.type === QuestionType.CLOSED
                 ? TypeAction.CLOSED_QUESTION
                 : TypeAction.OPENED_QUESTION,
-        primaryElement: question.content,
+        primaryElement: question.primaryElement ?? question.content,
         ...(question.type === QuestionType.CLOSED
             ? {
                 actionClosedQuestion: {
@@ -210,7 +210,7 @@ function createExamenAction(examResult: ExamResults, type: TypeAction) {
         primaryElement: type,
         [getActionKey(type)]: {  // Utilisation d'un nom dynamique pour le bon mapping
             zone: examResult.zone,
-            signs: examResult.signs
+            signs: examResult.signs.join('-')
         }
     };
 }

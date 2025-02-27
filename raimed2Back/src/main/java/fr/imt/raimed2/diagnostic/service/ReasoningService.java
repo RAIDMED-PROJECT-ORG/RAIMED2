@@ -1,6 +1,7 @@
 package fr.imt.raimed2.diagnostic.service;
 
 import fr.imt.raimed2.action.model.Action;
+import fr.imt.raimed2.action.model.ActionExamen;
 import fr.imt.raimed2.diagnostic.dto.request.CreateHypothesisDto;
 import fr.imt.raimed2.diagnostic.dto.request.CreateInterpretationDto;
 import fr.imt.raimed2.diagnostic.dto.request.CreateSyndromDto;
@@ -53,10 +54,7 @@ public class ReasoningService {
         Set<Action> actions = diagnostic.getVirtualPatient().getActions();
 
         Action action = actions.stream()
-                .filter(a -> (
-                        a.getId().equals(createInterpretationDto.getActionId())
-                                && a.getPrimaryElement().equals(createInterpretationDto.getPrimaryElement())
-                ))
+                .filter(a -> isMatchingAction(a, createInterpretationDto))
                 .findFirst()
                 .orElseThrow();
 
@@ -70,6 +68,19 @@ public class ReasoningService {
 
         return interpretationRepository.findAllByDiagnosticId(diagnosticId);
     }
+
+    private boolean isMatchingAction(Action action, CreateInterpretationDto dto) {
+        if (!action.getId().equals(dto.getActionId())) {
+            return false;
+        }
+
+        if (action instanceof ActionExamen) {
+            return ((ActionExamen) action).getSigns().equals(dto.getPrimaryElement());
+        }
+
+        return action.getPrimaryElement().equals(dto.getPrimaryElement());
+    }
+
 
     /**
      * Add a syndrom to a diagnostic

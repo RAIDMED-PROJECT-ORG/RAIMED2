@@ -1,10 +1,12 @@
 package fr.imt.raimed2.diagnostic.controller;
 
+import fr.imt.raimed2.action.model.Action;
 import fr.imt.raimed2.diagnostic.dto.request.*;
 import fr.imt.raimed2.diagnostic.dto.response.*;
 import fr.imt.raimed2.diagnostic.model.*;
 import fr.imt.raimed2.diagnostic.service.DiagnosticService;
 import fr.imt.raimed2.diagnostic.service.ReasoningService;
+import fr.imt.raimed2.precision.model.Precision;
 import fr.imt.raimed2.prescription.model.Prescription;
 import fr.imt.raimed2.question.model.Question;
 import fr.imt.raimed2.user.model.User;
@@ -99,6 +101,17 @@ public class DiagnosticController {
         return ResponseEntity.ok().body(prescriptions);
     }
 
+    @GetMapping("/{id}/precision")
+    private ResponseEntity<List<Action>> getDiagnosticPrecision(@PathVariable Long id) {
+        List<Action> precisions = this.diagnosticService.getDiagnosticPrecision(id);
+        return ResponseEntity.ok().body(precisions);
+    }
+
+    @GetMapping("/{id}/exam/{type}")
+    private ResponseEntity<List<Action>> getDiagnosticExam(@PathVariable Long id, @PathVariable String type) {
+        List<Action> exams = this.diagnosticService.getDiagnosticExam(id, type);
+        return ResponseEntity.ok().body(exams);
+    }
 
     @GetMapping("/{id}/openedQuestion")
     private ResponseEntity<List<Question>> getDiagnosticOpenedQuestion(@PathVariable Long id) {

@@ -15,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)  // Une seule table pour toutes les sous-classes
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("EXAMEN")
 public class ActionExamen extends Action {
 
     @Column(name = "zone")

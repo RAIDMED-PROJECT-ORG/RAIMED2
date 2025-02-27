@@ -75,7 +75,7 @@ const handleSelectPrimaryElement = (primaryElement: PrimaryElement) => {
         <span
           v-for="primaryElement in diagnosticStore.getPrimaryElements"
           v-bind:key="primaryElement.actionId"
-          :class="`badge badge-lg m-1 primary-element-selectable ${
+          :class="`badge badge-lg m-1 primary-element-selectable min-h-fit ${
             isSelectedPrimaryElement(primaryElement) && 'badge-ghost'
           }`"
           @click="handleSelectPrimaryElement(primaryElement)"
@@ -87,7 +87,7 @@ const handleSelectPrimaryElement = (primaryElement: PrimaryElement) => {
         <span
           v-for="primaryElement in diagnosticStore.getPrimaryElements"
           v-bind:key="primaryElement.actionId"
-          class="badge badge-lg m-1"
+          class="badge badge-lg m-1 min-h-fit"
         >
           {{ primaryElement.value }}
         </span>
@@ -100,6 +100,7 @@ const handleSelectPrimaryElement = (primaryElement: PrimaryElement) => {
 .primary-element-selectable {
   cursor: pointer;
 }
+
 .primary-element-selectable:hover {
   background-color: oklch(var(--b2));
 }
