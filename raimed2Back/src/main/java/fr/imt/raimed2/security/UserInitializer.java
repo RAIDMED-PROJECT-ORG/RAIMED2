@@ -23,15 +23,22 @@ public class UserInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
+        User student;
         // Add a user with the student role
-        User student = User.builder()
-                .username("student")
-                .firstname("Steffan")
-                .lastname("Santiago")
-                .email("student@raimed.fr")
-                .password(passwordEncoder.encode("student"))
-                .role(Role.STUDENT)
-                .build();
+        for(int i = 0; i < 60; i++){
+            student = User.builder()
+                    .username("student" + i)
+                    .firstname("Steffan")
+                    .lastname("Santiago")
+                    .email("student@raimed.fr" + i)
+                    .password(passwordEncoder.encode("student" + i))
+                    .role(Role.STUDENT)
+                    .build();
+            if (userRepository.findByUsername(student.getUsername()).isEmpty()) {
+                userRepository.save(student);
+            }
+        }
+
 
         // Add a user with the teacher role
         User teacher = User.builder()
@@ -52,10 +59,6 @@ public class UserInitializer implements CommandLineRunner {
                 .password(passwordEncoder.encode("admin"))
                 .role(Role.ADMIN)
                 .build();
-
-        if (userRepository.findByUsername(student.getUsername()).isEmpty()) {
-            userRepository.save(student);
-        }
 
         if (userRepository.findByUsername(teacher.getUsername()).isEmpty()) {
             userRepository.save(teacher);
