@@ -10,7 +10,7 @@ import type { AddEventDto } from '@/models/diagnostic/addEventDto';
 import type { Interpretation } from '@/models/diagnostic/interpretation.model';
 import type { Syndrom } from '@/models/diagnostic/syndrom.model';
 
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axiosInstance from '@/service/httpClient/axios.config';
 import { useDiagnosticStore } from '@/stores/diagnostic.store';
@@ -292,6 +292,10 @@ const isDiagnosticAlreadyDone = () => {
     queryDiagnostic.data.value?.status === 'FAILURE'
   );
 };
+
+onMounted(() => {
+  diagnosticStore.reinitializeDiagnostic();
+});
 </script>
 
 <template>

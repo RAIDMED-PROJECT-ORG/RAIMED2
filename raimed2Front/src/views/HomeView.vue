@@ -33,6 +33,7 @@ const { role, firstname, lastname } = authStore.getUserInfo;
         aboutir au diagnostic dans une situation clinique donnée.<br />
       </p>
       <p class="w-full text-center">A vous de jouer !</p>
+      <ActionButton class="mt-5" v-if="role == Role.STUDENT" :onClick="() => router.push('/patients')" label="Aller vers la liste des patients" :color="Color.Orange"></ActionButton>
       <div class="flex flex-col m-4 space-y-4" v-if="role == Role.TEACHER">
         <ActionButton :onClick="() => router.push({ name: 'teacherPatients' })" label="Visualisation des patients / Création de nouveaux patients" :color="Color.Orange"></ActionButton>
         <ActionButton disabled :onClick="() => console.log('Not implemented yet')" label="Analyse des résultats des étudiants" :color="Color.Orange"></ActionButton>

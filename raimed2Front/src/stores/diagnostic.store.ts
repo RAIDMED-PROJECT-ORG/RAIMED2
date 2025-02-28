@@ -235,6 +235,14 @@ export const useDiagnosticStore = defineStore('diagnostic', {
 
     setDiagnosticHypothesis(diagnosticHypothesis: Hypothesis[]) {
       this.diagnosticHypothesis = diagnosticHypothesis;
+    },
+
+    reinitializeDiagnostic() {
+      this.virtualPatient = null;
+      this.diagnosticEvents = [];
+      this.diagnosticInterpretations = [];
+      this.diagnosticSyndroms = [];
+      this.diagnosticHypothesis = [];
     }
   }
 });
