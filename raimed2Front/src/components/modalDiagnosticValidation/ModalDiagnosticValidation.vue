@@ -44,7 +44,7 @@ const mutationValidateDiagnostic = useMutation({
 });
 
 const handleValidateDiagnostic = () => {
-  if (selectedHypothesis.value) {
+  if (selectedHypothesis.value && props.diagnosticId) {
     mutationValidateDiagnostic.mutate({
       hypothesisId: selectedHypothesis.value.id,
       degreeOfCertainty: degreeOfCertainty.value
@@ -56,7 +56,7 @@ const handleValidateDiagnostic = () => {
 <template>
   <button
     class="btn btn-success text-white"
-    :disabled="!diagnosticStore.getHypothesis.length"
+    :disabled="!diagnosticStore.getHypothesis?.length"
     @click="openModal"
   >
     Valider le diagnostic
@@ -81,7 +81,7 @@ const handleValidateDiagnostic = () => {
             v-for="hypothesis in diagnosticStore.getHypothesis"
             v-bind:key="hypothesis.id"
             @click="selectedHypothesis = hypothesis"
-            :class="`btn btn-info ${selectedHypothesis?.id === hypothesis.id && 'btn-active'} m-1`"
+            :class="`btn btn-info ${selectedHypothesis && selectedHypothesis.id === hypothesis.id ? 'btn-active' : ''} m-1`"
           >
             <FontAwesomeIcon
               v-if="selectedHypothesis?.id === hypothesis.id"
@@ -108,7 +108,7 @@ const handleValidateDiagnostic = () => {
 
       <div class="modal-action">
         <button
-          v-if="!mutationValidateDiagnostic.isError.value"
+          v-if="!mutationValidateDiagnostic.isError?.value"
           class="btn btn-success text-white"
           :disabled="!selectedHypothesis || mutationValidateDiagnostic.isPending.value"
           @click="handleValidateDiagnostic"
